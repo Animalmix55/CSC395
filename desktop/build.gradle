@@ -15,6 +15,18 @@ task run(dependsOn: classes, type: JavaExec) {
     ignoreExitValue = true
 }
 
+task fatJar(type: Jar) {
+  manifest {
+    attributes 'Main-Class': 'com.kacstudios.game.DesktopLauncher'
+  }
+  archiveClassifier = "all"
+  from {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+  with jar
+}
+
 task debug(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
