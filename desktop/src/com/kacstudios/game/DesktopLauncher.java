@@ -5,6 +5,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new EscapeRoomGame(), config);
+		config.width = 1024;
+		config.height = 768;
+		new LwjglApplication(new FarmaniaGame(), config);
 	}
 }
