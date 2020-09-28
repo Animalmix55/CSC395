@@ -33,20 +33,19 @@ public class LevelScreen extends BaseScreen {
 //        add in farmer actor
         farmer = new Farmer(20,20,mainStage);
 
-//        BROKEN
+
 //        loop through grid squares and activate click functions on each one
-//
-//        for (GridSquare square : gridSquares) {
-//            square.addListener(
-//                    (Event e) ->
-//                    {
-//                        InputEvent ie = (InputEvent)e;
-//                        if ( ie.getType().equals(InputEvent.Type.touchDown) )
-//                            square.clickFunction();
-//                        return false;
-//                    }
-//            );
-//        }
+        for (GridSquare square : gridSquares) {
+            square.addListener(
+                    (Event e) ->
+                    {
+                        InputEvent ie = (InputEvent)e;
+                        if ( ie.getType().equals(InputEvent.Type.touchDown) )
+                            square.clickFunction();
+                        return false;
+                    }
+            );
+        }
 
     }
 
