@@ -4,17 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<GridSquare> gridSquares;
-
-
-
-
+    private TimeEngine time;
+    private Label timeLabel;
 
     public void initialize() {
 
@@ -23,6 +23,14 @@ public class LevelScreen extends BaseScreen {
         farmBaseActor.loadTexture("grass_1080x1080.png");
         farmBaseActor.setSize(1080,1080);
         BaseActor.setWorldBounds(farmBaseActor);
+        time = new TimeEngine();
+        // time.dilateTime(2) // double time
+
+        timeLabel = new Label("Time:", BaseGame.labelStyle);
+        timeLabel.setX(0);
+        timeLabel.setY(0);
+
+        uiStage.addActor(timeLabel);
 
 
 
@@ -49,26 +57,16 @@ public class LevelScreen extends BaseScreen {
 
     }
 
-
-
-
-
-
-
-
     public void update(float dt) {
+        time.timeHook(dt); // do NOT remove this, this makes time work.
+
+        timeLabel.setText("Time: " + time.getFormattedString());
         for (GridSquare square : gridSquares) {
             if (square.getCollisionSetting()) {
                 farmer.preventOverlap(square);
             }
         }
     }
-
-
-
-
-
-
 
     public boolean keyDown(int keyCode)
     {
