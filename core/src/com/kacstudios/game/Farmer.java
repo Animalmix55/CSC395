@@ -14,7 +14,7 @@ public class Farmer extends BaseActor {
 
         String[] filenames =
                 {"farmer-1.png", "farmer-2.png", "farmer-3.png",
-                        "farmer-4.png", "farmer-5.png", "farmer-6.png"};
+                        "farmer-4.png", "farmer-5.png", "farmer-6.png", "farmer-7.png", "farmer-8.png"};
 
         loadAnimationFromFiles(filenames, 0.1f, true);
 
@@ -33,6 +33,7 @@ public class Farmer extends BaseActor {
             addAction( Actions.after( Actions.removeActor() ) );
             return;
         }
+
         if (Gdx.input.isKeyPressed(Keys.LEFT))
             accelerateAtAngle(180);
         if (Gdx.input.isKeyPressed(Keys.RIGHT))
@@ -46,8 +47,8 @@ public class Farmer extends BaseActor {
 
         setAnimationPaused( !isMoving() );
 
-        if ( getSpeed() > 0 )
-            setRotation( getMotionAngle() );
+//        if ( getSpeed() > 0 )
+//            setRotation( getMotionAngle() );
 
         boundToWorld();
 
