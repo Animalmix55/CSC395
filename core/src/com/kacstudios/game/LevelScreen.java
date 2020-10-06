@@ -76,7 +76,7 @@ public class LevelScreen extends BaseScreen {
                 {
                     InputEvent ie = (InputEvent)e;
                     if ( ie.getType().equals(InputEvent.Type.touchDown) )
-                        FarmaniaGame.setActiveScreen(new Pause());
+                        FarmaniaGame.setActiveScreen(new Pause(this));
                     return false;
                 }
         );
@@ -130,7 +130,7 @@ public class LevelScreen extends BaseScreen {
     {
 
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            FarmaniaGame.setActiveScreen(new Pause());
+            FarmaniaGame.setActiveScreen(new Pause(this));
 
         if (Gdx.input.isKeyPressed(Input.Keys.C)) {
             if (!gridSquares.get(0).getCollisionSetting()) {

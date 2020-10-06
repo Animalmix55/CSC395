@@ -20,7 +20,13 @@ public class PauseSettings extends BaseScreen {
     private Slider Gameslider;
     private Slider Musicslider;
 
+    private Pause level;
+    public PauseSettings(Pause _level){
+        level = _level;
+    }
+
     public void initialize() {
+
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         final Label Gamelabel = new Label("Game Volume: " + Global.GameVolume, skin);
@@ -108,7 +114,7 @@ public class PauseSettings extends BaseScreen {
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
 
-                    FarmaniaGame.setActiveScreen( new Pause() );
+                    FarmaniaGame.setActiveScreen( level );
                     return true;
                 }
         );
