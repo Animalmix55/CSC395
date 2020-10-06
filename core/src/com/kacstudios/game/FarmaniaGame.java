@@ -16,9 +16,11 @@ public class FarmaniaGame extends BaseGame {
 
 	public void create () {
 		super.create();
+
+		setActiveScreen( new MainMenu() );
 		camera = new PerspectiveCamera();
 		viewport = new FitViewport(1280,720, camera);
-		setActiveScreen( new LevelScreen() );
+
 
 	}
 
