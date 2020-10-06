@@ -15,6 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 public class Pause extends BaseScreen {
 
+    //this allows to save current state of game when return back from pause
+    private LevelScreen level;
+    public Pause(LevelScreen _level){
+        level = _level;
+    }
+
 
     public void initialize() {
 
@@ -56,7 +62,7 @@ public class Pause extends BaseScreen {
 
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
-                    FarmaniaGame.setActiveScreen( new PauseSettings() );
+                    FarmaniaGame.setActiveScreen( new PauseSettings(this) );
                     return true;
                 }
         );
@@ -95,7 +101,7 @@ public class Pause extends BaseScreen {
     public boolean keyDown(int keyCode)
     {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            FarmaniaGame.setActiveScreen(new LevelScreen());
+            FarmaniaGame.setActiveScreen( level );
         return false;
     }
 
