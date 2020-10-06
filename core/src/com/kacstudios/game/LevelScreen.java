@@ -7,19 +7,22 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
+
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<GridSquare> gridSquares;
-
-
-
-
+    private List<BaseActor> outOfBoundsArea;
+    private TimeEngine time;
+    private Label timeLabel;
 
     public void initialize() {
 
@@ -28,6 +31,30 @@ public class LevelScreen extends BaseScreen {
         farmBaseActor.loadTexture("grass_1080x1080.png");
         farmBaseActor.setSize(1080,1080);
         BaseActor.setWorldBounds(farmBaseActor);
+        time = new TimeEngine();
+        // time.dilateTime(2) // double time
+
+        timeLabel = new Label("Time:", BaseGame.labelStyle);
+        timeLabel.setX(0);
+        timeLabel.setY(0);
+
+        uiStage.addActor(timeLabel);
+
+//        out of bounds background
+//        counter clockwise, starting from the right middle
+        outOfBoundsArea = new ArrayList<>();
+        outOfBoundsArea.add( new BaseActor(1080,0,mainStage) );
+        outOfBoundsArea.add( new BaseActor(1080,1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(0,1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(-1080,1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(-1080,0,mainStage) );
+        outOfBoundsArea.add( new BaseActor(-1080,-1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(0,-1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(1080,-1080,mainStage) );
+        for (BaseActor baseActor : outOfBoundsArea) {
+            baseActor.loadTexture("grass-outofbounds_1080x1080.png");
+            baseActor.setSize(1080,1080);
+        }
 
 
 
@@ -57,8 +84,17 @@ public class LevelScreen extends BaseScreen {
 
 
 //        add in grid square
+
+//        add in grid squares
+
         gridSquares = new ArrayList<>();
         gridSquares.add(new GridSquare(135,135,mainStage,false));
+        gridSquares.add(new GridSquare(270,135,mainStage,false));
+        gridSquares.add(new GridSquare(135,270,mainStage,false));
+        gridSquares.add(new GridSquare(270,270,mainStage,false));
+        for (GridSquare gridSquare : gridSquares) {
+            gridSquare.setTexture("soil.png");
+        }
 
 //        add in farmer actor
         farmer = new Farmer(20,20,mainStage);
@@ -79,14 +115,10 @@ public class LevelScreen extends BaseScreen {
 
     }
 
-
-
-
-
-
-
-
     public void update(float dt) {
+        time.timeHook(dt); // do NOT remove this, this makes time work.
+
+        timeLabel.setText("Time: " + time.getFormattedString());
         for (GridSquare square : gridSquares) {
             if (square.getCollisionSetting()) {
                 farmer.preventOverlap(square);
@@ -94,14 +126,9 @@ public class LevelScreen extends BaseScreen {
         }
     }
 
-
-
-
-
-
-
     public boolean keyDown(int keyCode)
     {
+
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
             FarmaniaGame.setActiveScreen(new Pause(this));
 
@@ -116,6 +143,8 @@ public class LevelScreen extends BaseScreen {
             }
 
         }
+
+
         return false;
     }
 
