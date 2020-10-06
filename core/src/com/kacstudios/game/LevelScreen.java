@@ -11,6 +11,7 @@ import java.util.List;
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<GridSquare> gridSquares;
+    private List<BaseActor> outOfBoundsArea;
 
 
 
@@ -24,11 +25,33 @@ public class LevelScreen extends BaseScreen {
         farmBaseActor.setSize(1080,1080);
         BaseActor.setWorldBounds(farmBaseActor);
 
+//        out of bounds background
+//        counter clockwise, starting from the right middle
+        outOfBoundsArea = new ArrayList<>();
+        outOfBoundsArea.add( new BaseActor(1080,0,mainStage) );
+        outOfBoundsArea.add( new BaseActor(1080,1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(0,1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(-1080,1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(-1080,0,mainStage) );
+        outOfBoundsArea.add( new BaseActor(-1080,-1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(0,-1080,mainStage) );
+        outOfBoundsArea.add( new BaseActor(1080,-1080,mainStage) );
+        for (BaseActor baseActor : outOfBoundsArea) {
+            baseActor.loadTexture("grass-outofbounds_1080x1080.png");
+            baseActor.setSize(1080,1080);
+        }
 
 
-//        add in grid square
+
+//        add in grid squares
         gridSquares = new ArrayList<>();
         gridSquares.add(new GridSquare(135,135,mainStage,false));
+        gridSquares.add(new GridSquare(270,135,mainStage,false));
+        gridSquares.add(new GridSquare(135,270,mainStage,false));
+        gridSquares.add(new GridSquare(270,270,mainStage,false));
+        for (GridSquare gridSquare : gridSquares) {
+            gridSquare.setTexture("soil.png");
+        }
 
 //        add in farmer actor
         farmer = new Farmer(20,20,mainStage);
@@ -72,17 +95,17 @@ public class LevelScreen extends BaseScreen {
 
     public boolean keyDown(int keyCode)
     {
-        if (Gdx.input.isKeyPressed(Input.Keys.C)) {
-            if (!gridSquares.get(0).getCollisionSetting()) {
-                gridSquares.get(0).setTexture("grid_red.png");
-                gridSquares.get(0).setCollisionSetting(true);
-            }
-            else {
-                gridSquares.get(0).setTexture("grid_blank.png");
-                gridSquares.get(0).setCollisionSetting(false);
-            }
-
-        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.C)) {
+//            if (!gridSquares.get(0).getCollisionSetting()) {
+//                gridSquares.get(0).setTexture("soil.png");
+//                gridSquares.get(0).setCollisionSetting(true);
+//            }
+//            else {
+//                gridSquares.get(0).setTexture("grid_blank.png");
+//                gridSquares.get(0).setCollisionSetting(false);
+//            }
+//
+//        }
         return false;
     }
 
