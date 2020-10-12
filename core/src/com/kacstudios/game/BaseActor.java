@@ -390,15 +390,17 @@ public class BaseActor extends Group
      *  If not accelerating, deceleration value is applied. <br>
      *  Speed is limited by maxSpeed value. <br>
      *  Acceleration vector reset to (0,0) at end of method. <br>
-     *  @param dt Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
+     *  @param deltaTime Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
      *  @see #acceleration
      *  @see #deceleration
      *  @see #maxSpeed
      */
-    public void applyPhysics(float dt)
+    public void applyPhysics(float deltaTime)
     {
+
+        float dt = deltaTime * TimeEngine.getDilation(); // uses new, dilated time
         // apply acceleration
-        velocityVec.add( accelerationVec.x * dt, accelerationVec.y * dt );
+        velocityVec.add( accelerationVec.x * dt, accelerationVec.y * dt);
 
         float speed = getSpeed();
 
@@ -557,7 +559,7 @@ public class BaseActor extends Group
 
     /**
      *  Set world dimensions for use by methods boundToWorld() and scrollTo().
-     *  @param BaseActor whose size determines the world bounds (typically a background image)
+     *  @param ba whose size determines the world bounds (typically a background image)
      */
     public static void setWorldBounds(BaseActor ba)
     {
