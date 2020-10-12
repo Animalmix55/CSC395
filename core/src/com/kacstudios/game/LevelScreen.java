@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<GridSquare> gridSquares;
     private List<BaseActor> outOfBoundsArea;
-    private TimeEngine time;
     private Label timeLabel;
 
     public void initialize() {
@@ -31,8 +29,8 @@ public class LevelScreen extends BaseScreen {
         farmBaseActor.loadTexture("grass_1080x1080.png");
         farmBaseActor.setSize(1080,1080);
         BaseActor.setWorldBounds(farmBaseActor);
-        time = new TimeEngine();
-        // time.dilateTime(2) // double time
+        TimeEngine.Init();
+        // TimeEngine.dilateTime(0); // freeze time
 
         timeLabel = new Label("Time:", BaseGame.labelStyle);
         timeLabel.setX(0);
@@ -97,7 +95,7 @@ public class LevelScreen extends BaseScreen {
         }
 
 //        add in farmer actor
-        farmer = new Farmer(20,20,mainStage);
+        farmer = new Farmer(20,20, mainStage);
 
 
 //        loop through grid squares and activate click functions on each one
@@ -116,9 +114,9 @@ public class LevelScreen extends BaseScreen {
     }
 
     public void update(float dt) {
-        time.timeHook(dt); // do NOT remove this, this makes time work.
+        TimeEngine.act(dt); // do NOT remove this, this makes time work.
 
-        timeLabel.setText("Time: " + time.getFormattedString());
+        timeLabel.setText("Time: " + TimeEngine.getFormattedString());
         for (GridSquare square : gridSquares) {
             if (square.getCollisionSetting()) {
                 farmer.preventOverlap(square);
