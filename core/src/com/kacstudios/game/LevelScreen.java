@@ -2,11 +2,17 @@ package com.kacstudios.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
-import java.time.temporal.ChronoUnit;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +20,6 @@ public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<Plant> gridSquares;
     private List<BaseActor> outOfBoundsArea;
-    private TimeEngine time;
     private Label timeLabel;
 
     public void initialize() {
@@ -24,8 +29,8 @@ public class LevelScreen extends BaseScreen {
         farmBaseActor.loadTexture("grass_1080x1080.png");
         farmBaseActor.setSize(1080,1080);
         BaseActor.setWorldBounds(farmBaseActor);
-        time = new TimeEngine();
-        // time.dilateTime(2) // double time
+        TimeEngine.Init();
+        // TimeEngine.dilateTime(0); // freeze time
 
         timeLabel = new Label("Time:", BaseGame.labelStyle);
         timeLabel.setX(0);
@@ -51,7 +56,35 @@ public class LevelScreen extends BaseScreen {
 
 
 
+        //pause button
+
+        Button.ButtonStyle buttonStyle = new Button.ButtonStyle();
+
+        Texture buttonTex = new Texture( Gdx.files.internal("ButtonPause.png") );
+        TextureRegion buttonRegion =  new TextureRegion(buttonTex);
+        buttonStyle.up = new TextureRegionDrawable( buttonRegion );
+
+        Button PauseButton = new Button( buttonStyle );
+        PauseButton.setColor( Color.CYAN );
+        PauseButton.setPosition(20,675);
+        uiStage.addActor(PauseButton);
+
+        PauseButton.addListener(
+                (Event e) ->
+                {
+                    InputEvent ie = (InputEvent)e;
+                    if ( ie.getType().equals(InputEvent.Type.touchDown) )
+                        FarmaniaGame.setActiveScreen(new Pause(this));
+                    return false;
+                }
+        );
+
+
+
+//        add in grid square
+
 //        add in grid squares
+
         gridSquares = new ArrayList<>();
         gridSquares.add(new Plant(135,135,mainStage,false));
         gridSquares.add(new Plant(270,135,mainStage,false));
@@ -60,7 +93,7 @@ public class LevelScreen extends BaseScreen {
 
 
 //        add in farmer actor
-        farmer = new Farmer(20,20,mainStage);
+        farmer = new Farmer(20,20, mainStage);
 
 
 //        loop through grid squares and activate click functions on each one
@@ -79,9 +112,9 @@ public class LevelScreen extends BaseScreen {
     }
 
     public void update(float dt) {
-        time.timeHook(dt); // do NOT remove this, this makes time work.
+        TimeEngine.act(dt); // do NOT remove this, this makes time work.
 
-        timeLabel.setText("Time: " + time.getFormattedString());
+        timeLabel.setText("Time: " + TimeEngine.getFormattedString());
         for (GridSquare square : gridSquares) {
             if (square.getCollisionSetting()) {
                 farmer.preventOverlap(square);
@@ -95,17 +128,23 @@ public class LevelScreen extends BaseScreen {
 
     public boolean keyDown(int keyCode)
     {
-//        if (Gdx.input.isKeyPressed(Input.Keys.C)) {
-//            if (!gridSquares.get(0).getCollisionSetting()) {
-//                gridSquares.get(0).setTexture("soil.png");
-//                gridSquares.get(0).setCollisionSetting(true);
-//            }
-//            else {
-//                gridSquares.get(0).setTexture("grid_blank.png");
-//                gridSquares.get(0).setCollisionSetting(false);
-//            }
-//
-//        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+            FarmaniaGame.setActiveScreen(new Pause(this));
+
+        if (Gdx.input.isKeyPressed(Input.Keys.C)) {
+            if (!gridSquares.get(0).getCollisionSetting()) {
+                gridSquares.get(0).setTexture("grid_red.png");
+                gridSquares.get(0).setCollisionSetting(true);
+            }
+            else {
+                gridSquares.get(0).setTexture("grid_blank.png");
+                gridSquares.get(0).setCollisionSetting(false);
+            }
+
+        }
+
+
         return false;
     }
 
