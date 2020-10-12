@@ -12,7 +12,7 @@ import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
-    private List<GridSquare> gridSquares;
+    private List<Plant> gridSquares;
     private List<BaseActor> outOfBoundsArea;
     private TimeEngine time;
     private Label timeLabel;
@@ -53,13 +53,11 @@ public class LevelScreen extends BaseScreen {
 
 //        add in grid squares
         gridSquares = new ArrayList<>();
-        gridSquares.add(new GridSquare(135,135,mainStage,false));
-        gridSquares.add(new GridSquare(270,135,mainStage,false));
-        gridSquares.add(new GridSquare(135,270,mainStage,false));
-        gridSquares.add(new GridSquare(270,270,mainStage,false));
-        for (GridSquare gridSquare : gridSquares) {
-            gridSquare.setTexture("soil.png");
-        }
+        gridSquares.add(new Plant(135,135,mainStage,false));
+        gridSquares.add(new Plant(270,135,mainStage,false));
+        gridSquares.add(new Plant(135,270,mainStage,false));
+        gridSquares.add(new Plant(270,270,mainStage,false));
+
 
 //        add in farmer actor
         farmer = new Farmer(20,20,mainStage);
@@ -72,7 +70,7 @@ public class LevelScreen extends BaseScreen {
                     {
                         InputEvent ie = (InputEvent)e;
                         if ( ie.getType().equals(InputEvent.Type.touchDown) )
-                            square.clickFunction();
+                            square.clickFunction(time.getDateTime());
                         return false;
                     }
             );
@@ -88,6 +86,10 @@ public class LevelScreen extends BaseScreen {
             if (square.getCollisionSetting()) {
                 farmer.preventOverlap(square);
             }
+        }
+
+        for(Plant plant : gridSquares) {
+            plant.checkStatus(time.getDateTime());
         }
     }
 
