@@ -170,6 +170,36 @@ public class BaseActor extends Group
     }
 
     /**
+     * Created by KAC, creates animation but does not set animation to play right away
+     * @param fileNames array of names of files containing animation images
+     * @param frameDuration how long each frame should be displayed
+     * @param loop should the animation loop
+     * @return animation created (useful for storing multiple animations)
+     */
+    public Animation<TextureRegion> loadAnimationUnsetFromFiles(String[] fileNames, float frameDuration, boolean loop)
+    {
+        int fileCount = fileNames.length;
+        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+
+        for (int n = 0; n < fileCount; n++)
+        {
+            String fileName = fileNames[n];
+            Texture texture = new Texture( Gdx.files.internal(fileName) );
+            texture.setFilter( TextureFilter.Linear, TextureFilter.Linear );
+            textureArray.add( new TextureRegion( texture ) );
+        }
+
+        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
+
+        if (loop)
+            anim.setPlayMode(PlayMode.LOOP);
+        else
+            anim.setPlayMode(PlayMode.NORMAL);
+
+        return anim;
+    }
+
+    /**
      * Creates an animation from a spritesheet: a rectangular grid of images stored in a single file.
      * @param fileName name of file containing spritesheet
      * @param rows number of rows of images in spritesheet
