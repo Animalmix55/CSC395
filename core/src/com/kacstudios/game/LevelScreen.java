@@ -61,13 +61,13 @@ public class LevelScreen extends BaseScreen {
 
         Button.ButtonStyle buttonStyle = new Button.ButtonStyle();
 
-        Texture buttonTex = new Texture( Gdx.files.internal("ButtonPause.png") );
+        Texture buttonTex = new Texture( Gdx.files.internal("button_pause_48x48.png") );
         TextureRegion buttonRegion =  new TextureRegion(buttonTex);
         buttonStyle.up = new TextureRegionDrawable( buttonRegion );
 
         Button PauseButton = new Button( buttonStyle );
-        PauseButton.setColor( Color.CYAN );
-        PauseButton.setPosition(20,675);
+//        PauseButton.setColor( Color.CYAN );
+        PauseButton.setPosition(20,650);
         uiStage.addActor(PauseButton);
 
         PauseButton.addListener(

@@ -74,13 +74,13 @@ public class Settings extends BaseScreen {
 //        set background/map limits
         BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
         farmBaseActor.loadTexture("MainMenu.jpg");
-        farmBaseActor.setSize(1024,768);
+        farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
 
 
 
         TextButton ApplyButton = new TextButton( "Apply", BaseGame.textButtonStyle );
-        ApplyButton.setPosition(500,0);
+        ApplyButton.setPosition(940,0);
         uiStage.addActor(ApplyButton);
 
         ApplyButton.addListener(
@@ -97,7 +97,7 @@ public class Settings extends BaseScreen {
         );
 
         TextButton ExitButton = new TextButton( "Exit", BaseGame.textButtonStyle );
-        ExitButton.setPosition(690,0);
+        ExitButton.setPosition(1135,0);
         uiStage.addActor(ExitButton);
 
         ExitButton.addListener(
