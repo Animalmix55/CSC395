@@ -16,6 +16,8 @@ public class Farmer extends BaseActor {
                 {"farmer-1.png", "farmer-2.png", "farmer-3.png",
                         "farmer-4.png", "farmer-5.png", "farmer-6.png", "farmer-7.png", "farmer-8.png"};
 
+        String[] leftMovementFiles = {"farmer-left-1.png", "farmer-left-2.png", "farmer-left-3.png", "farmer-left-4.png", "farmer-left-5.png", "farmer-left-6.png", "farmer-left-7.png", "farmer-left-8.png"};
+
         loadAnimationFromFiles(filenames, 0.1f, true);
 
         setAcceleration(1000);
