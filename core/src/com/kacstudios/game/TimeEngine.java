@@ -40,7 +40,7 @@ public class TimeEngine {
     }
 
     public static void undilateTime() {
-        dilation = -1;
+        dilation = 1;
     }
 
     /**
@@ -54,7 +54,7 @@ public class TimeEngine {
      * Resumes the game with <b>NO TIME DILATION</b>
      */
     public static void resume() {
-        dilation = -1;
+        dilation = 1;
     }
 
     public static LocalDateTime getDateTime(){
