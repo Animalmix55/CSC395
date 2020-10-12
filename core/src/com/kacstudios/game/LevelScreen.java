@@ -123,7 +123,10 @@ public class LevelScreen extends BaseScreen {
         }
 
         for(Plant plant : gridSquares) {
-            plant.checkStatus();
+            if(plant.checkIfGrowing() == true)
+            {
+                plant.checkStatus();
+            }
         }
     }
 

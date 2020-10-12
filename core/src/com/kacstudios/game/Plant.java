@@ -2,9 +2,7 @@ package com.kacstudios.game;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 public class Plant extends GridSquare{
 
@@ -31,7 +29,6 @@ public class Plant extends GridSquare{
         if(!isPlanted)
         {
             startTime = time;
-            System.out.println(time);
             setTexture("TestSeed.png");
             isPlanted = true;
         }
@@ -43,6 +40,11 @@ public class Plant extends GridSquare{
     public void setGrowthTime(Long gTime)
     {
         growthTime = gTime;
+    }
+
+    public Boolean checkIfGrowing()
+    {
+        return isPlanted;
     }
 
     /**
@@ -69,6 +71,7 @@ public class Plant extends GridSquare{
             {
                 setTexture("grid_green.png");
                 fullyGrown = true;
+                isPlanted = false;
             }
         }
     }
