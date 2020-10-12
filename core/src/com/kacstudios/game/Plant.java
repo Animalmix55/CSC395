@@ -9,7 +9,6 @@ import java.time.temporal.ChronoUnit;
 public class Plant extends GridSquare{
 
     private LocalDateTime startTime;
-    private LocalDateTime currentTime;
     private Boolean isPlanted = false;
     private Boolean fullyGrown = false;
     private long growthTime = 60;
@@ -47,14 +46,13 @@ public class Plant extends GridSquare{
     }
 
     /**
-     * Called within the update() of LevelScreen, this checks to see
-     * @param time is the current time which will be compared to the startTime to get elapsedTime
+     * Called within the update() of LevelScreen, this checks to see the growth percentage of the plant
+     *
      */
-    public void checkStatus(LocalDateTime time) {
-        currentTime = time;
+    public void checkStatus() {
         if(isPlanted)
         {
-            Long elapsedTime = ChronoUnit.SECONDS.between(startTime,currentTime);
+            Long elapsedTime = TimeEngine.getSecondsSince(startTime);
             if(elapsedTime >= (growthTime*.25))
             {
                 setTexture("grid_blank.png");

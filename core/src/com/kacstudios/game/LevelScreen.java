@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +104,7 @@ public class LevelScreen extends BaseScreen {
                     {
                         InputEvent ie = (InputEvent)e;
                         if ( ie.getType().equals(InputEvent.Type.touchDown) )
-                            square.clickFunction(time.getDateTime());
+                            square.clickFunction(TimeEngine.getDateTime());
                         return false;
                     }
             );
@@ -122,7 +123,7 @@ public class LevelScreen extends BaseScreen {
         }
 
         for(Plant plant : gridSquares) {
-            plant.checkStatus(time.getDateTime());
+            plant.checkStatus();
         }
     }
 
