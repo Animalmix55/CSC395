@@ -1,8 +1,9 @@
-package com.kacstudios.game;
+package com.kacstudios.game.gridItems;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.kacstudios.game.actors.BaseActor;
 
 import java.time.LocalDateTime;
 

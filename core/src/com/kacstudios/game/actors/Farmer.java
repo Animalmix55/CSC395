@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.kacstudios.game.actors.BaseActor;
 
 public class Farmer extends BaseActor {
     public boolean remove;

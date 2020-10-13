@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.games.BaseGame;
+import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.utilities.Global;
 
 
 public class PauseSettings extends BaseScreen {
@@ -79,13 +83,13 @@ public class PauseSettings extends BaseScreen {
 //        set background/map limits
         BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
         farmBaseActor.loadTexture("MainMenu.jpg");
-        farmBaseActor.setSize(1024,768);
+        farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
 
 
 
         TextButton ApplyButton = new TextButton( "Apply", BaseGame.textButtonStyle );
-        ApplyButton.setPosition(500,0);
+        ApplyButton.setPosition(940,0);
         uiStage.addActor(ApplyButton);
 
         ApplyButton.addListener(
@@ -102,7 +106,7 @@ public class PauseSettings extends BaseScreen {
         );
 
         TextButton ExitButton = new TextButton( "Exit", BaseGame.textButtonStyle );
-        ExitButton.setPosition(690,0);
+        ExitButton.setPosition(1135,0);
         uiStage.addActor(ExitButton);
 
         ExitButton.addListener(

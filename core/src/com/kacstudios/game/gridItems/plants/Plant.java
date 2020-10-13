@@ -1,22 +1,30 @@
-package com.kacstudios.game;
+package com.kacstudios.game.gridItems.plants;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.kacstudios.game.gridItems.GridSquare;
+import com.kacstudios.game.utilities.TimeEngine;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Plant extends GridSquare{
+public class Plant extends GridSquare {
 
     private LocalDateTime startTime;
     private Boolean isPlanted = false;
     private Boolean fullyGrown = false;
     private long growthTime = 60;
+    private ArrayList<Animation<TextureRegion>> growthTextures = new ArrayList<>();
 
     public Plant(float x, float y, Stage s, boolean collides) {
         super(x, y, s, collides);
+    }
 
-        //setTexture("TestSeed.png");
-
-        //add variables here to be set by another function
+    public void setGrowthTextures(String[] textureNames) {
+        growthTextures = new ArrayList<>();
+        Arrays.stream(textureNames).forEach(t -> growthTextures.add(this.loadTexture(t))); // add all textures
     }
 
     /**
@@ -31,6 +39,7 @@ public class Plant extends GridSquare{
             startTime = time;
             setTexture("TestSeed.png");
             isPlanted = true;
+            fullyGrown = false;
         }
     }
 
@@ -52,24 +61,19 @@ public class Plant extends GridSquare{
      *
      */
     public void checkStatus() {
-        if(isPlanted)
+        if(isPlanted && !fullyGrown)
         {
-            Long elapsedTime = TimeEngine.getSecondsSince(startTime);
-            if(elapsedTime >= (growthTime*.25))
-            {
-                setTexture("grid_blank.png");
+            int elapsedSeconds = (int) TimeEngine.getSecondsSince(startTime);
+            int numTextures = growthTextures.size();
+
+            for(int i = 1; i <= numTextures; i++){
+                if((int)(growthTime * ((float)i/numTextures)) == elapsedSeconds) {
+                    setAnimation(growthTextures.get(i-1));
+                    break;
+                }
             }
-            if(elapsedTime >= (growthTime*.50))
-            {
-                setTexture("grid_red.png");
-            }
-            if(elapsedTime >= (growthTime*.75))
-            {
-                setTexture("grid_blue.png");
-            }
-            if(elapsedTime >= growthTime)
-            {
-                setTexture("grid_green.png");
+
+            if(elapsedSeconds >= growthTime) {
                 fullyGrown = true;
                 isPlanted = false;
             }

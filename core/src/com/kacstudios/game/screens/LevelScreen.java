@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,9 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.actors.Farmer;
+import com.kacstudios.game.games.BaseGame;
+import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.gridItems.plants.CornPlant;
+import com.kacstudios.game.gridItems.GridSquare;
+import com.kacstudios.game.gridItems.plants.Plant;
+import com.kacstudios.game.utilities.TimeEngine;
 
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,13 +68,13 @@ public class LevelScreen extends BaseScreen {
 
         Button.ButtonStyle buttonStyle = new Button.ButtonStyle();
 
-        Texture buttonTex = new Texture( Gdx.files.internal("ButtonPause.png") );
+        Texture buttonTex = new Texture( Gdx.files.internal("button_pause_48x48.png") );
         TextureRegion buttonRegion =  new TextureRegion(buttonTex);
         buttonStyle.up = new TextureRegionDrawable( buttonRegion );
 
         Button PauseButton = new Button( buttonStyle );
-        PauseButton.setColor( Color.CYAN );
-        PauseButton.setPosition(20,675);
+//        PauseButton.setColor( Color.CYAN );
+        PauseButton.setPosition(20,650);
         uiStage.addActor(PauseButton);
 
         PauseButton.addListener(
@@ -87,10 +94,10 @@ public class LevelScreen extends BaseScreen {
 //        add in grid squares
 
         gridSquares = new ArrayList<>();
-        gridSquares.add(new Plant(135,135,mainStage,false));
-        gridSquares.add(new Plant(270,135,mainStage,false));
-        gridSquares.add(new Plant(135,270,mainStage,false));
-        gridSquares.add(new Plant(270,270,mainStage,false));
+        gridSquares.add(new CornPlant(135,135,mainStage,false));
+        gridSquares.add(new CornPlant(270,135,mainStage,false));
+        gridSquares.add(new CornPlant(135,270,mainStage,false));
+        gridSquares.add(new CornPlant(270,270,mainStage,false));
 
 
 //        add in farmer actor
