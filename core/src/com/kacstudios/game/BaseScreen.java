@@ -15,11 +15,13 @@ public abstract class BaseScreen implements Screen, InputProcessor
 {
     protected Stage mainStage;
     protected Stage uiStage;
+    protected boolean paused;
 
     public BaseScreen()
     {
         mainStage = new Stage();
         uiStage = new Stage();
+        paused = false;
 
         initialize();
     }
@@ -34,12 +36,25 @@ public abstract class BaseScreen implements Screen, InputProcessor
     // (3) render the graphics
     public void render(float dt)
     {
+
+        if (!paused) {
+            // act methods
+            uiStage.act(dt);
+            mainStage.act(dt);
+
+            // defined by user
+            update(dt);
+        }
+
+        /*
         // act methods
         uiStage.act(dt);
         mainStage.act(dt);
 
         // defined by user
         update(dt);
+
+         */
 
         // clear the screen
         Gdx.gl.glClearColor(0,0,0,1);
