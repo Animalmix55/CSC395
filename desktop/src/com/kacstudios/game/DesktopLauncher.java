@@ -1,8 +1,7 @@
 package com.kacstudios.game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-
-import javax.swing.*;
+import com.kacstudios.game.games.FarmaniaGame;
 
 public class DesktopLauncher {
 
@@ -13,6 +12,8 @@ public class DesktopLauncher {
 
 		config.width = 1280;
 		config.height = 720;
+
+		config.resizable = false;
 
 		new LwjglApplication(new FarmaniaGame(), config);
 	}

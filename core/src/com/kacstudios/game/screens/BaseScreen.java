@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;

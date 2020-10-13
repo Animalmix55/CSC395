@@ -1,24 +1,21 @@
-package com.kacstudios.game;
-
-import jdk.vm.ci.meta.Local;
+package com.kacstudios.game.utilities;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class TimeEngine {
-    private double timeModifier; //a modifier to add or remove from the current time
-    private int dilation = -1;
-
+    private static double timeModifier; //a modifier to add or remove from the current time
+    private static int dilation = 1;
 
     /**
      * @param timeOffset a constant (in seconds) indicated how much the time should be modified forward or backward
      *                     to reach the current game time.
      */
-    public TimeEngine(long timeOffset){
+    public static void Init(long timeOffset){
         timeModifier = timeOffset;
     }
-    public TimeEngine(){
+    public static void Init(){
         timeModifier = 0; // 0 second offset
     }
 
@@ -26,7 +23,7 @@ public class TimeEngine {
      * timeHook runs the logic to calculate all time dilations.
      * @param deltaSeconds is the amount of time that has passed since the last call to this method.
      */
-    public void timeHook(float deltaSeconds){
+    public static void act(float deltaSeconds){
         if (dilation > -1) timeModifier += (dilation - 1) * deltaSeconds;
     }
 
@@ -35,64 +32,64 @@ public class TimeEngine {
      *
      * @param multiplier the multiple of time units to pass per time unit.
      *                   (EX: dilation of 2 means that 2 seconds pass for every 1.
-     *                   DOES NOTHING if the dilation is less than 0.
+     *                   DOES NOTHING if the dilation is less than 0. 0 freezes time.
      */
-    public void dilateTime(int multiplier) {
+    public static void dilateTime(int multiplier) {
         if(multiplier < 0) return;
         dilation = multiplier;
     }
 
-    public void undilateTime() {
-        dilation = -1;
+    public static void undilateTime() {
+        dilation = 1;
     }
 
     /**
      * Pauses the passage of time in the game
      */
-    public void pause() {
+    public static void pause() {
         dilation = 0;
     }
 
     /**
      * Resumes the game with <b>NO TIME DILATION</b>
      */
-    public void resume() {
-        dilation = -1;
+    public static void resume() {
+        dilation = 1;
     }
 
-    public LocalDateTime getDateTime(){
+    public static LocalDateTime getDateTime(){
         return LocalDateTime.now().plusSeconds((long)timeModifier);
     }
 
-    public LocalTime getTime() {
+    public static LocalTime getTime() {
         return LocalDateTime.now().plusSeconds((long)timeModifier).toLocalTime();
     }
 
-    public LocalDate getDate() {
+    public static LocalDate getDate() {
         return LocalDateTime.now().plusSeconds((long)timeModifier).toLocalDate();
     }
 
-    public Duration getDurationSince(LocalDateTime dateTime){
+    public static Duration getDurationSince(LocalDateTime dateTime){
         return Duration.between(dateTime, getDateTime());
     }
-    public Period getPeriodSince(LocalDate date) { return Period.between(getDate(), date); }
+    public static Period getPeriodSince(LocalDate date) { return Period.between(getDate(), date); }
 
-    public long getDaysSince(LocalDateTime time){
+    public static long getDaysSince(LocalDateTime time){
         return getDurationSince(time).toDays();
     }
-    public long getDaysSince(LocalDate date){
+    public static long getDaysSince(LocalDate date){
         return getPeriodSince(date).getDays();
     }
 
-    public long getMinutesSince(LocalDateTime dateTime) {
+    public static long getMinutesSince(LocalDateTime dateTime) {
         return getDurationSince(dateTime).toMinutes();
     }
 
-    public long getSecondsSince(LocalDateTime dateTime) {
+    public static long getSecondsSince(LocalDateTime dateTime) {
         return ChronoUnit.SECONDS.between(dateTime, getDateTime());
     }
 
-    public String getFormattedString(){
+    public static String getFormattedString(){
         return getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
@@ -101,15 +98,15 @@ public class TimeEngine {
      * @param formatString A valid time format string like "yyyy-MM-dd HH:mm:ss"
      * @return formatted string
      */
-    public String getFormattedString(String formatString){
+    public static String getFormattedString(String formatString){
         return getDateTime().format(DateTimeFormatter.ofPattern(formatString));
     }
 
-    public int getDilation() {
+    public static int getDilation() {
         return dilation;
     }
 
-    public double getOffset() {
+    public static double getOffset() {
         return timeModifier;
     }
 }

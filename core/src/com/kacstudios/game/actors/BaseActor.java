@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.actors;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,6 +26,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.kacstudios.game.utilities.TimeEngine;
 
 /**
  * Extends functionality of the LibGDX Actor class.
@@ -165,6 +166,36 @@ public class BaseActor extends Group
 
         if (animation == null)
             setAnimation(anim);
+
+        return anim;
+    }
+
+    /**
+     * Created by KAC, creates animation but does not set animation to play right away
+     * @param fileNames array of names of files containing animation images
+     * @param frameDuration how long each frame should be displayed
+     * @param loop should the animation loop
+     * @return animation created (useful for storing multiple animations)
+     */
+    public Animation<TextureRegion> loadAnimationUnsetFromFiles(String[] fileNames, float frameDuration, boolean loop)
+    {
+        int fileCount = fileNames.length;
+        Array<TextureRegion> textureArray = new Array<TextureRegion>();
+
+        for (int n = 0; n < fileCount; n++)
+        {
+            String fileName = fileNames[n];
+            Texture texture = new Texture( Gdx.files.internal(fileName) );
+            texture.setFilter( TextureFilter.Linear, TextureFilter.Linear );
+            textureArray.add( new TextureRegion( texture ) );
+        }
+
+        Animation<TextureRegion> anim = new Animation<TextureRegion>(frameDuration, textureArray);
+
+        if (loop)
+            anim.setPlayMode(PlayMode.LOOP);
+        else
+            anim.setPlayMode(PlayMode.NORMAL);
 
         return anim;
     }
@@ -360,15 +391,17 @@ public class BaseActor extends Group
      *  If not accelerating, deceleration value is applied. <br>
      *  Speed is limited by maxSpeed value. <br>
      *  Acceleration vector reset to (0,0) at end of method. <br>
-     *  @param dt Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
+     *  @param deltaTime Time elapsed since previous frame (delta time); typically obtained from <code>act</code> method.
      *  @see #acceleration
      *  @see #deceleration
      *  @see #maxSpeed
      */
-    public void applyPhysics(float dt)
+    public void applyPhysics(float deltaTime)
     {
+
+        float dt = deltaTime * TimeEngine.getDilation(); // uses new, dilated time
         // apply acceleration
-        velocityVec.add( accelerationVec.x * dt, accelerationVec.y * dt );
+        velocityVec.add( accelerationVec.x * dt, accelerationVec.y * dt);
 
         float speed = getSpeed();
 
@@ -527,7 +560,7 @@ public class BaseActor extends Group
 
     /**
      *  Set world dimensions for use by methods boundToWorld() and scrollTo().
-     *  @param BaseActor whose size determines the world bounds (typically a background image)
+     *  @param ba whose size determines the world bounds (typically a background image)
      */
     public static void setWorldBounds(BaseActor ba)
     {

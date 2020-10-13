@@ -1,8 +1,11 @@
-package com.kacstudios.game;
+package com.kacstudios.game.gridItems;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.kacstudios.game.actors.BaseActor;
+
+import java.time.LocalDateTime;
 
 public class GridSquare extends BaseActor {
 
@@ -12,7 +15,7 @@ public class GridSquare extends BaseActor {
     {
         super(x,y,s);
         collideWithPlayer = collides;
-        loadTexture("grid_blank.png");
+        loadTexture("soil.png");
     }
 
     public void setTexture(String path) {
@@ -33,7 +36,7 @@ public class GridSquare extends BaseActor {
         return collideWithPlayer;
     }
 
-    public void clickFunction() {
+    public void clickFunction(LocalDateTime dateTime) {
         System.out.println("I was clicked!");
     }
 

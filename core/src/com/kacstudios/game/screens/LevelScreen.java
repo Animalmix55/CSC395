@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -7,25 +7,28 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.actors.Farmer;
+import com.kacstudios.game.games.BaseGame;
+import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.gridItems.plants.CornPlant;
+import com.kacstudios.game.gridItems.GridSquare;
+import com.kacstudios.game.gridItems.plants.Plant;
+import com.kacstudios.game.utilities.TimeEngine;
 
 
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LevelScreen extends BaseScreen {
-
     private Farmer farmer;
-    private List<GridSquare> gridSquares;
+    private List<Plant> gridSquares;
     private List<BaseActor> outOfBoundsArea;
-    private TimeEngine time;
     private Label timeLabel;
-
-    private Skin skin;
-    private Window window;
 
     public void initialize() {
 
@@ -34,8 +37,8 @@ public class LevelScreen extends BaseScreen {
         farmBaseActor.loadTexture("grass_1080x1080.png");
         farmBaseActor.setSize(1080,1080);
         BaseActor.setWorldBounds(farmBaseActor);
-        time = new TimeEngine();
-        // time.dilateTime(2) // double time
+        TimeEngine.Init();
+        // TimeEngine.dilateTime(0); // freeze time
 
         timeLabel = new Label("Time:", BaseGame.labelStyle);
         timeLabel.setX(0);
@@ -65,86 +68,40 @@ public class LevelScreen extends BaseScreen {
 
         Button.ButtonStyle buttonStyle = new Button.ButtonStyle();
 
-        Texture buttonTex = new Texture( Gdx.files.internal("ButtonPause.png") );
+        Texture buttonTex = new Texture( Gdx.files.internal("button_pause_48x48.png") );
         TextureRegion buttonRegion =  new TextureRegion(buttonTex);
         buttonStyle.up = new TextureRegionDrawable( buttonRegion );
 
         Button PauseButton = new Button( buttonStyle );
-        PauseButton.setColor( Color.CYAN );
-        PauseButton.setPosition(20,675);
+//        PauseButton.setColor( Color.CYAN );
+        PauseButton.setPosition(20,650);
         uiStage.addActor(PauseButton);
 
         PauseButton.addListener(
                 (Event e) ->
                 {
-                    if ( !(e instanceof InputEvent) )
-                        return false;
-
-                    if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
-                        return false;
-
-                    paused = !paused;
-                    window.setVisible(true);
-
-                        //FarmaniaGame.setActiveScreen(new Pause(this));
-
+                    InputEvent ie = (InputEvent)e;
+                    if ( ie.getType().equals(InputEvent.Type.touchDown) )
+                        FarmaniaGame.setActiveScreen(new Pause(this));
                     return false;
                 }
         );
 
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-        window = new Window("Paused", skin);
-        window.setVisible(false);
-        window.setMovable(false);
-        final TextButton ResumeButton = new TextButton("Resume", skin);
-        ResumeButton.addListener(
-                (Event e) ->
-                {
-                    if ( !(e instanceof InputEvent) )
-                        return false;
-
-                    if ( !((InputEvent)e).getType().equals(Type.touchDown) )
-                        return false;
-
-                    togglePaused();
-                    return true;
-                }
-        );
-        window.add(ResumeButton);
-        window.pack();
-        float newWidth = 400, newHeight = 200;
-        window.setBounds((Gdx.graphics.getWidth() - newWidth ) / 2,(Gdx.graphics.getHeight() - newHeight ) / 2, newWidth , newHeight ); //Center on screen.
-        uiStage.addActor(window);
-/*
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-        window = new Window("Paused", skin);
-        window.add(new TextButton("test",skin));
-        window.setScale(3);
-        //window.setKeepWithinStage(true);
-        window.setPosition(360,0);
-        window.setMovable(false);
-        window.setVisible(false);
-        uiStage.addActor(window);
-
-
- */
 
 //        add in grid square
 
 //        add in grid squares
 
         gridSquares = new ArrayList<>();
-        gridSquares.add(new GridSquare(135,135,mainStage,false));
-        gridSquares.add(new GridSquare(270,135,mainStage,false));
-        gridSquares.add(new GridSquare(135,270,mainStage,false));
-        gridSquares.add(new GridSquare(270,270,mainStage,false));
-        for (GridSquare gridSquare : gridSquares) {
-            gridSquare.setTexture("soil.png");
-        }
+        gridSquares.add(new CornPlant(135,135,mainStage,false));
+        gridSquares.add(new CornPlant(270,135,mainStage,false));
+        gridSquares.add(new CornPlant(135,270,mainStage,false));
+        gridSquares.add(new CornPlant(270,270,mainStage,false));
+
 
 //        add in farmer actor
-        farmer = new Farmer(20,20,mainStage);
+        farmer = new Farmer(20,20, mainStage);
 
 
 //        loop through grid squares and activate click functions on each one
@@ -154,7 +111,7 @@ public class LevelScreen extends BaseScreen {
                     {
                         InputEvent ie = (InputEvent)e;
                         if ( ie.getType().equals(InputEvent.Type.touchDown) )
-                            square.clickFunction();
+                            square.clickFunction(TimeEngine.getDateTime());
                         return false;
                     }
             );
@@ -163,12 +120,19 @@ public class LevelScreen extends BaseScreen {
     }
 
     public void update(float dt) {
-        time.timeHook(dt); // do NOT remove this, this makes time work.
+        TimeEngine.act(dt); // do NOT remove this, this makes time work.
 
-        timeLabel.setText("Time: " + time.getFormattedString());
+        timeLabel.setText("Time: " + TimeEngine.getFormattedString());
         for (GridSquare square : gridSquares) {
             if (square.getCollisionSetting()) {
                 farmer.preventOverlap(square);
+            }
+        }
+
+        for(Plant plant : gridSquares) {
+            if(plant.checkIfGrowing() == true)
+            {
+                plant.checkStatus();
             }
         }
     }
@@ -193,11 +157,6 @@ public class LevelScreen extends BaseScreen {
 
 
         return false;
-    }
-
-    private void togglePaused() {
-        paused = !paused;
-        window.setVisible(paused);
     }
 
 }
