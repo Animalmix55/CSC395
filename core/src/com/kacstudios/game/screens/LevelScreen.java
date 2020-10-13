@@ -8,9 +8,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.games.BaseGame;
@@ -29,6 +28,8 @@ public class LevelScreen extends BaseScreen {
     private List<Plant> gridSquares;
     private List<BaseActor> outOfBoundsArea;
     private Label timeLabel;
+    private Skin skin;
+    private Window window;
 
     public void initialize() {
 
@@ -80,12 +81,42 @@ public class LevelScreen extends BaseScreen {
         PauseButton.addListener(
                 (Event e) ->
                 {
-                    InputEvent ie = (InputEvent)e;
-                    if ( ie.getType().equals(InputEvent.Type.touchDown) )
-                        FarmaniaGame.setActiveScreen(new Pause(this));
+                    if ( !(e instanceof InputEvent) )
+                        return false;
+
+                    if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
+                        return false;
+
+                    paused = !paused;
+                    window.setVisible(true);
+
                     return false;
                 }
         );
+
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        window = new Window("Paused", skin);
+        window.setVisible(false);
+        window.setMovable(false);
+        final TextButton ResumeButton = new TextButton("Resume", skin);
+        ResumeButton.addListener(
+                (Event e) ->
+                {
+                    if ( !(e instanceof InputEvent) )
+                        return false;
+
+                    if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
+                        return false;
+
+                    togglePaused();
+                    return true;
+                }
+        );
+        window.add(ResumeButton);
+        window.pack();
+        float newWidth = 400, newHeight = 200;
+        window.setBounds((Gdx.graphics.getWidth() - newWidth ) / 2,(Gdx.graphics.getHeight() - newHeight ) / 2, newWidth , newHeight ); //Center on screen.
+        uiStage.addActor(window);
 
 
 
@@ -157,6 +188,11 @@ public class LevelScreen extends BaseScreen {
 
 
         return false;
+    }
+
+    private void togglePaused() {
+        paused = !paused;
+        window.setVisible(paused);
     }
 
 }
