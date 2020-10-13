@@ -1,16 +1,23 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.games.BaseGame;
+import com.kacstudios.game.games.FarmaniaGame;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class MainMenu extends BaseScreen {
+public class Pause extends BaseScreen {
 
+    //this allows to save current state of game when return back from pause
+    private LevelScreen level;
+    public Pause(LevelScreen _level){
+        level = _level;
+    }
 
 
     public void initialize() {
@@ -23,11 +30,12 @@ public class MainMenu extends BaseScreen {
 
 
 
-        TextButton NewButton = new TextButton( "New", BaseGame.textButtonStyle );
-        NewButton.setPosition(250,150);
-        uiStage.addActor(NewButton);
+        TextButton SaveButton = new TextButton( "Save", BaseGame.textButtonStyle );
+        //SaveButton.setLayoutEnabled(true);
+        SaveButton.setPosition(325,300);
+        uiStage.addActor(SaveButton);
 
-        NewButton.addListener(
+        SaveButton.addListener(
                 (Event e) ->
                 {
                     if ( !(e instanceof InputEvent) )
@@ -36,32 +44,12 @@ public class MainMenu extends BaseScreen {
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
 
-                    FarmaniaGame.setActiveScreen( new LevelScreen() );
-                    return true;
-                }
-        );
-
-
-        TextButton LoadButton = new TextButton( "Load", BaseGame.textButtonStyle );
-        LoadButton.setPosition(410,150);
-        uiStage.addActor(LoadButton);
-
-        LoadButton.addListener(
-                (Event e) ->
-                {
-                    if ( !(e instanceof InputEvent) )
-                        return false;
-
-                    if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
-                        return false;
-
-                    FarmaniaGame.setActiveScreen( new LevelScreen() );
                     return true;
                 }
         );
 
         TextButton SettingsButton = new TextButton( "Settings", BaseGame.textButtonStyle );
-        SettingsButton.setPosition(580,150);
+        SettingsButton.setPosition(525,300);
         uiStage.addActor(SettingsButton);
 
         SettingsButton.addListener(
@@ -72,14 +60,13 @@ public class MainMenu extends BaseScreen {
 
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
-                    //new test();
-                    FarmaniaGame.setActiveScreen( new Settings() );
+                    FarmaniaGame.setActiveScreen( new PauseSettings(this) );
                     return true;
                 }
         );
 
         TextButton ExitButton = new TextButton( "Exit", BaseGame.textButtonStyle );
-        ExitButton.setPosition(840,150);
+        ExitButton.setPosition(815,300);
         uiStage.addActor(ExitButton);
 
         ExitButton.addListener(
@@ -91,18 +78,12 @@ public class MainMenu extends BaseScreen {
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
 
-                    System.exit(0);
+                    FarmaniaGame.setActiveScreen( new MainMenu() );
                     return true;
                 }
         );
 
     }
-
-
-
-
-
-
 
 
     public void update(float dt) {
@@ -118,7 +99,7 @@ public class MainMenu extends BaseScreen {
     public boolean keyDown(int keyCode)
     {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            Gdx.app.exit();
+            FarmaniaGame.setActiveScreen( level );
         return false;
     }
 

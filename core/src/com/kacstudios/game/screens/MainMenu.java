@@ -1,25 +1,16 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.games.BaseGame;
+import com.kacstudios.game.games.FarmaniaGame;
 
+public class MainMenu extends BaseScreen {
 
-public class Pause extends BaseScreen {
-
-    //this allows to save current state of game when return back from pause
-    private LevelScreen level;
-    public Pause(LevelScreen _level){
-        level = _level;
-    }
 
 
     public void initialize() {
@@ -32,12 +23,11 @@ public class Pause extends BaseScreen {
 
 
 
-        TextButton SaveButton = new TextButton( "Save", BaseGame.textButtonStyle );
-        //SaveButton.setLayoutEnabled(true);
-        SaveButton.setPosition(325,300);
-        uiStage.addActor(SaveButton);
+        TextButton NewButton = new TextButton( "New", BaseGame.textButtonStyle );
+        NewButton.setPosition(250,150);
+        uiStage.addActor(NewButton);
 
-        SaveButton.addListener(
+        NewButton.addListener(
                 (Event e) ->
                 {
                     if ( !(e instanceof InputEvent) )
@@ -46,12 +36,32 @@ public class Pause extends BaseScreen {
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
 
+                    FarmaniaGame.setActiveScreen( new LevelScreen() );
+                    return true;
+                }
+        );
+
+
+        TextButton LoadButton = new TextButton( "Load", BaseGame.textButtonStyle );
+        LoadButton.setPosition(410,150);
+        uiStage.addActor(LoadButton);
+
+        LoadButton.addListener(
+                (Event e) ->
+                {
+                    if ( !(e instanceof InputEvent) )
+                        return false;
+
+                    if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
+                        return false;
+
+                    FarmaniaGame.setActiveScreen( new LevelScreen() );
                     return true;
                 }
         );
 
         TextButton SettingsButton = new TextButton( "Settings", BaseGame.textButtonStyle );
-        SettingsButton.setPosition(525,300);
+        SettingsButton.setPosition(580,150);
         uiStage.addActor(SettingsButton);
 
         SettingsButton.addListener(
@@ -62,13 +72,14 @@ public class Pause extends BaseScreen {
 
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
-                    FarmaniaGame.setActiveScreen( new PauseSettings(this) );
+                    //new test();
+                    FarmaniaGame.setActiveScreen( new Settings() );
                     return true;
                 }
         );
 
         TextButton ExitButton = new TextButton( "Exit", BaseGame.textButtonStyle );
-        ExitButton.setPosition(815,300);
+        ExitButton.setPosition(840,150);
         uiStage.addActor(ExitButton);
 
         ExitButton.addListener(
@@ -80,12 +91,18 @@ public class Pause extends BaseScreen {
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
 
-                    FarmaniaGame.setActiveScreen( new MainMenu() );
+                    System.exit(0);
                     return true;
                 }
         );
 
     }
+
+
+
+
+
+
 
 
     public void update(float dt) {
@@ -101,7 +118,7 @@ public class Pause extends BaseScreen {
     public boolean keyDown(int keyCode)
     {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            FarmaniaGame.setActiveScreen( level );
+            Gdx.app.exit();
         return false;
     }
 

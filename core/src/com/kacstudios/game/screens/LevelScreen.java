@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,9 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.actors.Farmer;
+import com.kacstudios.game.games.BaseGame;
+import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.gridItems.plants.CornPlant;
+import com.kacstudios.game.gridItems.GridSquare;
+import com.kacstudios.game.gridItems.plants.Plant;
+import com.kacstudios.game.utilities.TimeEngine;
 
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,10 +94,10 @@ public class LevelScreen extends BaseScreen {
 //        add in grid squares
 
         gridSquares = new ArrayList<>();
-        gridSquares.add(new Plant(135,135,mainStage,false));
-        gridSquares.add(new Plant(270,135,mainStage,false));
-        gridSquares.add(new Plant(135,270,mainStage,false));
-        gridSquares.add(new Plant(270,270,mainStage,false));
+        gridSquares.add(new CornPlant(135,135,mainStage,false));
+        gridSquares.add(new CornPlant(270,135,mainStage,false));
+        gridSquares.add(new CornPlant(135,270,mainStage,false));
+        gridSquares.add(new CornPlant(270,270,mainStage,false));
 
 
 //        add in farmer actor

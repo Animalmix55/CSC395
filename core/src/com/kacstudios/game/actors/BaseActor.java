@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.actors;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,6 +26,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.kacstudios.game.utilities.TimeEngine;
 
 /**
  * Extends functionality of the LibGDX Actor class.

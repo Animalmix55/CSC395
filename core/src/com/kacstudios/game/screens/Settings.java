@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.games.BaseGame;
+import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.screens.BaseScreen;
+import com.kacstudios.game.screens.MainMenu;
+import com.kacstudios.game.utilities.Global;
 
 
 //public class Settings extends ApplicationAdapter{

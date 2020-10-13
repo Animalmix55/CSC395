@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.utilities;
 //global variables
 
 public class Global {

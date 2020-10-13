@@ -1,4 +1,4 @@
-package com.kacstudios.game;
+package com.kacstudios.game.utilities;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
