@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.kacstudios.game.utilities.TimeEngine;
 
 /**
  * @author Lee Stemkoski
@@ -15,11 +16,13 @@ public abstract class BaseScreen implements Screen, InputProcessor
 {
     protected Stage mainStage;
     protected Stage uiStage;
+    protected boolean paused;
 
     public BaseScreen()
     {
         mainStage = new Stage();
         uiStage = new Stage();
+        paused = false;
 
         initialize();
     }
@@ -34,12 +37,25 @@ public abstract class BaseScreen implements Screen, InputProcessor
     // (3) render the graphics
     public void render(float dt)
     {
+        TimeEngine.act(dt);
+        if (!paused) {
+            // act methods
+            uiStage.act(dt);
+            mainStage.act(dt);
+
+            // defined by user
+            update(dt);
+        }
+
+        /*
         // act methods
         uiStage.act(dt);
         mainStage.act(dt);
 
         // defined by user
         update(dt);
+
+         */
 
         // clear the screen
         Gdx.gl.glClearColor(0,0,0,1);
