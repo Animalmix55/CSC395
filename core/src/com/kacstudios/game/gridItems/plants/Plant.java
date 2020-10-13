@@ -66,9 +66,10 @@ public class Plant extends GridSquare {
             int elapsedSeconds = (int) TimeEngine.getSecondsSince(startTime);
             int numTextures = growthTextures.size();
 
-            for(int i = 1; i <= numTextures; i++){
-                if((int)(growthTime * ((float)i/numTextures)) == elapsedSeconds) {
-                    setAnimation(growthTextures.get(i-1));
+            for(int i = numTextures; i >= 1; i--){
+                Animation<TextureRegion> animation = growthTextures.get(i-1);
+                if(growthTime * ((float)i/numTextures) <= elapsedSeconds) {
+                    if(getAnimation() != animation) setAnimation(growthTextures.get(i-1));
                     break;
                 }
             }
