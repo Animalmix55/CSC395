@@ -41,7 +41,7 @@ public class LevelScreen extends BaseScreen {
         farmBaseActor.setSize(1080,1080);
         BaseActor.setWorldBounds(farmBaseActor);
         TimeEngine.Init();
-        // TimeEngine.dilateTime(0); // freeze time
+        // TimeEngine.dilateTime(100); // dilate time
 
         timeLabel = new Label("Time:", BaseGame.labelStyle);
         timeLabel.setX(0);

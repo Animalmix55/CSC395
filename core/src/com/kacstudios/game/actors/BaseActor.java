@@ -137,6 +137,10 @@ public class BaseActor extends Group
             setBoundaryRectangle();
     }
 
+    public Animation<TextureRegion> getAnimation() {
+        return animation;
+    }
+
     /**
      * Creates an animation from images stored in separate files.
      * @param fileNames array of names of files containing animation images

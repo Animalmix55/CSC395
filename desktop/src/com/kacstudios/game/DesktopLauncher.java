@@ -14,7 +14,7 @@ public class DesktopLauncher {
 		config.height = 720;
 
 		config.resizable = false;
-		config.fullscreen = true;
+		//config.fullscreen = true;
 
 		new LwjglApplication(new FarmaniaGame(), config);
 	}
