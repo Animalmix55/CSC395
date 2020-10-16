@@ -139,6 +139,10 @@ public class BaseActor extends Group
         centerAtPosition( other.getX() + other.getWidth()/2 , other.getY() + other.getHeight()/2 );
     }
 
+    public Animation<TextureRegion> getAnimation() {
+        return animation;
+    }
+
     // ----------------------------------------------
     // Animation methods
     // ----------------------------------------------
