@@ -139,10 +139,6 @@ public class BaseActor extends Group
         centerAtPosition( other.getX() + other.getWidth()/2 , other.getY() + other.getHeight()/2 );
     }
 
-    public Animation<TextureRegion> getAnimation() {
-        return animation;
-    }
-
     // ----------------------------------------------
     // Animation methods
     // ----------------------------------------------
@@ -162,6 +158,10 @@ public class BaseActor extends Group
 
         if (boundaryPolygon == null)
             setBoundaryRectangle();
+    }
+
+    public Animation<TextureRegion> getAnimation() {
+        return animation;
     }
 
     /**
