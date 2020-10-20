@@ -2,7 +2,6 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -13,13 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
-import com.kacstudios.game.games.BaseGame;
-import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.CornPlant;
-import com.kacstudios.game.grid.GridSquare;
-import com.kacstudios.game.grid.plants.Plant;
-import com.kacstudios.game.utilities.Global;
+import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
 
@@ -30,9 +25,9 @@ import java.util.List;
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<BaseActor> outOfBoundsArea;
-    private Label timeLabel;
     private Grid grid;
     PauseWindow pauseWindow;
+    private HUD hud;
 
     public void initialize() {
 
@@ -46,12 +41,8 @@ public class LevelScreen extends BaseScreen {
         // TimeEngine.dilateTime(1000); // freeze time
         grid = new Grid(this); // create grid
 
-        timeLabel = new Label("Time:", BaseGame.labelStyle);
-        timeLabel.setX(0);
-        timeLabel.setY(0);
+        hud = new HUD(this); // add HUD
 
-
-        uiStage.addActor(timeLabel);
 
 //        out of bounds background
 //        counter clockwise, starting from the right middle
@@ -113,7 +104,7 @@ public class LevelScreen extends BaseScreen {
     }
 
     public void update(float dt) {
-        timeLabel.setText("Time: " + TimeEngine.getFormattedString());
+        //pass
     }
 
     public boolean keyDown(int keyCode) {
