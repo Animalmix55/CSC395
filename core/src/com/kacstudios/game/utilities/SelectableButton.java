@@ -1,20 +1,24 @@
-package com.kacstudios.game.overlays.hud;
+package com.kacstudios.game.utilities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.actors.BaseActor;
 
-public class InventoryButton extends Actor {
-    Texture selectedImage = new Texture("bottombar/inventorybutton_background_selected.png");
-    Texture unselectedImage = new Texture("bottombar/inventorybutton_background_unselected.png");
+public class SelectableButton extends BaseActor {
+    Texture selectedImage;
+    Texture unselectedImage;
     boolean isSelected = false;
 
-    public InventoryButton(float x, float y){
+    public SelectableButton(float x, float y, Texture selectedTexture, Texture unselectedTexture){
         super();
+        selectedImage = selectedTexture;
+        unselectedImage = unselectedTexture;
+        init(x, y);
+    }
 
+    private void init(float x, float y){
         setX(x);
         setY(y);
 
@@ -25,7 +29,7 @@ public class InventoryButton extends Actor {
         this.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                onClick();
+                onClick(event, x, y);
             }
         });
     }
@@ -37,12 +41,17 @@ public class InventoryButton extends Actor {
         super.draw(batch, parentAlpha);
     }
 
-    public void onClick() {
-        System.out.println("Clicked");
-        //isSelected = !isSelected;
+    /**
+     * Override this method for it to be called on click
+     */
+    public void onClick(InputEvent event, float x, float y) {
+        //pass
     }
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+    public boolean getSelected(){
+        return isSelected;
     }
 }
