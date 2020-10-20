@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
@@ -44,8 +45,8 @@ public class LevelScreen extends BaseScreen {
     int y = 200;
 
 
-    Vector2 cursorLocation =  new Vector2(0 ,0);
-    Vector2 farmerLocation =  new Vector2(0 ,0);
+    Vector3 cursorLocation =  new Vector3(0 ,0, 0);
+    Vector3 farmerLocation =  new Vector3(0 ,0, 0);
 
     public void initialize() {
 
@@ -127,51 +128,27 @@ public class LevelScreen extends BaseScreen {
 
     public void update(float dt) {
         timeLabel.setText("Time: " + TimeEngine.getFormattedString());
-
-
-        //int x = Gdx.input.getX();
-        //int y = Gdx.graphics.getHeight()-Gdx.input.getY();
-
-        //cursorLocation.y = Gdx.graphics.getHeight()-Gdx.input.getY();
-        //System.out.println(cursorLocation.x + "," +cursorLocation.y);
+        
 
         //if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
 
 
-            x = Gdx.input.getX();
-            y = Gdx.graphics.getHeight() - Gdx.input.getY();
+            cursorLocation.x = Gdx.input.getX();
+            cursorLocation.y = Gdx.input.getY();
+
+            this.mainStage.getWidth();
+            this.mainStage.getHeight();
+
+            Vector3 translatedLocation = this.mainStage.getCamera().unproject(cursorLocation);
 
 
             //follows cursor when remove line above
-            if(farmer.getX() < x)
-            {
-                farmer.setX(farmer.getX() + 5);
-            }
-            if(farmer.getX() > x)
-            {
-                farmer.setX(farmer.getX() - 5);
-            }
-            if(farmer.getX() < y)
-            {
-                farmer.setX(farmer.getY() + 5);
-            }
-            if(farmer.getX() > y)
-            {
-                farmer.setX(farmer.getY() - 5);
-            }
 
-            farmer.setX(x - farmer.getWidth()/2);
-            //farmer.setX((Gdx.graphics.getWidth()/2)-farmer.getWidth());
-            farmer.setY(y - farmer.getHeight()/2);
-            //farmer.setX(Gdx.graphics.getHeight()-farmer.getHeight());
-
-            timeLabel.setX(x- timeLabel.getWidth()/2);
-            timeLabel.setY(y- timeLabel.getHeight()/2);
-            //farmer.setPosition(x,y);
-            //farmer.setPosition(cursorLocation.x - farmer.getWidth()/2 ,cursorLocation.y - farmer.getHeight()/2);
+            farmer.setPosition(translatedLocation.x - farmer.getWidth()/2,
+                    translatedLocation.y - farmer.getHeight()/2);
 
 
-            System.out.println("mouse "+cursorLocation.x + "," +cursorLocation.y);
+            System.out.println("mouse "+translatedLocation.toString());
             System.out.println("farmer"+farmer.getX() + ","+ farmer.getY());
         //}
 
