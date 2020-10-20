@@ -53,6 +53,29 @@ public class BaseActor extends Group
     // stores size of game world for all actors
     private static Rectangle worldBounds;
 
+    /**
+     * Does not automatically render this actor nor position it. To render properly call this.act() and this.draw();
+     */
+    public BaseActor()
+    {
+        // call constructor from Actor class
+        super();
+
+        // initialize animation data
+        animation = null;
+        elapsedTime = 0;
+        animationPaused = false;
+
+        // initialize physics data
+        velocityVec = new Vector2(0,0);
+        accelerationVec = new Vector2(0,0);
+        acceleration = 0;
+        maxSpeed = 1000;
+        deceleration = 0;
+
+        boundaryPolygon = null;
+    }
+
     public BaseActor(float x, float y, Stage s)
     {
         // call constructor from Actor class
