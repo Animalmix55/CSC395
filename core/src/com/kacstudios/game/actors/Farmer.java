@@ -1,7 +1,9 @@
 package com.kacstudios.game.actors;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -47,21 +49,21 @@ public class Farmer extends BaseActor {
         super.act( dt );
 
         // configure sprite direction
-        if(Gdx.input.isKeyPressed(Keys.UP)){
-            if(prevKey != Keys.UP) setAnimation(upAnimation);
-            prevKey = Keys.UP;
+        if(Gdx.input.isKeyPressed(Keys.W)){
+            if(prevKey != Keys.W) setAnimation(upAnimation);
+            prevKey = Keys.W;
         }
-        else if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            if(prevKey != Keys.RIGHT) setAnimation(rightAnimation);
-            prevKey = Keys.RIGHT;
+        else if (Gdx.input.isKeyPressed(Keys.D)) {
+            if(prevKey != Keys.D) setAnimation(rightAnimation);
+            prevKey = Keys.D;
         }
-        else if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-            if(prevKey != Keys.LEFT) setAnimation(leftAnimation);
-            prevKey = Keys.LEFT;
+        else if (Gdx.input.isKeyPressed(Keys.A)) {
+            if(prevKey != Keys.A) setAnimation(leftAnimation);
+            prevKey = Keys.A;
         }
-        else if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-            if (prevKey != Keys.DOWN) setAnimation(downAnimation);
-            prevKey = Keys.DOWN;
+        else if (Gdx.input.isKeyPressed(Keys.S)) {
+            if (prevKey != Keys.S) setAnimation(downAnimation);
+            prevKey = Keys.S;
         }
 
         if (remove) {
@@ -71,13 +73,13 @@ public class Farmer extends BaseActor {
         }
 
         // configure acceleration
-        if (Gdx.input.isKeyPressed(Keys.LEFT))
+        if (Gdx.input.isKeyPressed(Keys.A))
             accelerateAtAngle(180);
-        if (Gdx.input.isKeyPressed(Keys.RIGHT))
+        if (Gdx.input.isKeyPressed(Keys.D))
             accelerateAtAngle(0);
-        if (Gdx.input.isKeyPressed(Keys.UP))
+        if (Gdx.input.isKeyPressed(Keys.W))
             accelerateAtAngle(90);
-        if (Gdx.input.isKeyPressed(Keys.DOWN))
+        if (Gdx.input.isKeyPressed(Keys.S))
             accelerateAtAngle(270);
 
         applyPhysics(dt);
@@ -91,5 +93,4 @@ public class Farmer extends BaseActor {
 
         alignCamera();
     }
-
 }

@@ -3,8 +3,10 @@ package com.kacstudios.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
@@ -33,6 +35,17 @@ public class LevelScreen extends BaseScreen {
     private Label timeLabel;
     private Grid grid;
     PauseWindow pauseWindow;
+
+    private static final float SPEED = 300f; //world units per second
+    private final Vector2 tmp = new Vector2();
+
+    int x = 500;
+
+    int y = 200;
+
+
+    Vector2 cursorLocation =  new Vector2(0 ,0);
+    Vector2 farmerLocation =  new Vector2(0 ,0);
 
     public void initialize() {
 
@@ -114,7 +127,61 @@ public class LevelScreen extends BaseScreen {
 
     public void update(float dt) {
         timeLabel.setText("Time: " + TimeEngine.getFormattedString());
+
+
+        //int x = Gdx.input.getX();
+        //int y = Gdx.graphics.getHeight()-Gdx.input.getY();
+
+        //cursorLocation.y = Gdx.graphics.getHeight()-Gdx.input.getY();
+        //System.out.println(cursorLocation.x + "," +cursorLocation.y);
+
+        //if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+
+
+            x = Gdx.input.getX();
+            y = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+
+            //follows cursor when remove line above
+            if(farmer.getX() < x)
+            {
+                farmer.setX(farmer.getX() + 5);
+            }
+            if(farmer.getX() > x)
+            {
+                farmer.setX(farmer.getX() - 5);
+            }
+            if(farmer.getX() < y)
+            {
+                farmer.setX(farmer.getY() + 5);
+            }
+            if(farmer.getX() > y)
+            {
+                farmer.setX(farmer.getY() - 5);
+            }
+
+            farmer.setX(x - farmer.getWidth()/2);
+            //farmer.setX((Gdx.graphics.getWidth()/2)-farmer.getWidth());
+            farmer.setY(y - farmer.getHeight()/2);
+            //farmer.setX(Gdx.graphics.getHeight()-farmer.getHeight());
+
+            timeLabel.setX(x- timeLabel.getWidth()/2);
+            timeLabel.setY(y- timeLabel.getHeight()/2);
+            //farmer.setPosition(x,y);
+            //farmer.setPosition(cursorLocation.x - farmer.getWidth()/2 ,cursorLocation.y - farmer.getHeight()/2);
+
+
+            System.out.println("mouse "+cursorLocation.x + "," +cursorLocation.y);
+            System.out.println("farmer"+farmer.getX() + ","+ farmer.getY());
+        //}
+
+
+
+
+
+
     }
+
 
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
