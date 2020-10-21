@@ -8,17 +8,19 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.FarmaniaFonts;
-import com.kacstudios.game.utilities.SelectableButton;
+import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 
 public class HUD extends Group {
     LevelScreen screen;
     Image background;
-    HotItemButton[] hotButtons = new HotItemButton[8];
     Label time;
     Label date;
+    CustomizeFarmerButton customizeFarmerButton;
+    InventoryViewer inventoryViewer;
 
     public HUD(LevelScreen inputScreen){
         screen = inputScreen;
@@ -30,36 +32,25 @@ public class HUD extends Group {
         this.addActor(background);
         this.setX((screen.getUIStage().getWidth() - 1280)/2); // center
 
-        // init buttons
-        for(int i = 0; i < hotButtons.length; i++){
-            hotButtons[i] = new HotItemButton(getWidth() - 64*i, 0);
-            this.addActor(hotButtons[i]);
-        }
+        //ADD CUSTOMIZATION BUTTON
+        customizeFarmerButton = new CustomizeFarmerButton();
+        customizeFarmerButton.setX(5);
+        customizeFarmerButton.setY((background.getHeight() - customizeFarmerButton.getHeight()) / 2);
 
-        this.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Actor target = event.getTarget();
+        this.addActor(customizeFarmerButton);
 
-                if(target.getClass().getSimpleName().equals(HotItemButton.class.getSimpleName())){ // is inventory item
-                    for(int j = 0; j < hotButtons.length; j++){
-                        if(hotButtons[j] == target) hotButtons[j].setSelected(true);
-                        else hotButtons[j] .setSelected(false);
-                    };
-                }
-            }
-        });
+        //ADD TIME
 
         time = new Label(TimeEngine.getFormattedString("HH:mm"),
                 new Label.LabelStyle(FarmaniaFonts.generateFont("OpenSans.ttf", 20), Color.WHITE));
         time.setY(this.getHeight()-time.getHeight()-10);
-        time.setX(10);
+        time.setX(customizeFarmerButton.getWidth() + customizeFarmerButton.getX() + 5);
 
         this.addActor(time);
 
         date = new Label(TimeEngine.getFormattedString("MM/dd/yyyy"),
                 new Label.LabelStyle(FarmaniaFonts.generateFont("OpenSans.ttf", 15), Color.WHITE));
-        date.setX(10);
+        date.setX(time.getX());
         date.setY(10);
 
         this.addActor(date);
@@ -85,13 +76,35 @@ public class HUD extends Group {
         tripleTimeButton.setY((this.getHeight() - tripleTimeButton.getHeight()) / 2);
         this.addActor(tripleTimeButton);
 
+        // END TIME CONTROL BUTTONS
+
+        // Set up inventory viewer
+        inventoryViewer = new InventoryViewer();
+        inventoryViewer.setX(getWidth() - inventoryViewer.getWidth());
+        this.addActor(inventoryViewer);
 
         screen.getUIStage().addActor(this); // add to screen
+    }
+    public HUD(LevelScreen inputScreen, IInventoryItem[] initialInventoryItems){
+        this(inputScreen);
+        inventoryViewer.setItems(initialInventoryItems);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
         time.setText(TimeEngine.getFormattedString("HH:mm a"));
+    }
+
+    public void handleGridClickEvent(GridClickEvent event){
+        useItem(event);
+    }
+
+    /**
+     * Calls the onDeployment method of the item in the selected HUD slot, provided one exists
+     * @param event
+     */
+    public void useItem(GridClickEvent event){
+        inventoryViewer.onUseItem(event);
     }
 }

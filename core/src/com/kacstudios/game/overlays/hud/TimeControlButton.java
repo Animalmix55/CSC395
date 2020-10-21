@@ -2,6 +2,7 @@ package com.kacstudios.game.overlays.hud;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.utilities.SelectableButton;
 import com.kacstudios.game.utilities.TimeEngine;
 
@@ -25,16 +26,16 @@ public class TimeControlButton extends SelectableButton {
 
         switch(type){
             case Pause:
-                setAnimation(loadTexture("bottombar/timebutton_icon_pause.png"));
+                setContents(new Image(new Texture("bottombar/timebutton_icon_pause.png")));
                 break;
             case Play:
-                setAnimation(loadTexture("bottombar/timebutton_icon_play.png"));
+                setContents(new Image(new Texture("bottombar/timebutton_icon_play.png")));
                 break;
             case Double:
-                setAnimation(loadTexture("bottombar/timebutton_icon_2x.png"));
+                setContents(new Image(new Texture("bottombar/timebutton_icon_2x.png")));
                 break;
             case Triple:
-                setAnimation(loadTexture("bottombar/timebutton_icon_3x.png"));
+                setContents(new Image(new Texture("bottombar/timebutton_icon_3x.png")));
                 break;
         }
     }
