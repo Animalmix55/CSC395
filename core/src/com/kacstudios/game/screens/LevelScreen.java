@@ -2,7 +2,6 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -13,13 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
-import com.kacstudios.game.games.BaseGame;
-import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.CornPlant;
-import com.kacstudios.game.grid.GridSquare;
-import com.kacstudios.game.grid.plants.Plant;
-import com.kacstudios.game.utilities.Global;
+import com.kacstudios.game.inventoryItems.CornPlantItem;
+import com.kacstudios.game.inventoryItems.IInventoryItem;
+import com.kacstudios.game.inventoryItems.WateringCanItem;
+import com.kacstudios.game.overlays.hud.HUD;
+import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
 
@@ -30,28 +29,35 @@ import java.util.List;
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<BaseActor> outOfBoundsArea;
-    private Label timeLabel;
     private Grid grid;
     PauseWindow pauseWindow;
+    private HUD hud;
 
     public void initialize() {
+        // placeholder initial inventory
+        IInventoryItem[] initialItems = {
+                new CornPlantItem(3),
+                new CornPlantItem(4),
+                new CornPlantItem(5),
+                new CornPlantItem(6),
+                new CornPlantItem(7),
+                new CornPlantItem(8),
+                new CornPlantItem(9),
+                new CornPlantItem(10),
+                new CornPlantItem(11),
+                new CornPlantItem(12),
+                new CornPlantItem(13),
+                new WateringCanItem()
+        };
 
 //        set background/map limits
-        BaseActor farmBaseActor = new BaseActor(0, 0, mainStage);
-        farmBaseActor.loadTexture("grass_1080x1080.png");
-        farmBaseActor.setSize(1080, 1080);
-        BaseActor.setWorldBounds(farmBaseActor);
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
         // TimeEngine.dilateTime(1000); // freeze time
         grid = new Grid(this); // create grid
 
-        timeLabel = new Label("Time:", BaseGame.labelStyle);
-        timeLabel.setX(0);
-        timeLabel.setY(0);
+        hud = new HUD(this, initialItems); // add HUD
 
-
-        uiStage.addActor(timeLabel);
 
 //        out of bounds background
 //        counter clockwise, starting from the right middle
@@ -113,7 +119,7 @@ public class LevelScreen extends BaseScreen {
     }
 
     public void update(float dt) {
-        timeLabel.setText("Time: " + TimeEngine.getFormattedString());
+        //pass
     }
 
     public boolean keyDown(int keyCode) {
@@ -140,5 +146,9 @@ public class LevelScreen extends BaseScreen {
 
     public void setPaused(boolean isPaused){
         paused = isPaused;
+    }
+
+    public void handleGridClickEvent(GridClickEvent event){
+        hud.handleGridClickEvent(event); // pass grid click event to hud for item
     }
 }

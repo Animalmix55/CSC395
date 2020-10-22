@@ -12,6 +12,10 @@ public abstract class IDepleteableItem extends IInventoryItem {
         return isBreakable;
     }
 
+    public void setBreakable(boolean isBreakable){
+        this.isBreakable = isBreakable;
+    }
+
     /**
      * Gets how depleted the item is to display its depletion. 100% is completely depleted
      * @return the depletion percentage (0.00-1.00)

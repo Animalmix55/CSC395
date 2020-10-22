@@ -1,16 +1,46 @@
 package com.kacstudios.game.grid;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.screens.LevelScreen;
+import com.kacstudios.game.utilities.GridClickEvent;
 
-public class Grid extends Actor {
+public class Grid extends Group {
     private GridSquare[][] gridSquares;
     private LevelScreen screen;
     private Integer squareSideLength = 135;
+    private int width = 8;
+    private int height = 8;
 
     public Grid(LevelScreen levelScreen){
+        Actor background = new Image(new Texture("grass_1080x1080.png"));
+        this.addActor(background);
+        this.setHeight(background.getHeight());
+        this.setWidth(background.getWidth());
+        BaseActor.setWorldBounds(this.getHeight(), this.getWidth());
+
         screen = levelScreen;
         setStage(levelScreen.getMainStage());
-        gridSquares = new GridSquare[8][8];
+
+        levelScreen.getUIStage().addActor(this);
+        gridSquares = new GridSquare[width][height];
+
+        Grid grid = this;
+
+        this.addCaptureListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GridVector coords = new GridVector((int)x / squareSideLength, (int) y / squareSideLength);
+                GridClickEvent gridSquareItemEvent = new GridClickEvent(coords.x, coords.y, grid);
+                screen.handleGridClickEvent(gridSquareItemEvent); // pass the event to the screen
+            }
+        });
     }
 
     /**
@@ -43,7 +73,7 @@ public class Grid extends Actor {
         square.setY(squareSideLength * y);
         if(gridSquares[x][y] != null) gridSquares[x][y].remove(); // remove old square
         gridSquares[x][y] = square;
-        getStage().addActor(square); // register gridSquare
+        this.addActor(square); // register gridSquare
     }
 
     /**
@@ -56,5 +86,16 @@ public class Grid extends Actor {
             gridSquares[x][y].remove(); // remove old square
             gridSquares[x][y] = null;
         }
+    }
+
+    public GridSquare[][] getGridSquares(){
+        return gridSquares;
+    }
+
+    public GridVector getGridCoordinate(Vector2 screenCoordinate){
+        return new GridVector((int)screenCoordinate.x / width, (int)screenCoordinate.y / height);
+    }
+    public GridVector getGridCoordinate(Vector3 screenCoordinate){
+        return new GridVector((int)screenCoordinate.x / width, (int)screenCoordinate.y / height);
     }
 }
