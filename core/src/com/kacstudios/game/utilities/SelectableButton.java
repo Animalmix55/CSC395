@@ -13,7 +13,6 @@ public class SelectableButton extends Group {
     Image selectedImage;
     Image unselectedImage;
     Actor contents;
-    boolean isSelected = false;
 
     public SelectableButton(float x, float y, Texture selectedTexture, Texture unselectedTexture){
         super();
@@ -31,26 +30,19 @@ public class SelectableButton extends Group {
         setHeight(selectedImage.getHeight());
         setBounds(getX(), getY(), getWidth(), getHeight());
 
+        selectedImage.setPosition(0,0);
+        unselectedImage.setPosition(0,0);
+        selectedImage.setVisible(false);
+
+        this.addActor(selectedImage);
+        this.addActor(unselectedImage);
+
         this.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 onClick(event, x, y);
             }
         });
-    }
-
-    @Override
-    public void setX(float x) {
-        super.setX(x);
-        selectedImage.setX(x);
-        unselectedImage.setX(x);
-    }
-
-    @Override
-    public void setY(float y) {
-        super.setY(y);
-        selectedImage.setY(y);
-        unselectedImage.setY(y);
     }
 
     /**
@@ -60,19 +52,12 @@ public class SelectableButton extends Group {
         //pass
     }
 
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        if(getSelected()) selectedImage.draw(batch, parentAlpha);
-        else unselectedImage.draw(batch, parentAlpha);
-
-        super.draw(batch, parentAlpha);
-    }
-
     public void setSelected(boolean selected) {
-        isSelected = selected;
+        selectedImage.setVisible(selected);
+        unselectedImage.setVisible(!selected);
     }
     public boolean getSelected(){
-        return isSelected;
+        return selectedImage.isVisible();
     }
 
     public void setContents(Actor actor){
