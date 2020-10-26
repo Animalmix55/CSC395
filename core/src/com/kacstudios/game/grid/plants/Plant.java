@@ -13,34 +13,29 @@ import java.util.Arrays;
 public class Plant extends GridSquare {
 
     private LocalDateTime startTime;
-    private Boolean isPlanted = false;
     private Boolean fullyGrown = false;
     private long growthTime = 60;
     private ArrayList<Animation<TextureRegion>> growthTextures = new ArrayList<>();
 
     public Plant(boolean collides) {
         super(collides);
+        startTime = TimeEngine.getDateTime();
     }
 
     public void setGrowthTextures(String[] textureNames) {
         growthTextures = new ArrayList<>();
         Arrays.stream(textureNames).forEach(t -> growthTextures.add(this.loadTexture(t))); // add all textures
+
+        setAnimation(growthTextures.get(0));
     }
 
     /**
      *  Overrides the clickFunction of GridSquare.
-     *  Upon a click of an empty GridSquare, the time of the click is recorded and the seed texture is set.
      */
     @Override
     public void clickFunction(LocalDateTime time)
     {
-        if(!isPlanted)
-        {
-            startTime = time;
-            setTexture("TestSeed.png");
-            isPlanted = true;
-            fullyGrown = false;
-        }
+        //pass
     }
 
     /**
@@ -53,7 +48,7 @@ public class Plant extends GridSquare {
 
     public Boolean checkIfGrowing()
     {
-        return isPlanted;
+        return !fullyGrown;
     }
 
     /**
@@ -62,12 +57,12 @@ public class Plant extends GridSquare {
     @Override
     public void act(float dt) {
         super.act(dt);
-        if(isPlanted && !fullyGrown)
+        if(!fullyGrown)
         {
             int elapsedSeconds = (int) TimeEngine.getSecondsSince(startTime);
             int numTextures = growthTextures.size();
 
-            for(int i = numTextures; i >= 1; i--){
+            for(int i = numTextures; i > 1; i--){
                 Animation<TextureRegion> animation = growthTextures.get(i-1);
                 if(growthTime * ((float)i/numTextures) <= elapsedSeconds) {
                     if(getAnimation() != animation) setAnimation(growthTextures.get(i-1));
@@ -77,7 +72,6 @@ public class Plant extends GridSquare {
 
             if(elapsedSeconds >= growthTime) {
                 fullyGrown = true;
-                isPlanted = false;
             }
         }
     }

@@ -36,17 +36,7 @@ public class LevelScreen extends BaseScreen {
     public void initialize() {
         // placeholder initial inventory
         IInventoryItem[] initialItems = {
-                new CornPlantItem(3),
-                new CornPlantItem(4),
-                new CornPlantItem(5),
-                new CornPlantItem(6),
-                new CornPlantItem(7),
-                new CornPlantItem(8),
-                new CornPlantItem(9),
-                new CornPlantItem(10),
-                new CornPlantItem(11),
-                new CornPlantItem(12),
-                new CornPlantItem(13),
+                new CornPlantItem(15),
                 new WateringCanItem()
         };
 
