@@ -93,6 +93,7 @@ public class HUD extends Group {
     @Override
     public void act(float delta) {
         super.act(delta);
+        date.setText(TimeEngine.getFormattedString("MM/dd/yyyy"));
         time.setText(TimeEngine.getFormattedString("HH:mm a"));
     }
 
