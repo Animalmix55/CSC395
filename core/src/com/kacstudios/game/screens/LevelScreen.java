@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
+import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
+    private Tractor tractor;
     private List<BaseActor> outOfBoundsArea;
     private Grid grid;
     PauseWindow pauseWindow;
@@ -105,7 +107,9 @@ public class LevelScreen extends BaseScreen {
 
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
+        tractor = new Tractor(100,100,mainStage);
         farmer = new Farmer(20, 20, mainStage);
+        tractor.addFarmer(farmer);
     }
 
     public void update(float dt) {
@@ -115,6 +119,13 @@ public class LevelScreen extends BaseScreen {
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
             pauseWindow.setVisible();
+        if (Gdx.input.isKeyPressed(Input.Keys.B))
+            if (tractor.onTractor()) {
+                tractor.removeFarmer();
+            }
+            else {
+                tractor.addFarmer(farmer);
+            }
         return true;
     }
 
