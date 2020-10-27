@@ -20,7 +20,7 @@ public class Farmer extends BaseActor {
     Animation<TextureRegion> rightAnimation;
     Animation<TextureRegion> upAnimation;
     Animation<TextureRegion> downAnimation;
-    float previousAngle = -1;
+    int maxSpeed = 200;
     int prevKey = -1;
 
     MoveToAction action;
@@ -42,7 +42,7 @@ public class Farmer extends BaseActor {
         upAnimation = loadAnimationUnsetFromFiles(upMovementFiles, 0.1f, true);
 
         setAcceleration(1000);
-        setMaxSpeed(200);
+        setMaxSpeed(maxSpeed);
         setDeceleration(1000);
 
         setBoundaryPolygon(8);
@@ -113,7 +113,10 @@ public class Farmer extends BaseActor {
 
         action= new MoveToAction();
         action.setPosition(x,y);
-        action.setDuration(1);
+
+        double distance = Math.sqrt(Math.pow(Math.abs(x-getX()), 2) + Math.pow(Math.abs(y-getY()), 2));
+
+        action.setDuration((float)distance / maxSpeed);
 
 
 
