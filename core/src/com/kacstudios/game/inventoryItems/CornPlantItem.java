@@ -20,7 +20,7 @@ public class CornPlantItem extends IInventoryItem {
 
         if(!event.farmerWithinRadius(300)) return; // must be within 300 pixels
         if(event.getGridSquare() == null) {
-            event.setSquare(new CornPlant(false));
+            event.setSquare(new CornPlant());
             int amount = getAmount();
             amount--;
             setAmount(amount >= 0 ? amount : 0);
