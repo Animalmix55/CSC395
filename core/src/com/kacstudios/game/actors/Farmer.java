@@ -11,6 +11,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.utilities.TimeEngine;
 
 import java.awt.*;
 
@@ -113,33 +114,19 @@ public class Farmer extends BaseActor {
 
         action= new MoveToAction();
         action.setPosition(x,y);
+        action.setActor(this);
 
         double distance = Math.sqrt(Math.pow(Math.abs(x-getX()), 2) + Math.pow(Math.abs(y-getY()), 2));
 
         action.setDuration((float)distance / maxSpeed);
-
-
-
-        addAction(action);
-        // applyPhysics(dt);
-
-        //setAnimationPaused(!isMoving());
-
-        //System.out.println( Math.atan2(y-getY(),x-getX())*180/Math.PI);
-
     }
 
 
     public void act(float dt) {
-        Vector3 cursorLocation = new Vector3(0, 0, 0);
-
-
         super.act(dt);
-
+        if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
 
         // configure sprite direction
-
-
 
         if (Gdx.input.isKeyPressed(Keys.W)) {
             if (prevKey != Keys.W) setAnimation(upAnimation);
@@ -178,10 +165,8 @@ public class Farmer extends BaseActor {
                 setAnimationPaused(false);
             else
                 setAnimationPaused(!isMoving());
-            // System.out.println("in act");
         }
-//        if ( getSpeed() > 0 )
-//            setRotation( getMotionAngle() );
+        else setAnimationPaused(!isMoving());
 
         boundToWorld();
 

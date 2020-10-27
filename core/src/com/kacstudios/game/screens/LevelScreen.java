@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
@@ -118,33 +119,21 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
+        mainStage.addListener(new ClickListener(Input.Buttons.RIGHT){
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                cursorLocation.x = Gdx.input.getX();
+                cursorLocation.y = Gdx.input.getY();
+                Vector3 translatedLocation = mainStage.getCamera().unproject(cursorLocation);
+                farmer.moveTo(translatedLocation.x - farmer.getWidth()/2, translatedLocation.y - farmer.getHeight()/2);
+            }
+        });
     }
 
     public void update(float dt) {
-        //click to move ability
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            //farmer on mainnstage
-
-
-            cursorLocation.x = Gdx.input.getX();
-            cursorLocation.y = Gdx.input.getY();
-
-
-            this.mainStage.getWidth();
-            this.mainStage.getHeight();
-
-            Vector3 translatedLocation = this.mainStage.getCamera().unproject(cursorLocation);
-
-
-            float x = translatedLocation.x;
-            float y = translatedLocation.y;
-
-            farmer.moveTo(translatedLocation.x - farmer.getWidth()/2, translatedLocation.y - farmer.getHeight()/2);
-
-            //System.out.println("mouse "+cursorLocation.x+","+cursorLocation.y);
-            //  System.out.println("farmer"+farmer.getX() + ","+ farmer.getY());
-            //  System.out.println(x < cursorLocation.x);
-        }
+        //pass
     }
 
 
