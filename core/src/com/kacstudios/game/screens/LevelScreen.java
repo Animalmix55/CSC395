@@ -40,9 +40,6 @@ public class LevelScreen extends BaseScreen {
     private static final float SPEED = 300f; //world units per second
     private final Vector2 tmp = new Vector2();
 
-    int x = 500;
-
-    int y = 200;
 
 
     Vector3 cursorLocation =  new Vector3(0 ,0, 0);
@@ -128,13 +125,17 @@ public class LevelScreen extends BaseScreen {
 
     public void update(float dt) {
         timeLabel.setText("Time: " + TimeEngine.getFormattedString());
-        
 
-        //if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+
+
+        //click to move ability
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            //farmer on mainnstage
 
 
             cursorLocation.x = Gdx.input.getX();
             cursorLocation.y = Gdx.input.getY();
+
 
             this.mainStage.getWidth();
             this.mainStage.getHeight();
@@ -142,15 +143,16 @@ public class LevelScreen extends BaseScreen {
             Vector3 translatedLocation = this.mainStage.getCamera().unproject(cursorLocation);
 
 
-            //follows cursor when remove line above
+            float x = translatedLocation.x;
+            float y = translatedLocation.y;
 
-            farmer.setPosition(translatedLocation.x - farmer.getWidth()/2,
-                    translatedLocation.y - farmer.getHeight()/2);
+            farmer.moveTo(translatedLocation.x - farmer.getWidth()/2, translatedLocation.y - farmer.getHeight()/2);
 
+            //System.out.println("mouse "+cursorLocation.x+","+cursorLocation.y);
+            //  System.out.println("farmer"+farmer.getX() + ","+ farmer.getY());
+            //  System.out.println(x < cursorLocation.x);
+        }
 
-            System.out.println("mouse "+translatedLocation.toString());
-            System.out.println("farmer"+farmer.getX() + ","+ farmer.getY());
-        //}
 
 
 
