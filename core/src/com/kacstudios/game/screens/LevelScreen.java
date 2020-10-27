@@ -2,13 +2,18 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
@@ -32,6 +37,14 @@ public class LevelScreen extends BaseScreen {
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
+
+    private static final float SPEED = 300f; //world units per second
+    private final Vector2 tmp = new Vector2();
+
+
+
+    Vector3 cursorLocation =  new Vector3(0 ,0, 0);
+    Vector3 farmerLocation =  new Vector3(0 ,0, 0);
 
     public void initialize() {
         // placeholder initial inventory
@@ -106,11 +119,23 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
+        mainStage.addListener(new ClickListener(Input.Buttons.RIGHT){
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                cursorLocation.x = Gdx.input.getX();
+                cursorLocation.y = Gdx.input.getY();
+                Vector3 translatedLocation = mainStage.getCamera().unproject(cursorLocation);
+                farmer.moveTo(translatedLocation.x - farmer.getWidth()/2, translatedLocation.y - farmer.getHeight()/2);
+            }
+        });
     }
 
     public void update(float dt) {
         //pass
     }
+
 
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
