@@ -17,6 +17,8 @@ public class CornPlantItem extends IInventoryItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+
+        if(!event.farmerWithinRadius(300)) return; // must be within 300 pixels
         if(event.getGridSquare() == null) {
             event.setSquare(new CornPlant(false));
             int amount = getAmount();

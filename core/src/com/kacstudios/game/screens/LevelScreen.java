@@ -130,6 +130,10 @@ public class LevelScreen extends BaseScreen {
         return uiStage;
     }
 
+    public Grid getGrid() {
+        return grid;
+    }
+
     public boolean getPaused(){
         return paused;
     }
