@@ -37,7 +37,7 @@ public class Grid extends Group {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 GridVector coords = new GridVector((int)x / squareSideLength, (int) y / squareSideLength);
-                GridClickEvent gridSquareItemEvent = new GridClickEvent(coords.x, coords.y, grid);
+                GridClickEvent gridSquareItemEvent = new GridClickEvent(coords.x, coords.y, grid.screen);
                 screen.handleGridClickEvent(gridSquareItemEvent); // pass the event to the screen
             }
         });
@@ -97,5 +97,9 @@ public class Grid extends Group {
     }
     public GridVector getGridCoordinate(Vector3 screenCoordinate){
         return new GridVector((int)screenCoordinate.x / width, (int)screenCoordinate.y / height);
+    }
+
+    public Integer getSquareSideLength() {
+        return squareSideLength;
     }
 }

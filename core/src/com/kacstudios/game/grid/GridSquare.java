@@ -18,7 +18,6 @@ public class GridSquare extends BaseActor {
     {
         super();
         collideWithPlayer = collides;
-        loadTexture("soil.png");
 
         // add event
         this.addListener(

@@ -98,10 +98,10 @@ public class LevelScreen extends BaseScreen {
 
 //        add in grid squares
 
-        grid.addGridSquare(2, 2, new CornPlant(false));
-        grid.addGridSquare(2, 3, new CornPlant(false));
-        grid.addGridSquare(3, 2, new CornPlant(false));
-        grid.addGridSquare(3, 3, new CornPlant(false));
+        grid.addGridSquare(2, 2, new CornPlant());
+        grid.addGridSquare(2, 3, new CornPlant());
+        grid.addGridSquare(3, 2, new CornPlant());
+        grid.addGridSquare(3, 3, new CornPlant());
 
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
@@ -128,6 +128,10 @@ public class LevelScreen extends BaseScreen {
 
     public Stage getUIStage(){
         return uiStage;
+    }
+
+    public Grid getGrid() {
+        return grid;
     }
 
     public boolean getPaused(){
