@@ -55,14 +55,12 @@ public class Tractor extends BaseActor {
                 if(prevKey != Input.Keys.RIGHT) {
                     setAnimation(rightAnimation);
                 }
-                farmer.setPosition(this.getX() + 25, this.getY() + 70);
                 prevKey = Input.Keys.RIGHT;
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 if(prevKey != Input.Keys.LEFT) {
                     setAnimation(leftAnimation);
                 }
-                farmer.setPosition(this.getX() + 105, this.getY() + 70);
                 prevKey = Input.Keys.LEFT;
             }
             else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
@@ -72,35 +70,35 @@ public class Tractor extends BaseActor {
                 prevKey = Input.Keys.DOWN;
             }
 
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                accelerateAtAngle(180);
-//                farmer.accelerateAtAngle(180);
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                accelerateAtAngle(0);
-//                farmer.accelerateAtAngle(0);
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                accelerateAtAngle(90);
-//                farmer.accelerateAtAngle(90);
-            }
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                accelerateAtAngle(270);
-//                farmer.accelerateAtAngle(270);
-            }
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) accelerateAtAngle(180);
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) accelerateAtAngle(0);
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) accelerateAtAngle(90);
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) accelerateAtAngle(270);
 
             applyPhysics(dt);
+
+            switch (prevKey) {
+                case Input.Keys.LEFT:
+                    farmer.setPosition(this.getX() + 105, this.getY() + 70);
+                    break;
+                case Input.Keys.RIGHT:
+                    farmer.setPosition(this.getX() + 25, this.getY() + 70);
+                    break;
+                case Input.Keys.UP:
+                    farmer.setPosition(this.getX() + 25, this.getY() + 70);
+                    break;
+                case Input.Keys.DOWN:
+                    farmer.setPosition(this.getX() + 25, this.getY() + 70);
+                    break;
+            }
 
             setAnimationPaused(!isMoving());
 
             boundToWorld();
 
             alignCamera();
-
-            farmer.setSpeed(this.getSpeed());
         }
-
-        }
+    }
 
 
     public void addFarmer(Farmer farmer) {
