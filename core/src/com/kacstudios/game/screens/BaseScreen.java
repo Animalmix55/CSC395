@@ -36,7 +36,6 @@ public abstract class BaseScreen implements Screen, InputProcessor
     // (3) render the graphics
     public void render(float dt)
     {
-        TimeEngine.act(dt);
         if (!paused) {
             // act methods
             uiStage.act(dt);

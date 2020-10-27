@@ -427,10 +427,9 @@ public class BaseActor extends Group
      *  @see #deceleration
      *  @see #maxSpeed
      */
-    public void applyPhysics(float deltaTime)
+    public void applyPhysics(float dt)
     {
 
-        float dt = deltaTime * TimeEngine.getDilation(); // uses new, dilated time
         // apply acceleration
         velocityVec.add( accelerationVec.x * dt, accelerationVec.y * dt);
 

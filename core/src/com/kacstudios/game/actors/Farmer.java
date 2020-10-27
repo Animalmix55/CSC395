@@ -114,7 +114,7 @@ public class Farmer extends BaseActor {
 
         action= new MoveToAction();
         action.setPosition(x,y);
-        action.setActor(this);
+        addAction(action);
 
         double distance = Math.sqrt(Math.pow(Math.abs(x-getX()), 2) + Math.pow(Math.abs(y-getY()), 2));
 
@@ -124,8 +124,6 @@ public class Farmer extends BaseActor {
 
     public void act(float dt) {
         super.act(dt);
-        if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
-
         // configure sprite direction
 
         if (Gdx.input.isKeyPressed(Keys.W)) {

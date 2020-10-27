@@ -90,7 +90,7 @@ public class Plant extends GridSquare {
 
         if(!fullyGrown && !isDead)
         {
-            float tempGrowthPercentage = getPercentPerSecond() * dt * TimeEngine.getDilation() + growthPercentage; // update growth percentage
+            float tempGrowthPercentage = getPercentPerSecond() * dt + growthPercentage; // update growth percentage
             if(tempGrowthPercentage >= 1) {
                 fullyGrown = true;
                 growthPercentage = 1;

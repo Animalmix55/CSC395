@@ -136,6 +136,12 @@ public class LevelScreen extends BaseScreen {
         //pass
     }
 
+    @Override
+    public void render(float dt) {
+        // Propagates time dilations to DeltaTime
+        TimeEngine.act(dt);
+        super.render(dt * TimeEngine.getDilation());
+    }
 
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
