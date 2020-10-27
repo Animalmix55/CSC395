@@ -160,6 +160,10 @@ public class BaseActor extends Group
             setBoundaryRectangle();
     }
 
+    public void removeAnimation(){
+        animation = null;
+    }
+
     public Animation<TextureRegion> getAnimation() {
         return animation;
     }

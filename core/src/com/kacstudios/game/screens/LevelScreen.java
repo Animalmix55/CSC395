@@ -16,13 +16,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
-import com.kacstudios.game.games.BaseGame;
-import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.CornPlant;
-import com.kacstudios.game.grid.GridSquare;
-import com.kacstudios.game.grid.plants.Plant;
-import com.kacstudios.game.utilities.Global;
+import com.kacstudios.game.inventoryItems.CornPlantItem;
+import com.kacstudios.game.inventoryItems.IInventoryItem;
+import com.kacstudios.game.inventoryItems.WateringCanItem;
+import com.kacstudios.game.overlays.hud.HUD;
+import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
 
@@ -33,9 +33,9 @@ import java.util.List;
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private List<BaseActor> outOfBoundsArea;
-    private Label timeLabel;
     private Grid grid;
     PauseWindow pauseWindow;
+    private HUD hud;
 
     private static final float SPEED = 300f; //world units per second
     private final Vector2 tmp = new Vector2();
@@ -46,23 +46,20 @@ public class LevelScreen extends BaseScreen {
     Vector3 farmerLocation =  new Vector3(0 ,0, 0);
 
     public void initialize() {
+        // placeholder initial inventory
+        IInventoryItem[] initialItems = {
+                new CornPlantItem(15),
+                new WateringCanItem()
+        };
 
 //        set background/map limits
-        BaseActor farmBaseActor = new BaseActor(0, 0, mainStage);
-        farmBaseActor.loadTexture("grass_1080x1080.png");
-        farmBaseActor.setSize(1080, 1080);
-        BaseActor.setWorldBounds(farmBaseActor);
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
         // TimeEngine.dilateTime(1000); // freeze time
         grid = new Grid(this); // create grid
 
-        timeLabel = new Label("Time:", BaseGame.labelStyle);
-        timeLabel.setX(0);
-        timeLabel.setY(0);
+        hud = new HUD(this, initialItems); // add HUD
 
-
-        uiStage.addActor(timeLabel);
 
 //        out of bounds background
 //        counter clockwise, starting from the right middle
@@ -113,10 +110,10 @@ public class LevelScreen extends BaseScreen {
 
 //        add in grid squares
 
-        grid.addGridSquare(2, 2, new CornPlant(false));
-        grid.addGridSquare(2, 3, new CornPlant(false));
-        grid.addGridSquare(3, 2, new CornPlant(false));
-        grid.addGridSquare(3, 3, new CornPlant(false));
+        grid.addGridSquare(2, 2, new CornPlant());
+        grid.addGridSquare(2, 3, new CornPlant());
+        grid.addGridSquare(3, 2, new CornPlant());
+        grid.addGridSquare(3, 3, new CornPlant());
 
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
@@ -124,10 +121,6 @@ public class LevelScreen extends BaseScreen {
     }
 
     public void update(float dt) {
-        timeLabel.setText("Time: " + TimeEngine.getFormattedString());
-
-
-
         //click to move ability
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             //farmer on mainnstage
@@ -152,13 +145,6 @@ public class LevelScreen extends BaseScreen {
             //  System.out.println("farmer"+farmer.getX() + ","+ farmer.getY());
             //  System.out.println(x < cursorLocation.x);
         }
-
-
-
-
-
-
-
     }
 
 
@@ -180,11 +166,19 @@ public class LevelScreen extends BaseScreen {
         return uiStage;
     }
 
+    public Grid getGrid() {
+        return grid;
+    }
+
     public boolean getPaused(){
         return paused;
     }
 
     public void setPaused(boolean isPaused){
         paused = isPaused;
+    }
+
+    public void handleGridClickEvent(GridClickEvent event){
+        hud.handleGridClickEvent(event); // pass grid click event to hud for item
     }
 }
