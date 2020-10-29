@@ -24,6 +24,7 @@ import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
 
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class LevelScreen extends BaseScreen {
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
+    private double distanceFromTractor;
 
     public void initialize() {
         // placeholder initial inventory
@@ -98,34 +100,21 @@ public class LevelScreen extends BaseScreen {
                 }
         );
 
-//        add in grid squares
-
-        grid.addGridSquare(2, 2, new CornPlant(false));
-        grid.addGridSquare(2, 3, new CornPlant(false));
-        grid.addGridSquare(3, 2, new CornPlant(false));
-        grid.addGridSquare(3, 3, new CornPlant(false));
-
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
-        tractor = new Tractor(100,100,mainStage);
         farmer = new Farmer(20, 20, mainStage);
-        tractor.addFarmer(farmer);
+        tractor = new Tractor(500,100,mainStage);
+        tractor.setFarmer(farmer);
     }
 
     public void update(float dt) {
-        //pass
+
     }
 
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
             pauseWindow.setVisible();
-        if (Gdx.input.isKeyPressed(Input.Keys.B))
-            if (tractor.onTractor()) {
-                tractor.removeFarmer();
-            }
-            else {
-                tractor.addFarmer(farmer);
-            }
+
         return true;
     }
 

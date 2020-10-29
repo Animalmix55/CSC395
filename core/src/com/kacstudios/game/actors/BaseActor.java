@@ -725,4 +725,13 @@ public class BaseActor extends Group
         super.draw( batch, parentAlpha );
     }
 
+
+    /**
+     *  Overrides boundaries for collision with other entities with custom x,y coordinates <br>
+     *  @param inputVertices (list of x,y points to be added to poly, starting at bottom left corner)
+     *
+     */
+    public void setBoundaryPolyCustom(float[] inputVertices) {
+        boundaryPolygon = new Polygon(inputVertices);
+    }
 }

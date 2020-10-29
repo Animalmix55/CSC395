@@ -4,13 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import javax.xml.stream.FactoryConfigurationError;
+import java.awt.geom.Point2D;
 
 public class Tractor extends BaseActor {
-    private boolean remove;
     private Farmer farmer;
+    private boolean active = false;
     Animation<TextureRegion> leftAnimation;
     Animation<TextureRegion> rightAnimation;
     Animation<TextureRegion> upAnimation;
@@ -22,99 +24,146 @@ public class Tractor extends BaseActor {
         super(x,y,s);
         String[] leftMovementFiles = {"tractor-left-1.png"};
         String[] rightMovementFiles = {"tractor-right-1.png"};
-        String[] upMovementFiles = {"tractor-right-1.png"};
-        String[] downMovementFiles = {"tractor-right-1.png"};
+        String[] upMovementFiles = {"tractor-up-1.png"};
+        String[] downMovementFiles = {"tractor-down-1.png"};
 
         leftAnimation = loadAnimationUnsetFromFiles(leftMovementFiles, 0.1f, true);
-        rightAnimation = loadAnimationUnsetFromFiles(rightMovementFiles,0.1f,true);
+        rightAnimation = loadAnimationFromFiles(rightMovementFiles,0.1f,true);
         upAnimation = loadAnimationUnsetFromFiles(upMovementFiles,0.1f,true);
         downAnimation = loadAnimationUnsetFromFiles(downMovementFiles,0.1f,true);
-        setAcceleration(1000);
-        setMaxSpeed(500);
-        setDeceleration(1000);
+        setAcceleration(2000);
+        setMaxSpeed(625);
+        setDeceleration(5000);
 
-        setBoundaryPolygon(8);
+        setBoundaryPolyCustom(new float[]{0,0, getWidth(),0, getWidth(),getHeight(), 0,getHeight()});
+
+//        adds click listener so that if the player is within 200 pixels of the tractor, they can click it to be added onto the tractor
+//        if the player is already on the tractor, then they are removed from the tractor
+        this.addListener(
+                (Event e) ->
+                {
+                    if (!(e instanceof InputEvent))
+                        return false;
+
+                    if (!((InputEvent) e).getType().equals(InputEvent.Type.touchDown))
+                        return false;
+
+                    if (active) removeFarmer();
+                    else {
+                        if (getDistanceFromFarmer() < 200) addFarmer();
+                    };
+
+                    return false;
+                }
+        );
+
     }
 
     public void act(float dt) {
 
         super.act(dt);
-
         if (farmer != null) {
-//            set farmer position on chair
-//            need to change with direction
-
-
-            if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-                if(prevKey != Input.Keys.UP) {
-                    setAnimation(upAnimation);
-                };
-                prevKey = Input.Keys.UP;
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                if(prevKey != Input.Keys.RIGHT) {
-                    setAnimation(rightAnimation);
+            if (active) {
+                if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+                    if(prevKey != Input.Keys.UP) {
+                        setAnimation(upAnimation);
+                    };
+                    prevKey = Input.Keys.UP;
                 }
-                prevKey = Input.Keys.RIGHT;
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                if(prevKey != Input.Keys.LEFT) {
-                    setAnimation(leftAnimation);
+                else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                    if(prevKey != Input.Keys.RIGHT) {
+                        setAnimation(rightAnimation);
+                    }
+                    prevKey = Input.Keys.RIGHT;
                 }
-                prevKey = Input.Keys.LEFT;
-            }
-            else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                if (prevKey != Input.Keys.DOWN) {
-                    setAnimation(downAnimation);
+                else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                    if(prevKey != Input.Keys.LEFT) {
+                        setAnimation(leftAnimation);
+                    }
+                    prevKey = Input.Keys.LEFT;
                 }
-                prevKey = Input.Keys.DOWN;
+                else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                    if (prevKey != Input.Keys.DOWN) {
+                        setAnimation(downAnimation);
+                    }
+                    prevKey = Input.Keys.DOWN;
+                }
+
+                if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) accelerateAtAngle(180);
+                if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) accelerateAtAngle(0);
+                if (Gdx.input.isKeyPressed(Input.Keys.UP)) accelerateAtAngle(90);
+                if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) accelerateAtAngle(270);
+
+                applyPhysics(dt);
+
+                switch (prevKey) {
+                    case Input.Keys.LEFT:
+                        farmer.setPosition(this.getX() + 115, this.getY() + 70);
+                        setBoundaryPolyCustom(new float[]{0,0, getWidth(),0, getWidth(),getHeight(), 0,getHeight()});
+                        break;
+                    case Input.Keys.RIGHT:
+                        farmer.setPosition(this.getX() + 35, this.getY() + 70);
+                        setBoundaryPolyCustom(new float[]{0,0, getWidth(),0, getWidth(),getHeight(), 0,getHeight()});
+                        break;
+                    case Input.Keys.UP:
+                    case Input.Keys.DOWN:
+                        setBoundaryPolyCustom(new float[]{89,0, getWidth()-89,0, getWidth()-89,getHeight(), 89,getHeight()});
+                        farmer.setPosition(this.getX() + 75, this.getY() + 70);
+//                    farmer.setPosition(this.getX(), this.getY());
+//                    farmer.setPosition(this.getX() + 75, this.getY() + 50);
+                        break;
+                }
+
+                setAnimationPaused(!isMoving());
+
+                boundToWorld();
+
+                alignCamera();
             }
-
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) accelerateAtAngle(180);
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) accelerateAtAngle(0);
-            if (Gdx.input.isKeyPressed(Input.Keys.UP)) accelerateAtAngle(90);
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) accelerateAtAngle(270);
-
-            applyPhysics(dt);
-
-            switch (prevKey) {
-                case Input.Keys.LEFT:
-                    farmer.setPosition(this.getX() + 105, this.getY() + 70);
-                    break;
-                case Input.Keys.RIGHT:
-                    farmer.setPosition(this.getX() + 25, this.getY() + 70);
-                    break;
-                case Input.Keys.UP:
-                    farmer.setPosition(this.getX() + 25, this.getY() + 70);
-                    break;
-                case Input.Keys.DOWN:
-                    farmer.setPosition(this.getX() + 25, this.getY() + 70);
-                    break;
+            else {
+                farmer.preventOverlap(this);
             }
-
-            setAnimationPaused(!isMoving());
-
-            boundToWorld();
-
-            alignCamera();
         }
     }
 
-
-    public void addFarmer(Farmer farmer) {
-        this.farmer = farmer;
+    /**
+     * Sets the tractor status as being actively used, which disables player movement, matches player speed to tractor speed, and mounts the player onto the tractor
+     */
+    private void addFarmer() {
+        active = true;
         farmer.setMovement(false);
-        farmer.setMaxSpeed(500);
+        farmer.setMaxSpeed(625);
 
     }
 
-    public void removeFarmer() {
+    /**
+     * Sets the tractor status as inactive, re-enabling player movement and resetting speed to normal
+     * Also forces tractor speed to 0, so that it doesn't slide when getting back on tractor for second time usage
+     */
+    private void removeFarmer() {
         farmer.setMovement(true);
         farmer.setMaxSpeed(200);
-        this.farmer = null;
+        this.setSpeed(0);
+        active = false;
     }
 
-    public boolean onTractor() {
-        return this.farmer != null;
+    /**
+     * Sets the farmer within the Tractor class so that it can be referred to within Tractor
+     * @param farmer that should be mounted onto tractor when in use
+     */
+    public void setFarmer(Farmer farmer) {
+        this.farmer = farmer;
+    }
+
+    /**
+     * @return Pixel distance between tractor and farmer
+     */
+    private double getDistanceFromFarmer() {
+        return Point2D.distance(
+                farmer.getX()+(farmer.getWidth()/2),
+                farmer.getY()+(farmer.getHeight()/2),
+                this.getX()+(this.getWidth()/2),
+                this.getY()+(this.getHeight()/2)
+        );
     }
 }

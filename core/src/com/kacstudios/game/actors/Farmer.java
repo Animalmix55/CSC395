@@ -17,6 +17,8 @@ public class Farmer extends BaseActor {
     Animation<TextureRegion> downAnimation;
     Animation<TextureRegion> leftTractorAnimation;
     Animation<TextureRegion> rightTractorAnimation;
+    Animation<TextureRegion> upTractorAnimation;
+    Animation<TextureRegion> downTractorAnimation;
     float previousAngle = -1;
     int prevKey = -1;
 
@@ -33,6 +35,8 @@ public class Farmer extends BaseActor {
         String[] upMovementFiles = {"farmer-up-1.png", "farmer-up-2.png", "farmer-up-3.png", "farmer-up-4.png", "farmer-up-5.png", "farmer-up-6.png", "farmer-up-7.png", "farmer-up-8.png"};
         String[] leftTractor = {"farmer-tractor-left.png"};
         String[] rightTractor = {"farmer-tractor-right.png"};
+        String[] upTractor = {"farmer-tractor-up.png"};
+        String[] downTractor = {"farmer-tractor-down.png"};
 
         downAnimation = loadAnimationFromFiles(downAnimationFiles, 0.1f, true);
         leftAnimation = loadAnimationUnsetFromFiles(leftMovementFiles, 0.1f, true);
@@ -41,6 +45,9 @@ public class Farmer extends BaseActor {
 
         leftTractorAnimation = loadAnimationUnsetFromFiles(leftTractor,0.1f,true);
         rightTractorAnimation = loadAnimationUnsetFromFiles(rightTractor,0.1f,true);
+        upTractorAnimation = loadAnimationUnsetFromFiles(upTractor,0.1f,true);
+        downTractorAnimation = loadAnimationUnsetFromFiles(downTractor,0.1f,true);
+
         movement = true;
 
         setAcceleration(1000);
@@ -93,10 +100,31 @@ public class Farmer extends BaseActor {
             alignCamera();
         }
         else {
-            if (Gdx.input.isKeyPressed(Keys.LEFT))
-                setAnimation(leftTractorAnimation);
-            if (Gdx.input.isKeyPressed(Keys.RIGHT))
-                setAnimation(rightTractorAnimation);
+            if(Gdx.input.isKeyPressed(Keys.UP)){
+                if(prevKey != Keys.UP) setAnimation(upTractorAnimation);;
+                prevKey = Keys.UP;
+            }
+            else if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+                if(prevKey != Keys.RIGHT) setAnimation(rightTractorAnimation);;
+                prevKey = Keys.RIGHT;
+            }
+            else if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+                if(prevKey != Keys.LEFT) setAnimation(leftTractorAnimation);
+                prevKey = Keys.LEFT;
+            }
+            else if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+                if (prevKey != Keys.DOWN) setAnimation(downTractorAnimation);
+                prevKey = Keys.DOWN;
+            }
+
+//            if (Gdx.input.isKeyPressed(Keys.LEFT))
+//                setAnimation(leftTractorAnimation);
+//            if (Gdx.input.isKeyPressed(Keys.RIGHT))
+//                setAnimation(rightTractorAnimation);
+//            if (Gdx.input.isKeyPressed(Keys.UP))
+//                setAnimation(upTractorAnimation);
+//            if (Gdx.input.isKeyPressed(Keys.DOWN))
+//                setAnimation(downTractorAnimation);
         }
 
 
@@ -111,6 +139,7 @@ public class Farmer extends BaseActor {
 
         setAnimationPaused( !isMoving() );
 
+//        alignCamera();
 //        if ( getSpeed() > 0 )
 //            setRotation( getMotionAngle() );
 
