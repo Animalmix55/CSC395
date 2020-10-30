@@ -339,6 +339,10 @@ public class BaseActor extends Group
         maxSpeed = ms;
     }
 
+    public float getMaxSpeed() {
+        return maxSpeed;
+    }
+
     /**
      *  Set the speed of movement (in pixels/second) in current direction.
      *  If current speed is zero (direction is undefined), direction will be set to 0 degrees.
@@ -605,22 +609,43 @@ public class BaseActor extends Group
     public static Rectangle getWorldBounds()
     {
         return worldBounds;
-    }   
-    
+    }
+
     /**
      * If an edge of an object moves past the world bounds, 
      *   adjust its position to keep it completely on screen.
      */
     public void boundToWorld()
     {
-        if (getX() < 0)
-            setX(0);
-        if (getX() + getWidth() > worldBounds.width)    
-            setX(worldBounds.width - getWidth());
-        if (getY() < 0)
-            setY(0);
-        if (getY() + getHeight() > worldBounds.height)
-            setY(worldBounds.height - getHeight());
+        Rectangle boundingRectangle = getBoundaryPolygon().getBoundingRectangle();
+
+        if(boundingRectangle.width != getWidth() || boundingRectangle.height != getHeight()){
+            float x = boundingRectangle.getX();
+            float y = boundingRectangle.getY();
+
+            float width = boundingRectangle.width;
+            float height = boundingRectangle.height;
+
+            if (x < 0)
+                setX(-Math.abs(width - getWidth())/2);
+            if (x + width > worldBounds.width)
+                setX(worldBounds.width - width - Math.abs(width - getWidth())/2 );
+            if (y < 0)
+                setY(0);
+            if (y + height > worldBounds.height)
+                setY(worldBounds.height - height);
+        }
+        else {
+
+            if (getX() < 0)
+                setX(0);
+            if (getX() + getWidth() > worldBounds.width)
+                setX(worldBounds.width - getWidth());
+            if (getY() < 0)
+                setY(0);
+            if (getY() + getHeight() > worldBounds.height)
+                setY(worldBounds.height - getHeight());
+        }
     }
 
     /**
@@ -725,4 +750,13 @@ public class BaseActor extends Group
         super.draw( batch, parentAlpha );
     }
 
+
+    /**
+     *  Overrides boundaries for collision with other entities with custom x,y coordinates <br>
+     *  @param inputVertices (list of x,y points to be added to poly, starting at bottom left corner)
+     *
+     */
+    public void setBoundaryPolyCustom(float[] inputVertices) {
+        boundaryPolygon = new Polygon(inputVertices);
+    }
 }
