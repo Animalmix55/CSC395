@@ -10,9 +10,9 @@ import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class WateringCanItem extends IDepleteableItem {
-    public WateringCanItem(){
+    public WateringCanItem(int amount){
         setTexturePath("items/watering_can.png");
-        setAmount(3);
+        setAmount(amount);
     }
 
     @Override
