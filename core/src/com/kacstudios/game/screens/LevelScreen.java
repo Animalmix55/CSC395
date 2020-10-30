@@ -2,8 +2,6 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -19,7 +17,6 @@ import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.grid.Grid;
-import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.inventoryItems.WateringCanItem;
@@ -40,15 +37,8 @@ public class LevelScreen extends BaseScreen {
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
-    private double distanceFromTractor;
-
-    private static final float SPEED = 300f; //world units per second
-    private final Vector2 tmp = new Vector2();
-
-
 
     Vector3 cursorLocation =  new Vector3(0 ,0, 0);
-    Vector3 farmerLocation =  new Vector3(0 ,0, 0);
 
     public void initialize() {
         // placeholder initial inventory
@@ -60,7 +50,6 @@ public class LevelScreen extends BaseScreen {
 //        set background/map limits
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
-        // TimeEngine.dilateTime(1000); // freeze time
         grid = new Grid(this); // create grid
 
         hud = new HUD(this, initialItems); // add HUD
@@ -116,19 +105,8 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
-        tractor = new Tractor(500,100,mainStage);
+        tractor = new Tractor(200,100,mainStage);
         tractor.setFarmer(farmer);
-        mainStage.addListener(new ClickListener(Input.Buttons.RIGHT){
-
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                cursorLocation.x = Gdx.input.getX();
-                cursorLocation.y = Gdx.input.getY();
-                Vector3 translatedLocation = mainStage.getCamera().unproject(cursorLocation);
-                farmer.moveTo(translatedLocation.x - farmer.getWidth()/2, translatedLocation.y - farmer.getHeight()/2);
-            }
-        });
     }
 
     public void update(float dt) {
