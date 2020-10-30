@@ -105,7 +105,7 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
-        tractor = new Tractor(200,100,mainStage);
+        tractor = new Tractor(200,100, this);
         tractor.setFarmer(farmer);
     }
 

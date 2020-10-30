@@ -2,12 +2,16 @@ package com.kacstudios.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.utilities.TimeEngine;
@@ -53,6 +57,39 @@ public class PlayableActor extends BaseActor {
                 }
             }
         });
+
+        this.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent e, float x, float y) {
+                Color pickedColor = null;
+
+                Texture texture = getAnimation().getKeyFrame(0).getTexture();
+
+                if (!texture.getTextureData().isPrepared()) {
+                    texture.getTextureData().prepare();
+                }
+                Pixmap pixmap = texture.getTextureData().consumePixmap();
+                pickedColor = new Color(pixmap.getPixel((int)x, (int)y));
+
+
+                //Check for transparency
+                if (pickedColor != null && pickedColor.a != 0) {
+                    onClick();
+                }
+                else {
+                    Vector2 screenCoords = localToScreenCoordinates(new Vector2(x, y));
+
+                    //pass click through if no texture.
+                    setTouchable(Touchable.disabled);
+                    getStage().touchDown((int)screenCoords.x, (int)screenCoords.y, e.getPointer(), e.getButton());
+                    setTouchable(Touchable.enabled);
+                }
+            }
+        });
+    }
+
+    public void onClick() {
+        // implement
     }
 
     public void setDirectionalAnimationPaths(String[] left, String[] right, String[] up, String[] down){
@@ -206,4 +243,5 @@ public class PlayableActor extends BaseActor {
 
         return vector;
     }
+
 }

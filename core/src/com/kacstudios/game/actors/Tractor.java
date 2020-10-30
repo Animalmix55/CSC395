@@ -1,21 +1,32 @@
 package com.kacstudios.game.actors;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.screens.LevelScreen;
 
 import java.awt.geom.Point2D;
 
 public class Tractor extends PlayableActor {
     private Farmer farmer;
     private boolean hasResized = true;
+    private LevelScreen screen;
 
-    public Tractor (float x, float y, Stage s) {
-        super(x,y,s, false);
+    public Tractor (float x, float y, LevelScreen s) {
+        super(x,y,s.getMainStage(), false);
+        screen = s;
         String[] leftMovementFiles = {"tractor-left-1.png"};
         String[] rightMovementFiles = {"tractor-right-1.png"};
         String[] upMovementFiles = {"tractor-up-1.png"};
@@ -31,18 +42,14 @@ public class Tractor extends PlayableActor {
 
         setDirectionalAnimations(leftAnimation, rightAnimation, upAnimation, downAnimation);
         setBoundaryPolyCustom(new float[]{0,0, getWidth(),0, getWidth(),getHeight(), 0,getHeight()});
+    }
 
-//        adds click listener so that if the player is within 200 pixels of the tractor, they can click it to be added onto the tractor
-//        if the player is already on the tractor, then they are removed from the tractor
-        this.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent e, float x, float y) {
-                if (getFocused()) removeFarmer();
-                else {
-                    if (getDistanceFromFarmer() < 200) addFarmer();
-                };
-            }
-        });
+    @Override
+    public void onClick() {
+        if (getFocused()) removeFarmer();
+        else {
+            if (getDistanceFromFarmer() < 200) addFarmer();
+        };
     }
 
     public void act(float dt) {
