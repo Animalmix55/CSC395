@@ -1,34 +1,22 @@
 package com.kacstudios.game.actors;
-
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.kacstudios.game.actors.BaseActor;
-import com.kacstudios.game.utilities.TimeEngine;
 
-import java.awt.*;
+public class Farmer extends PlayableActor {
+    Animation<TextureRegion> leftTractorAnimation;
+    Animation<TextureRegion> rightTractorAnimation;
+    Animation<TextureRegion> upTractorAnimation;
+    Animation<TextureRegion> downTractorAnimation;
 
-public class Farmer extends BaseActor {
-    public boolean remove;
     Animation<TextureRegion> leftAnimation;
     Animation<TextureRegion> rightAnimation;
     Animation<TextureRegion> upAnimation;
     Animation<TextureRegion> downAnimation;
-    int maxSpeed = 200;
-    int prevKey = -1;
 
-    MoveToAction action;
-
-    public Farmer(float x, float y, Stage s) {
-        super(x, y, s);
-
+    public Farmer(float x, float y, Stage s)
+    {
+        super(x,y,s, true);
         String[] downAnimationFiles =
                 {"farmer-1.png", "farmer-2.png", "farmer-3.png",
                         "farmer-4.png", "farmer-5.png", "farmer-6.png", "farmer-7.png", "farmer-8.png"};
@@ -42,132 +30,30 @@ public class Farmer extends BaseActor {
         rightAnimation = loadAnimationUnsetFromFiles(rightMovementFiles, 0.1f, true);
         upAnimation = loadAnimationUnsetFromFiles(upMovementFiles, 0.1f, true);
 
+        String[] leftTractor = {"farmer-tractor-left.png"};
+        String[] rightTractor = {"farmer-tractor-right.png"};
+        String[] upTractor = {"farmer-tractor-up.png"};
+        String[] downTractor = {"farmer-tractor-down.png"};
+
+        downTractorAnimation = loadAnimationFromFiles(downTractor, 0.1f, true);
+        leftTractorAnimation = loadAnimationUnsetFromFiles(leftTractor, 0.1f, true);
+        rightTractorAnimation = loadAnimationUnsetFromFiles(rightTractor, 0.1f, true);
+        upTractorAnimation = loadAnimationUnsetFromFiles(upTractor, 0.1f, true);
+
+        setDirectionalAnimationPaths(leftMovementFiles, rightMovementFiles, upMovementFiles, downAnimationFiles);
         setAcceleration(1000);
-        setMaxSpeed(maxSpeed);
+        setMaxSpeed(200);
         setDeceleration(1000);
 
         setBoundaryPolygon(8);
     }
 
-//to get coordinates do this.getx()
-
-    public static double  getAngleFromPoint(Point firstPoint, Point secondPoint) {
-
-        if((secondPoint.x > firstPoint.x)) {//above 0 to 180 degrees
-
-            return (Math.atan2((secondPoint.x - firstPoint.x), (firstPoint.y - secondPoint.y)) * 180 / Math.PI);
-
-        }
-        else if((secondPoint.x < firstPoint.x)) {//above 180 degrees to 360/0
-
-            return 360 - (Math.atan2((firstPoint.x - secondPoint.x), (firstPoint.y - secondPoint.y)) * 180 / Math.PI);
-
-        }//End if((secondPoint.x > firstPoint.x) && (secondPoint.y <= firstPoint.y))
-
-        return Math.atan2(0 ,0);
-
-    }//End public float getAngleFromPoint(Point firstPoint, Point secondPoint)
-    public static double angleBetweenTwoPointsWithFixedPoint(double point1X, double point1Y,
-                                                             double point2X, double point2Y,
-                                                             double fixedX, double fixedY) {
-
-        double angle1 = Math.atan2(point1Y - fixedY, point1X - fixedX);
-        double angle2 = Math.atan2(point2Y - fixedY, point2X - fixedX);
-
-        double result= angle1 - angle2;
-        System.out.println(angle1);
-        System.out.println(angle2);
-
-        return angle2;
-    }
-
-
-
-
-    public void moveTo(float x, float y){
-
-
-        // System.out.println("Old location:"+getX()+","+getY());
-        //  System.out.println("new location:"+x+","+y);
-
-        double angle=Math.toDegrees(angleBetweenTwoPointsWithFixedPoint(getX(),getY(),x,y,getX(),getY()));
-        // System.out.println("Angle is:"+angle);
-        if(angle<=45 && angle >=-45){
-            setAnimation(rightAnimation);
-            accelerateAtAngle(0);
-
-        }
-        else
-        if(angle>45 && angle<=135){
-            setAnimation(upAnimation);
-            accelerateAtAngle(90);
-        }
-        else if (angle>135 || angle <-135){
-            setAnimation(leftAnimation);
-            accelerateAtAngle(180);
+    public void useTractorAnimations(boolean isOnTractor) {
+        if(isOnTractor){
+            setDirectionalAnimations(leftTractorAnimation, rightTractorAnimation, upTractorAnimation, downTractorAnimation);
         }
         else {
-            setAnimation(downAnimation);
-            accelerateAtAngle(270);
+            setDirectionalAnimations(leftAnimation, rightAnimation, upAnimation, downAnimation);
         }
-
-
-        action= new MoveToAction();
-        action.setPosition(x,y);
-        addAction(action);
-
-        double distance = Math.sqrt(Math.pow(Math.abs(x-getX()), 2) + Math.pow(Math.abs(y-getY()), 2));
-
-        action.setDuration((float)distance / maxSpeed);
-    }
-
-
-    public void act(float dt) {
-        super.act(dt);
-        // configure sprite direction
-
-        if (Gdx.input.isKeyPressed(Keys.W)) {
-            if (prevKey != Keys.W) setAnimation(upAnimation);
-            prevKey = Keys.W;
-        } else if (Gdx.input.isKeyPressed(Keys.D)) {
-            if (prevKey != Keys.D) setAnimation(rightAnimation);
-            prevKey = Keys.D;
-        } else if (Gdx.input.isKeyPressed(Keys.A)) {
-            if (prevKey != Keys.A) setAnimation(leftAnimation);
-            prevKey = Keys.A;
-        } else if (Gdx.input.isKeyPressed(Keys.S)) {
-            if (prevKey != Keys.S) setAnimation(downAnimation);
-            prevKey = Keys.S;
-        }
-
-        if (remove) {
-            addAction(Actions.fadeOut(1));
-            addAction(Actions.after(Actions.removeActor()));
-            return;
-        }
-
-        // configure acceleration
-        if (Gdx.input.isKeyPressed(Keys.A))
-            accelerateAtAngle(180);//left
-        if (Gdx.input.isKeyPressed(Keys.D))
-            accelerateAtAngle(0);//right
-        if (Gdx.input.isKeyPressed(Keys.W))
-            accelerateAtAngle(90);//up
-        if (Gdx.input.isKeyPressed(Keys.S))
-            accelerateAtAngle(270);//down
-
-
-        applyPhysics(dt);
-        if(action!=null) {
-            if(!action.isComplete())
-                setAnimationPaused(false);
-            else
-                setAnimationPaused(!isMoving());
-        }
-        else setAnimationPaused(!isMoving());
-
-        boundToWorld();
-
-        alignCamera();
     }
 }
