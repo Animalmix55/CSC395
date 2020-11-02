@@ -17,6 +17,7 @@ import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.inventoryItems.WateringCanItem;
@@ -44,7 +45,8 @@ public class LevelScreen extends BaseScreen {
         // placeholder initial inventory
         IInventoryItem[] initialItems = {
                 new CornPlantItem(15),
-                new WateringCanItem()
+                new WateringCanItem(3),
+                new BasicTractorItem(40)
         };
 
 //        set background/map limits
@@ -105,14 +107,18 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
-        tractor = new Tractor(200,100, this);
-        tractor.setFarmer(farmer);
     }
 
     public void update(float dt) {
 
     }
 
+    @Override
+    public void render(float dt) {
+        // Propagates time dilations to DeltaTime
+        TimeEngine.act(dt);
+        super.render(dt * TimeEngine.getDilation());
+    }
 
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))

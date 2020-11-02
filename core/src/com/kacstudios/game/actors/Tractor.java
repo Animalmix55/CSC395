@@ -27,6 +27,8 @@ public class Tractor extends PlayableActor {
     public Tractor (float x, float y, LevelScreen s) {
         super(x,y,s.getMainStage(), false);
         screen = s;
+        farmer = s.getFarmer();
+
         String[] leftMovementFiles = {"tractor-left-1.png"};
         String[] rightMovementFiles = {"tractor-right-1.png"};
         String[] upMovementFiles = {"tractor-up-1.png"};
@@ -109,14 +111,6 @@ public class Tractor extends PlayableActor {
         farmer.setMaxSpeed(200);
         this.setSpeed(0);
         this.setFocused(false);
-    }
-
-    /**
-     * Sets the farmer within the Tractor class so that it can be referred to within Tractor
-     * @param farmer that should be mounted onto tractor when in use
-     */
-    public void setFarmer(Farmer farmer) {
-        this.farmer = farmer;
     }
 
     /**

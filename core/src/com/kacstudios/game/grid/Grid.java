@@ -40,9 +40,7 @@ public class Grid extends Group {
     }
 
     private void createGridEvent(float x, float y){
-        System.out.println(x + " " + y);
-        GridVector coords = new GridVector((int)x / squareSideLength, (int) y / squareSideLength);
-        GridClickEvent gridSquareItemEvent = new GridClickEvent(coords.x, coords.y, this.screen);
+        GridClickEvent gridSquareItemEvent = new GridClickEvent(x, y, this.screen);
         screen.handleGridClickEvent(gridSquareItemEvent); // pass the event to the screen
     }
 

@@ -7,15 +7,21 @@ import com.kacstudios.game.grid.GridVector;
 import com.kacstudios.game.screens.LevelScreen;
 
 public class GridClickEvent {
-    private int x;
-    private int y;
+    private float x;
+    private float y;
+
+    private GridVector gridCoords;
+
     private Grid grid;
     private LevelScreen screen;
 
-    public GridClickEvent(int x, int y, LevelScreen screen) {
+    public GridClickEvent(float x, float y, LevelScreen screen) {
+        this.grid = screen.getGrid();
         this.x = x;
         this.y = y;
-        this.grid = screen.getGrid();
+
+        this.gridCoords = new GridVector((int)x / grid.getSquareSideLength(),
+                (int) y / grid.getSquareSideLength());
         this.screen = screen;
     }
 
@@ -23,8 +29,16 @@ public class GridClickEvent {
      * Returns the location of the grid clicked in <b>GRID COORDINATES</b>
      * @return Grid coordinate vector
      */
-    public GridVector getLocation(){
-        return new GridVector(x, y);
+    public GridVector getGridLocation(){
+        return gridCoords;
+    }
+
+    /**
+     * Returns the location of the original click event
+     * @return Vector2 containing the click coords
+     */
+    public Vector2 getEventCoords(){
+        return new Vector2(x, y);
     }
 
     /**
@@ -32,11 +46,11 @@ public class GridClickEvent {
      * @return GridSquare clicked or null
      */
     public GridSquare getGridSquare(){
-        return grid.getGridSquares()[x][y]; // could be null
+        return grid.getGridSquares()[gridCoords.x][gridCoords.y]; // could be null
     }
 
     public void setSquare(GridSquare square){
-        grid.addGridSquare(x, y, square);
+        grid.addGridSquare(gridCoords.x, gridCoords.y, square);
     }
 
     public Vector2 getFarmerLocation() {
@@ -50,8 +64,8 @@ public class GridClickEvent {
      * @return
      */
     public boolean farmerWithinRadius(float radius) {
-        double squareX = grid.getSquareSideLength() * ((float)x + .5);
-        double squareY = grid.getSquareSideLength() * ((float)y + .5);
+        double squareX = grid.getSquareSideLength() * ((float)gridCoords.x + .5);
+        double squareY = grid.getSquareSideLength() * ((float)gridCoords.y + .5);
 
         return (squareX + radius >= getFarmerLocation().x &&
                 squareX - radius <= getFarmerLocation().x) &&
