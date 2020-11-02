@@ -31,16 +31,17 @@ public class Grid extends Group {
         levelScreen.getUIStage().addActor(this);
         gridSquares = new GridSquare[width][height];
 
-        Grid grid = this;
-
         this.addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                GridVector coords = new GridVector((int)x / squareSideLength, (int) y / squareSideLength);
-                GridClickEvent gridSquareItemEvent = new GridClickEvent(coords.x, coords.y, grid.screen);
-                screen.handleGridClickEvent(gridSquareItemEvent); // pass the event to the screen
+                createGridEvent(x, y);
             }
         });
+    }
+
+    private void createGridEvent(float x, float y){
+        GridClickEvent gridSquareItemEvent = new GridClickEvent(x, y, this.screen);
+        screen.handleGridClickEvent(gridSquareItemEvent); // pass the event to the screen
     }
 
     /**

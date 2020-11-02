@@ -1,12 +1,11 @@
 package com.kacstudios.game.screens;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.utilities.TimeEngine;
 
 /**
@@ -37,7 +36,6 @@ public abstract class BaseScreen implements Screen, InputProcessor
     // (3) render the graphics
     public void render(float dt)
     {
-        TimeEngine.act(dt);
         if (!paused) {
             // act methods
             uiStage.act(dt);
@@ -46,6 +44,10 @@ public abstract class BaseScreen implements Screen, InputProcessor
             // defined by user
             update(dt);
         }
+
+
+
+
 
         /*
         // act methods

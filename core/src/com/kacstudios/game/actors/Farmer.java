@@ -1,27 +1,22 @@
 package com.kacstudios.game.actors;
-
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.kacstudios.game.actors.BaseActor;
 
-public class Farmer extends BaseActor {
-    public boolean remove;
+public class Farmer extends PlayableActor {
+    Animation<TextureRegion> leftTractorAnimation;
+    Animation<TextureRegion> rightTractorAnimation;
+    Animation<TextureRegion> upTractorAnimation;
+    Animation<TextureRegion> downTractorAnimation;
+
     Animation<TextureRegion> leftAnimation;
     Animation<TextureRegion> rightAnimation;
     Animation<TextureRegion> upAnimation;
     Animation<TextureRegion> downAnimation;
-    float previousAngle = -1;
-    int prevKey = -1;
-
 
     public Farmer(float x, float y, Stage s)
     {
-        super(x,y,s);
-
+        super(x,y,s, true);
         String[] downAnimationFiles =
                 {"farmer-1.png", "farmer-2.png", "farmer-3.png",
                         "farmer-4.png", "farmer-5.png", "farmer-6.png", "farmer-7.png", "farmer-8.png"};
@@ -35,6 +30,17 @@ public class Farmer extends BaseActor {
         rightAnimation = loadAnimationUnsetFromFiles(rightMovementFiles, 0.1f, true);
         upAnimation = loadAnimationUnsetFromFiles(upMovementFiles, 0.1f, true);
 
+        String[] leftTractor = {"farmer-tractor-left.png"};
+        String[] rightTractor = {"farmer-tractor-right.png"};
+        String[] upTractor = {"farmer-tractor-up.png"};
+        String[] downTractor = {"farmer-tractor-down.png"};
+
+        downTractorAnimation = loadAnimationFromFiles(downTractor, 0.1f, true);
+        leftTractorAnimation = loadAnimationUnsetFromFiles(leftTractor, 0.1f, true);
+        rightTractorAnimation = loadAnimationUnsetFromFiles(rightTractor, 0.1f, true);
+        upTractorAnimation = loadAnimationUnsetFromFiles(upTractor, 0.1f, true);
+
+        setDirectionalAnimationPaths(leftMovementFiles, rightMovementFiles, upMovementFiles, downAnimationFiles);
         setAcceleration(1000);
         setMaxSpeed(200);
         setDeceleration(1000);
@@ -42,54 +48,12 @@ public class Farmer extends BaseActor {
         setBoundaryPolygon(8);
     }
 
-    public void act(float dt)
-    {
-        super.act( dt );
-
-        // configure sprite direction
-        if(Gdx.input.isKeyPressed(Keys.UP)){
-            if(prevKey != Keys.UP) setAnimation(upAnimation);
-            prevKey = Keys.UP;
+    public void useTractorAnimations(boolean isOnTractor) {
+        if(isOnTractor){
+            setDirectionalAnimations(leftTractorAnimation, rightTractorAnimation, upTractorAnimation, downTractorAnimation);
         }
-        else if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-            if(prevKey != Keys.RIGHT) setAnimation(rightAnimation);
-            prevKey = Keys.RIGHT;
+        else {
+            setDirectionalAnimations(leftAnimation, rightAnimation, upAnimation, downAnimation);
         }
-        else if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-            if(prevKey != Keys.LEFT) setAnimation(leftAnimation);
-            prevKey = Keys.LEFT;
-        }
-        else if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-            if (prevKey != Keys.DOWN) setAnimation(downAnimation);
-            prevKey = Keys.DOWN;
-        }
-
-        if (remove) {
-            addAction( Actions.fadeOut(1) );
-            addAction( Actions.after( Actions.removeActor() ) );
-            return;
-        }
-
-        // configure acceleration
-        if (Gdx.input.isKeyPressed(Keys.LEFT))
-            accelerateAtAngle(180);
-        if (Gdx.input.isKeyPressed(Keys.RIGHT))
-            accelerateAtAngle(0);
-        if (Gdx.input.isKeyPressed(Keys.UP))
-            accelerateAtAngle(90);
-        if (Gdx.input.isKeyPressed(Keys.DOWN))
-            accelerateAtAngle(270);
-
-        applyPhysics(dt);
-
-        setAnimationPaused( !isMoving() );
-
-//        if ( getSpeed() > 0 )
-//            setRotation( getMotionAngle() );
-
-        boundToWorld();
-
-        alignCamera();
     }
-
 }

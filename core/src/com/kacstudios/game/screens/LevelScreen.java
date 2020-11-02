@@ -4,16 +4,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
+import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.grid.Grid;
-import com.kacstudios.game.grid.plants.CornPlant;
+import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.inventoryItems.WateringCanItem;
@@ -23,27 +27,31 @@ import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
 
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
+    private Tractor tractor;
     private List<BaseActor> outOfBoundsArea;
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
 
+    Vector3 cursorLocation =  new Vector3(0 ,0, 0);
+
     public void initialize() {
         // placeholder initial inventory
         IInventoryItem[] initialItems = {
                 new CornPlantItem(15),
-                new WateringCanItem()
+                new WateringCanItem(3),
+                new BasicTractorItem(40)
         };
 
 //        set background/map limits
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
-        // TimeEngine.dilateTime(1000); // freeze time
         grid = new Grid(this); // create grid
 
         hud = new HUD(this, initialItems); // add HUD
@@ -96,25 +104,26 @@ public class LevelScreen extends BaseScreen {
                 }
         );
 
-//        add in grid squares
-
-        grid.addGridSquare(2, 2, new CornPlant());
-        grid.addGridSquare(2, 3, new CornPlant());
-        grid.addGridSquare(3, 2, new CornPlant());
-        grid.addGridSquare(3, 3, new CornPlant());
-
         mainStage.addActor(grid); // add grid to stage
 //        add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
     }
 
     public void update(float dt) {
-        //pass
+
+    }
+
+    @Override
+    public void render(float dt) {
+        // Propagates time dilations to DeltaTime
+        TimeEngine.act(dt);
+        super.render(dt * TimeEngine.getDilation());
     }
 
     public boolean keyDown(int keyCode) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
             pauseWindow.setVisible();
+
         return true;
     }
 

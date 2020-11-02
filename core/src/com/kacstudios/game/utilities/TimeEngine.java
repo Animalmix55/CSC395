@@ -5,18 +5,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class TimeEngine {
-    private static double timeModifier; //a modifier to add or remove from the current time
+    private static LocalDateTime currentTime;
     private static int dilation = 1;
 
     /**
-     * @param timeOffset a constant (in seconds) indicated how much the time should be modified forward or backward
+     * @param startTime a constant (in seconds) indicated how much the time should be modified forward or backward
      *                     to reach the current game time.
      */
-    public static void Init(long timeOffset){
-        timeModifier = timeOffset;
+    public static void Init(LocalDateTime startTime){
+        currentTime = startTime;
     }
     public static void Init(){
-        timeModifier = 0; // 0 second offset
+        currentTime = LocalDateTime.now();
     }
 
     /**
@@ -24,7 +24,9 @@ public class TimeEngine {
      * @param deltaSeconds is the amount of time that has passed since the last call to this method.
      */
     public static void act(float deltaSeconds){
-        if (dilation > -1) timeModifier += (dilation - 1) * deltaSeconds;
+        if (dilation > -1) {
+            currentTime = currentTime.plusNanos((long)(dilation * deltaSeconds * Math.pow(10, 9)));
+        }
     }
 
     /**
@@ -58,15 +60,15 @@ public class TimeEngine {
     }
 
     public static LocalDateTime getDateTime(){
-        return LocalDateTime.now().plusSeconds((long)timeModifier);
+        return currentTime;
     }
 
     public static LocalTime getTime() {
-        return LocalDateTime.now().plusSeconds((long)timeModifier).toLocalTime();
+        return currentTime.toLocalTime();
     }
 
     public static LocalDate getDate() {
-        return LocalDateTime.now().plusSeconds((long)timeModifier).toLocalDate();
+        return currentTime.toLocalDate();
     }
 
     public static Duration getDurationSince(LocalDateTime dateTime){
@@ -104,9 +106,5 @@ public class TimeEngine {
 
     public static int getDilation() {
         return dilation;
-    }
-
-    public static double getOffset() {
-        return timeModifier;
     }
 }
