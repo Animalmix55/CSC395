@@ -17,10 +17,7 @@ import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.grid.Grid;
-import com.kacstudios.game.inventoryItems.BasicTractorItem;
-import com.kacstudios.game.inventoryItems.CornPlantItem;
-import com.kacstudios.game.inventoryItems.IInventoryItem;
-import com.kacstudios.game.inventoryItems.WateringCanItem;
+import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
@@ -46,7 +43,8 @@ public class LevelScreen extends BaseScreen {
         IInventoryItem[] initialItems = {
                 new CornPlantItem(15),
                 new WateringCanItem(3),
-                new BasicTractorItem(40)
+                new BasicTractorItem(40),
+                new PesticideItem(5)
         };
 
 //        set background/map limits

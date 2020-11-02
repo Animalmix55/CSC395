@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.grid.GridSquare;
+import com.kacstudios.game.grid.InsectDisaster;
 import com.kacstudios.game.utilities.TimeEngine;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +25,15 @@ public class Plant extends GridSquare {
 
     private Boolean fullyGrown = false;
     private Boolean isDead = false;
+    private Boolean isProtected = false;
     private long growthTime = 60;
+    private LocalDateTime startTime = TimeEngine.getDateTime();
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
+    private InsectDisaster insect;
+    private int insectChance;
+    public int insecticideAmount;
+    public LocalDateTime attackStartTime;
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super(false);
@@ -34,11 +42,17 @@ public class Plant extends GridSquare {
         deadImage = new Image(new Texture(deadTexturePath));
         deadImage.setVisible(false);
         wetSoil.setVisible(false);
+        insect = new InsectDisaster(this);
 
         addActor(drySoil);
         addActor(wetSoil);
         addActor(deadImage);
         setGrowthTextures(growthTexturePaths);
+        addActor(insect);
+        insect.setVisible(false);
+        //This gives the insect attack a 1/5 chance.
+        insectChance = insect.generateRandom();
+        insecticideAmount = insect.generateRandom();
     }
 
     private void setGrowthTextures(String[] textureNames) {
@@ -99,6 +113,21 @@ public class Plant extends GridSquare {
 
             int numTextures = growthImages.size();
 
+            // Creates the Insect Attack
+            if(insectChance == 1 && !isProtected && !insect.isVisible() && growthPercentage >= .50)
+            {
+                this.setInsect(true);
+                attackStartTime = TimeEngine.getDateTime();
+            }
+
+            // Kills plant if insects not killed in 10 seconds
+            if(this.getInsect()){
+                if(TimeEngine.getSecondsSince(attackStartTime) == 10.0)
+                {
+                    this.setInsect(false);
+                    this.setDead(true);
+                }}
+
             if(fullyGrown) { // if grown, don't look for other textures
                 for (int i = numTextures - 2; i > 0; i--){
                     growthImages.get(i).setVisible(false);
@@ -113,6 +142,7 @@ public class Plant extends GridSquare {
                     }
                 }
             }
+
         }
     }
 
@@ -137,6 +167,19 @@ public class Plant extends GridSquare {
 
     public void resetGrowthRateModifier(){
         this.growthRateModifier = 1;
+    }
+
+    public boolean getInsect() { return insect.isVisible();}
+
+    public void setInsect(boolean isInsect){
+        insect.setVisible(isInsect);
+        if(!isInsect){
+            this.setGrowthRateModifier(1);
+            this.isProtected = true;
+        }
+        else{
+            this.setGrowthRateModifier(.25f);
+        }
     }
 
     /**
