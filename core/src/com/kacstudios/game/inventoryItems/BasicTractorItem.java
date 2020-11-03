@@ -22,6 +22,7 @@ public class BasicTractorItem extends IInventoryItem {
             tractor.setX(clickLoc.x - tractor.getWidth()/2);
             tractor.setY(clickLoc.y - tractor.getHeight()/2);
             if (getAmount() == 0) parent.setItem(null); // remove from inventory if none left
+            parent.checkItem();
         }
     }
 }
