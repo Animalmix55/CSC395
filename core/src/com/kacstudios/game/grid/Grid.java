@@ -1,4 +1,5 @@
 package com.kacstudios.game.grid;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,16 +10,20 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 public class Grid extends Group {
 
     private Texture gridSquareBgLight;
     private Texture gridSquareBgDark;
+
+    private ArrayList<Image> gridSquareImages;
 
     private GridSquare[][] gridSquares;
     private LevelScreen screen;
@@ -39,10 +44,9 @@ public class Grid extends Group {
         gridSquareBgDark.getTextureData().prepare();
 
         outOfBoundsArea = new ArrayList<>();
-        Actor background = new Image(buildGridBackground(height, width));
-        this.addActor(background);
-        this.setHeight(background.getHeight());
-        this.setWidth(background.getWidth());
+        buildGridBackground(height, width);
+        this.setHeight(height * squareSideLength);
+        this.setWidth(width * squareSideLength);
         BaseActor.setWorldBounds(this.getWidth(), this.getHeight());
 
         this.screen = levelScreen;
@@ -145,6 +149,10 @@ public class Grid extends Group {
             }
         }
 
+        IntBuffer intBuffer = BufferUtils.newIntBuffer(16);
+        Gdx.gl20.glGetIntegerv(Gdx.gl20.GL_MAX_TEXTURE_SIZE, intBuffer);
+        int maxTextureSize = intBuffer.get();
+
         float textureHeight = backgroundTexture.getHeight();
         float textureWidth = backgroundTexture.getWidth();
 
@@ -162,37 +170,51 @@ public class Grid extends Group {
         backgroundTexture.getTextureData().prepare();
         Pixmap backgroundImage = backgroundTexture.getTextureData().consumePixmap();
 
-        Pixmap container = new Pixmap((int)textureWidth, (int)height, Pixmap.Format.RGB888);
-        for(int y = 0; y < height; y = y + (int)textureHeight){
-            container.drawPixmap(backgroundImage, 0, y);
+        int imageY = 0;
+        while (imageY < height) {
+            int imageHeight = height > maxTextureSize? maxTextureSize : (int) height;
+
+            Pixmap container = new Pixmap((int) textureWidth, imageHeight, Pixmap.Format.RGB888);
+            for (int y = 0; y < imageHeight; y = y + (int) textureHeight) {
+                container.drawPixmap(backgroundImage, 0, y);
+            }
+
+            Texture sideTexture = new Texture(container);
+            Image leftImage = new Image(sideTexture);
+            Image rightImage = new Image(sideTexture);
+            leftImage.setPosition(width, imageY);
+            rightImage.setPosition(-textureWidth, imageY);
+
+            imageY += imageHeight; // increment height
+            outOfBoundsArea.add(leftImage);
+            outOfBoundsArea.add(rightImage);
         }
-
-        Texture sideTexture = new Texture(container);
-        Image leftImage = new Image(sideTexture);
-        Image rightImage = new Image(sideTexture);
-        leftImage.setPosition(width, 0);
-        rightImage.setPosition(-textureWidth, 0);
-
-        outOfBoundsArea.add(leftImage);
-        outOfBoundsArea.add(rightImage);
 
         // end generating side texture
 
         // generate top/bottom texture
 
-        Pixmap container2 = new Pixmap((int)width, (int)textureHeight, Pixmap.Format.RGB888);
-        for(int x = 0; x < width; x = x + (int)textureWidth){
-            container2.drawPixmap(backgroundImage, x, 0);
+        int imageX = 0;
+
+        while (imageX < width) {
+            int imageWidth = width > maxTextureSize? maxTextureSize : (int) width;
+
+            Pixmap container2 = new Pixmap(imageWidth, (int) textureHeight, Pixmap.Format.RGB888);
+            for (int x = 0; x < imageWidth; x = x + (int) textureWidth) {
+                container2.drawPixmap(backgroundImage, x, 0);
+            }
+
+            Texture topBottomTexture = new Texture(container2);
+            Image topImage = new Image(topBottomTexture);
+            Image bottomImage = new Image(topBottomTexture);
+            topImage.setPosition(imageX, height);
+            bottomImage.setPosition(imageX, -textureHeight);
+
+            imageX += imageWidth;
+
+            outOfBoundsArea.add(topImage);
+            outOfBoundsArea.add(bottomImage);
         }
-
-        Texture topBottomTexture = new Texture(container2);
-        Image topImage = new Image(topBottomTexture);
-        Image bottomImage = new Image(topBottomTexture);
-        topImage.setPosition(0, height);
-        bottomImage.setPosition(0, -textureHeight);
-
-        outOfBoundsArea.add(topImage);
-        outOfBoundsArea.add(bottomImage);
 
         // end generate top/bottom texture
         for (Image image: outOfBoundsArea){
@@ -202,23 +224,61 @@ public class Grid extends Group {
         backgroundImage.dispose();
     }
 
-    private Texture buildGridBackground(int height, int width){
+    private void buildGridBackground(int height, int width){
+        if(gridSquareImages != null){
+            for (int i = 0; i < gridSquareImages.size(); i++){
+                gridSquareImages.get(i).remove();
+            }
+        }
+        gridSquareImages = new ArrayList<>();
+
         Pixmap dark = gridSquareBgDark.getTextureData().consumePixmap();
         Pixmap light = gridSquareBgLight.getTextureData().consumePixmap();
 
-        Pixmap container = new Pixmap(width * squareSideLength, height * squareSideLength, Pixmap.Format.RGBA8888);
+        int imageX = 0;
 
-        for (int x = 0; x < width; x++){
-            for (int y = 0; y < height; y++) {
-                if((x + y) % 2 == 0) container.drawPixmap(dark, x * squareSideLength, y * squareSideLength);
-                else container.drawPixmap(light, x * squareSideLength, y * squareSideLength);
+        int pixelHeight = height * squareSideLength;
+        int pixelWidth = width * squareSideLength;
+
+        IntBuffer intBuffer = BufferUtils.newIntBuffer(16);
+        Gdx.gl20.glGetIntegerv(Gdx.gl20.GL_MAX_TEXTURE_SIZE, intBuffer);
+        int maxTextureSize = intBuffer.get();
+        int xIndexOffset = 0;
+
+        while (imageX < pixelWidth) {
+            int imageWidth = (width * squareSideLength) < maxTextureSize? (width * squareSideLength) :
+                    (maxTextureSize / squareSideLength) * squareSideLength; // round
+            int imageY = 0;
+
+            int yIndexOffset = 0;
+            while (imageY < pixelHeight) {
+                int imageHeight = (height * squareSideLength) < maxTextureSize? (height * squareSideLength) :
+                        (maxTextureSize / squareSideLength) * squareSideLength; // round
+
+                Pixmap container = new Pixmap(imageWidth, imageHeight, Pixmap.Format.RGBA8888);
+
+                for (int x = 0; x < imageWidth; x = x + squareSideLength) {
+                    int yIndex = yIndexOffset;
+                    for (int y = 0; y < imageHeight; y = y + squareSideLength) {
+                        if ((xIndexOffset + yIndex) % 2 == 0) container.drawPixmap(dark, x, y);
+                        else container.drawPixmap(light, x, y);
+                        yIndex++;
+                    }
+                    xIndexOffset++;
+                }
+                Texture textureResult = new Texture(container);
+                Image image = new Image(textureResult);
+                image.setPosition(imageX, imageY);
+
+                this.addActor(image);
+                gridSquareImages.add(image);
+
+                imageY += imageHeight;
             }
+            imageX += imageWidth;
         }
-        Texture textureResult = new Texture(container);
 
         dark.dispose();
         light.dispose();
-
-        return textureResult;
     }
 }
