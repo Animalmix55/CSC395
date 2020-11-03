@@ -1,12 +1,9 @@
 package com.kacstudios.game.grid.plants;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.grid.GridSquare;
+import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.utilities.TimeEngine;
 
 import java.time.LocalDateTime;
@@ -23,9 +20,12 @@ public class Plant extends GridSquare {
 
     private Boolean fullyGrown = false;
     private Boolean isDead = false;
+    private Boolean isProtected = false;
     private long growthTime = 60;
+    private LocalDateTime startTime = TimeEngine.getDateTime();
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
+    private InsectDisaster insect;
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super(false);
@@ -39,6 +39,10 @@ public class Plant extends GridSquare {
         addActor(wetSoil);
         addActor(deadImage);
         setGrowthTextures(growthTexturePaths);
+        if(InsectDisaster.generateRandom() < 3){
+            insect =  new InsectDisaster(this);
+            addActor(insect);
+        }
     }
 
     private void setGrowthTextures(String[] textureNames) {
@@ -99,10 +103,11 @@ public class Plant extends GridSquare {
 
             int numTextures = growthImages.size();
 
+            for (int i = numTextures - 1; i > 0; i--){
+                growthImages.get(i).setVisible(false);
+            }
+
             if(fullyGrown) { // if grown, don't look for other textures
-                for (int i = numTextures - 2; i > 0; i--){
-                    growthImages.get(i).setVisible(false);
-                }
                 growthImages.get(numTextures-1).setVisible(true);
             }
             else {
@@ -113,6 +118,7 @@ public class Plant extends GridSquare {
                     }
                 }
             }
+
         }
     }
 
@@ -139,22 +145,35 @@ public class Plant extends GridSquare {
         this.growthRateModifier = 1;
     }
 
+    public InsectDisaster getInsect() { return insect; }
+
+    public void setInsect(InsectDisaster disaster){
+        if(insect != null) insect.remove(); // remove old
+
+        insect = disaster;
+        if(insect != null) addActor(insect);
+    }
+
     /**
      * Kills the plant
      */
     public void setDead(boolean isDead) {
         if(isDead) {
-            for (int i = growthImages.size()-1; i > 0; i--){
+            this.isDead = true;
+            for (int i = 0; i < growthImages.size(); i++){
                 growthImages.get(i).setVisible(false);
             }
-            this.isDead = true;
             deadImage.setVisible(true);
         }
         else
-            isDead = false;
+            this.isDead = false;
     }
 
     public Boolean getDead() {
         return isDead;
+    }
+
+    public float getGrowthPercentage() {
+        return growthPercentage;
     }
 }
