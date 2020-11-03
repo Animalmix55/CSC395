@@ -126,12 +126,15 @@ public class Plant extends GridSquare {
                 {
                     this.setInsect(false);
                     this.setDead(true);
-                }}
+                    return; // DON'T GO ANY FURTHER IF THE PLANT IS DEAD
+                }
+            }
+
+            for (int i = numTextures - 1; i > 0; i--){
+                growthImages.get(i).setVisible(false);
+            }
 
             if(fullyGrown) { // if grown, don't look for other textures
-                for (int i = numTextures - 2; i > 0; i--){
-                    growthImages.get(i).setVisible(false);
-                }
                 growthImages.get(numTextures-1).setVisible(true);
             }
             else {
@@ -187,14 +190,14 @@ public class Plant extends GridSquare {
      */
     public void setDead(boolean isDead) {
         if(isDead) {
-            for (int i = growthImages.size()-1; i > 0; i--){
+            this.isDead = true;
+            for (int i = 0; i < growthImages.size(); i++){
                 growthImages.get(i).setVisible(false);
             }
-            this.isDead = true;
             deadImage.setVisible(true);
         }
         else
-            isDead = false;
+            this.isDead = false;
     }
 
     public Boolean getDead() {
