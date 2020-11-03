@@ -99,10 +99,11 @@ public class Plant extends GridSquare {
 
             int numTextures = growthImages.size();
 
+            for (int i = numTextures - 2; i > 0; i--){
+                growthImages.get(i).setVisible(false);
+            }
+
             if(fullyGrown) { // if grown, don't look for other textures
-                for (int i = numTextures - 2; i > 0; i--){
-                    growthImages.get(i).setVisible(false);
-                }
                 growthImages.get(numTextures-1).setVisible(true);
             }
             else {

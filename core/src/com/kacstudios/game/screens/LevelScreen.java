@@ -33,13 +33,9 @@ import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
-    private Tractor tractor;
-    private List<BaseActor> outOfBoundsArea;
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
-
-    Vector3 cursorLocation =  new Vector3(0 ,0, 0);
 
     public void initialize() {
         // placeholder initial inventory
@@ -48,31 +44,11 @@ public class LevelScreen extends BaseScreen {
                 new WateringCanItem(3),
                 new BasicTractorItem(40)
         };
-
-//        set background/map limits
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
-        grid = new Grid(this); // create grid
+        grid = new Grid(40, 40, this); // create grid
 
         hud = new HUD(this, initialItems); // add HUD
-
-
-//        out of bounds background
-//        counter clockwise, starting from the right middle
-        outOfBoundsArea = new ArrayList<>();
-        outOfBoundsArea.add(new BaseActor(1080, 0, mainStage));
-        outOfBoundsArea.add(new BaseActor(1080, 1080, mainStage));
-        outOfBoundsArea.add(new BaseActor(0, 1080, mainStage));
-        outOfBoundsArea.add(new BaseActor(-1080, 1080, mainStage));
-        outOfBoundsArea.add(new BaseActor(-1080, 0, mainStage));
-        outOfBoundsArea.add(new BaseActor(-1080, -1080, mainStage));
-        outOfBoundsArea.add(new BaseActor(0, -1080, mainStage));
-        outOfBoundsArea.add(new BaseActor(1080, -1080, mainStage));
-        for (BaseActor baseActor : outOfBoundsArea) {
-            baseActor.loadTexture("grass-outofbounds_1080x1080.png");
-            baseActor.setSize(1080, 1080);
-        }
-
 
         //pause button
 
@@ -83,7 +59,6 @@ public class LevelScreen extends BaseScreen {
         buttonStyle.up = new TextureRegionDrawable(buttonRegion);
 
         Button PauseButton = new Button(buttonStyle);
-//        PauseButton.setColor( Color.CYAN );
         PauseButton.setPosition(20, 650);
         uiStage.addActor(PauseButton);
 
@@ -105,7 +80,7 @@ public class LevelScreen extends BaseScreen {
         );
 
         mainStage.addActor(grid); // add grid to stage
-//        add in farmer actor
+//      add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
     }
 
