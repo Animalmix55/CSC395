@@ -99,7 +99,7 @@ public class Plant extends GridSquare {
 
             int numTextures = growthImages.size();
 
-            for (int i = numTextures - 2; i > 0; i--){
+            for (int i = numTextures - 1; i > 0; i--){
                 growthImages.get(i).setVisible(false);
             }
 
