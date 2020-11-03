@@ -171,15 +171,18 @@ public class Grid extends Group {
         Pixmap backgroundImage = backgroundTexture.getTextureData().consumePixmap();
 
         int imageY = 0;
+        Texture sideTexture = null;
         while (imageY < height) {
-            int imageHeight = height > maxTextureSize? maxTextureSize : (int) height;
+            int imageHeight = (height - imageY) > maxTextureSize? maxTextureSize : ((int) height - imageY);
 
-            Pixmap container = new Pixmap((int) textureWidth, imageHeight, Pixmap.Format.RGB888);
-            for (int y = 0; y < imageHeight; y = y + (int) textureHeight) {
-                container.drawPixmap(backgroundImage, 0, y);
+            if(sideTexture == null || imageHeight != sideTexture.getHeight()) {
+                Pixmap container = new Pixmap((int) textureWidth, imageHeight, Pixmap.Format.RGB888);
+                for (int y = 0; y < imageHeight; y = y + (int) textureHeight) {
+                    container.drawPixmap(backgroundImage, 0, y);
+                }
+
+                sideTexture = new Texture(container);
             }
-
-            Texture sideTexture = new Texture(container);
             Image leftImage = new Image(sideTexture);
             Image rightImage = new Image(sideTexture);
             leftImage.setPosition(width, imageY);
@@ -195,16 +198,19 @@ public class Grid extends Group {
         // generate top/bottom texture
 
         int imageX = 0;
+        Texture topBottomTexture = null;
 
         while (imageX < width) {
-            int imageWidth = width > maxTextureSize? maxTextureSize : (int) width;
+            int imageWidth = (width - imageX) > maxTextureSize? maxTextureSize : ((int) width - imageX);
 
-            Pixmap container2 = new Pixmap(imageWidth, (int) textureHeight, Pixmap.Format.RGB888);
-            for (int x = 0; x < imageWidth; x = x + (int) textureWidth) {
-                container2.drawPixmap(backgroundImage, x, 0);
+            if(topBottomTexture == null || imageWidth != sideTexture.getWidth()) {
+                Pixmap container2 = new Pixmap(imageWidth, (int) textureHeight, Pixmap.Format.RGB888);
+                for (int x = 0; x < imageWidth; x = x + (int) textureWidth) {
+                    container2.drawPixmap(backgroundImage, x, 0);
+                }
+
+                topBottomTexture = new Texture(container2);
             }
-
-            Texture topBottomTexture = new Texture(container2);
             Image topImage = new Image(topBottomTexture);
             Image bottomImage = new Image(topBottomTexture);
             topImage.setPosition(imageX, height);
@@ -242,31 +248,36 @@ public class Grid extends Group {
 
         IntBuffer intBuffer = BufferUtils.newIntBuffer(16);
         Gdx.gl20.glGetIntegerv(Gdx.gl20.GL_MAX_TEXTURE_SIZE, intBuffer);
-        int maxTextureSize = intBuffer.get();
+        int maxTextureSize = intBuffer.get() / 4; // don't go overboard
         int xIndexOffset = 0;
+        Texture textureResult = null; // holds the images temporarily
 
         while (imageX < pixelWidth) {
-            int imageWidth = (width * squareSideLength) < maxTextureSize? (width * squareSideLength) :
-                    (maxTextureSize / squareSideLength) * squareSideLength; // round
+            int imageWidth;
+
+            imageWidth = (width * squareSideLength - imageX) < maxTextureSize? (width * squareSideLength - imageX) :
+                    (maxTextureSize / (squareSideLength * 2)) * (squareSideLength * 2); // round
+
             int imageY = 0;
 
             int yIndexOffset = 0;
             while (imageY < pixelHeight) {
-                int imageHeight = (height * squareSideLength) < maxTextureSize? (height * squareSideLength) :
-                        (maxTextureSize / squareSideLength) * squareSideLength; // round
+                int imageHeight = (height * squareSideLength - imageY) < maxTextureSize ? (height * squareSideLength - imageY) :
+                        (maxTextureSize / (squareSideLength * 2)) * (squareSideLength * 2); // round
+                if(textureResult == null || textureResult.getHeight() != imageHeight || textureResult.getWidth() != imageWidth){
+                    Pixmap container = new Pixmap(imageWidth, imageHeight, Pixmap.Format.RGBA8888);
 
-                Pixmap container = new Pixmap(imageWidth, imageHeight, Pixmap.Format.RGBA8888);
-
-                for (int x = 0; x < imageWidth; x = x + squareSideLength) {
-                    int yIndex = yIndexOffset;
-                    for (int y = 0; y < imageHeight; y = y + squareSideLength) {
-                        if ((xIndexOffset + yIndex) % 2 == 0) container.drawPixmap(dark, x, y);
-                        else container.drawPixmap(light, x, y);
-                        yIndex++;
+                    for (int x = 0; x < imageWidth; x = x + squareSideLength) {
+                        int yIndex = yIndexOffset;
+                        for (int y = 0; y < imageHeight; y = y + squareSideLength) {
+                            if ((xIndexOffset + yIndex) % 2 == 0) container.drawPixmap(dark, x, y);
+                            else container.drawPixmap(light, x, y);
+                            yIndex++;
+                        }
+                        xIndexOffset++;
                     }
-                    xIndexOffset++;
+                    textureResult = new Texture(container);
                 }
-                Texture textureResult = new Texture(container);
                 Image image = new Image(textureResult);
                 image.setPosition(imageX, imageY);
 
