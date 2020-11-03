@@ -1,5 +1,6 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
@@ -18,10 +19,12 @@ public class PesticideItem extends IDepleteableItem{
         if(Plant.class.isAssignableFrom(event.getGridSquare().getClass())){
             //ACTION LOGIC
             Plant target = (Plant) event.getGridSquare();
-            if(!target.getInsect()) return;
+            InsectDisaster disaster = target.getInsect();
 
-            if(target.insecticideAmount == 1){ target.setInsect(false); }
-            else{ target.insecticideAmount--; }
+            if(disaster == null) return;
+
+            if(disaster.getInsecticideAmount() == 1){ disaster.endDisaster(); }
+            else{ disaster.setInsecticideAmount(disaster.getInsecticideAmount() - 1); }
 
             //CHANGE QUANTITIES LOGIC
             float newPercent = getDepletionPercentage() + 0.10f;
