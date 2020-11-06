@@ -40,7 +40,8 @@ public class LevelScreen extends BaseScreen {
                 new CornPlantItem(15),
                 new WateringCanItem(3),
                 new BasicTractorItem(40),
-                new PesticideItem(5)
+                new PesticideItem(5),
+                new BlueberriesPlantItem(5)
         };
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
