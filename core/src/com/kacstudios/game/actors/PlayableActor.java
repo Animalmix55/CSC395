@@ -151,28 +151,36 @@ public class PlayableActor extends BaseActor {
         super.act(dt);
         if (isFocused) {
             // configure sprite direction
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 if (prevKey != Input.Keys.W) setAnimation(upAnimation);
                 prevKey = Input.Keys.W;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                if (prevKey != Input.Keys.UP) setAnimation(upAnimation);
+                prevKey = Input.Keys.UP;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 if (prevKey != Input.Keys.D) setAnimation(rightAnimation);
                 prevKey = Input.Keys.D;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                if (prevKey != Input.Keys.RIGHT) setAnimation(rightAnimation);
+                prevKey = Input.Keys.RIGHT;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 if (prevKey != Input.Keys.A) setAnimation(leftAnimation);
                 prevKey = Input.Keys.A;
-            } else if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                if (prevKey != Input.Keys.LEFT) setAnimation(leftAnimation);
+                prevKey = Input.Keys.LEFT;
+            } else if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 if (prevKey != Input.Keys.S) setAnimation(downAnimation);
                 prevKey = Input.Keys.S;
+                if (prevKey != Input.Keys.DOWN) setAnimation(downAnimation);
+                prevKey = Input.Keys.DOWN;
             }
 
             // configure acceleration
-            if (Gdx.input.isKeyPressed(Input.Keys.A))
+            if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))
                 accelerateAtAngle(180);
-            if (Gdx.input.isKeyPressed(Input.Keys.D))
+            if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))
                 accelerateAtAngle(0);
-            if (Gdx.input.isKeyPressed(Input.Keys.W))
+            if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))
                 accelerateAtAngle(90);
-            if (Gdx.input.isKeyPressed(Input.Keys.S))
+            if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))
                 accelerateAtAngle(270);
 
             if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
