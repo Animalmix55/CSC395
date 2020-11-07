@@ -31,7 +31,7 @@ public class Settings extends BaseScreen {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         final Label Gamelabel = new Label("Game Volume: " + Global.GameVolume, skin);
-        Gamelabel.setColor(Color.BLACK);
+        Gamelabel.setColor(Color.WHITE);
         //Gamelabel.setScale(1.5f);
         Gamelabel.setPosition(225, 200);
 
@@ -50,7 +50,7 @@ public class Settings extends BaseScreen {
 
 
         final Label Musiclabel = new Label("Music Volume: " + Global.MusicVolume, skin);
-        Musiclabel.setColor(Color.BLACK);
+        Musiclabel.setColor(Color.WHITE);
         Musiclabel.setPosition(425, 200);
 
         final Slider Musicslider = new Slider(0,100,1,true, skin);
@@ -79,11 +79,10 @@ public class Settings extends BaseScreen {
 
 //        set background/map limits
         BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
-        farmBaseActor.loadTexture("MainMenu.jpg");
+//        farmBaseActor.loadTexture("MainMenu.jpg");
+        farmBaseActor.loadTexture("background_2.png");
         farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
-
-
 
         TextButton RestoreButton = new TextButton( "Restore", BaseGame.textButtonStyle );
         RestoreButton.setPosition(900,0);
@@ -110,7 +109,7 @@ public class Settings extends BaseScreen {
         );
 
         TextButton ExitButton = new TextButton( "Exit", BaseGame.textButtonStyle );
-        ExitButton.setPosition(1135,0);
+        ExitButton.setPosition(1095,60);
         uiStage.addActor(ExitButton);
 
         ExitButton.addListener(
