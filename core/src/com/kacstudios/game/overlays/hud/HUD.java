@@ -1,5 +1,6 @@
 package com.kacstudios.game.overlays.hud;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -7,22 +8,24 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.screens.LevelScreen;
-import com.kacstudios.game.utilities.FarmaniaFonts;
-import com.kacstudios.game.utilities.GridClickEvent;
-import com.kacstudios.game.utilities.TimeEngine;
+import com.kacstudios.game.utilities.*;
 
 public class HUD extends Group {
+    private Skin skin;
     LevelScreen screen;
     Image background;
     Label time;
     Label date;
+    Label money;
     CustomizeFarmerButton customizeFarmerButton;
     InventoryViewer inventoryViewer;
 
     public HUD(LevelScreen inputScreen){
+
         screen = inputScreen;
         background = new Image(new Texture("bottombar/background.png"));
 
@@ -31,6 +34,30 @@ public class HUD extends Group {
         this.setBounds(0, 0, getWidth(), getHeight());
         this.addActor(background);
         this.setX((screen.getUIStage().getWidth() - 1280)/2); // center
+
+
+        //adding label for money
+
+        money = new Label(TimeEngine.getFormattedString("$"+Economy.Money),
+                new Label.LabelStyle(FarmaniaFonts.generateFont("OpenSans.ttf", 30), Color.WHITE));
+        money.setX(400);
+        money.setY(10);
+
+        this.addActor(money);
+
+/*
+        //Adding label for Money
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        final Label MoneyLabel = new Label("$" + Economy.Money, skin);
+        MoneyLabel.setColor(Color.WHITE);
+
+        MoneyLabel.setX(400);
+        MoneyLabel.setY(15);
+        this.addActor(MoneyLabel);
+
+
+ */
 
         //ADD CUSTOMIZATION BUTTON
         customizeFarmerButton = new CustomizeFarmerButton();

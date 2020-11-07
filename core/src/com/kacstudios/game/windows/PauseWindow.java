@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
-import com.kacstudios.game.utilities.Global;
+import com.kacstudios.game.utilities.Setting;
 import com.kacstudios.game.utilities.TimeEngine;
 
 public class PauseWindow {
@@ -155,7 +155,7 @@ public class PauseWindow {
         ////////////sliders
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        final Label Gamelabel = new Label("Game Volume: " + Global.GameVolume, skin);
+        final Label Gamelabel = new Label("Game Volume: " + Setting.GameVolume, skin);
         Gamelabel.setColor(Color.WHITE);
         //Gamelabel.setScale(1.5f);
         Gamelabel.setSize(1, 1);
@@ -163,33 +163,33 @@ public class PauseWindow {
 
         final Slider Gameslider = new Slider(0, 100, 1, true, skin);
         //slider.setBounds(75,300,500,300);
-        Gameslider.setValue(Global.GameVolume);
+        Gameslider.setValue(Setting.GameVolume);
         Gameslider.setPosition(15, 30);
         Gameslider.addListener(
                 (Event e) ->
                 {
                     Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
-                    Global.GameVolume = Math.round(Gameslider.getValue());
+                    Setting.GameVolume = Math.round(Gameslider.getValue());
                     return true;
                 }
         );
 
 
-        final Label Musiclabel = new Label("Music Volume: " + Global.MusicVolume, skin);
+        final Label Musiclabel = new Label("Music Volume: " + Setting.MusicVolume, skin);
         Musiclabel.setColor(Color.WHITE);
         Musiclabel.setSize(1, 1);
         Musiclabel.setPosition(200, 10);
 
         final Slider Musicslider = new Slider(0, 100, 1, true, skin);
         //slider.setBounds(75,300,500,300);
-        Musicslider.setValue(Global.MusicVolume);
+        Musicslider.setValue(Setting.MusicVolume);
         //Musicslider.setPosition(155,30);
         Musicslider.setPosition(100, 30);
         Musicslider.addListener(
                 (Event e) ->
                 {
                     Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
-                    Global.MusicVolume = Math.round(Musicslider.getValue());
+                    Setting.MusicVolume = Math.round(Musicslider.getValue());
                     return true;
                 }
         );
@@ -219,11 +219,11 @@ public class PauseWindow {
 
                     if (!((InputEvent) e).getType().equals(InputEvent.Type.touchDown))
                         return false;
-                    Global.MusicVolume=50;
-                    Global.GameVolume=50;
-                    Musicslider.setValue(Global.MusicVolume);
+                    Setting.MusicVolume=50;
+                    Setting.GameVolume=50;
+                    Musicslider.setValue(Setting.MusicVolume);
                     Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
-                    Gameslider.setValue(Global.GameVolume);
+                    Gameslider.setValue(Setting.GameVolume);
                     Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
 
                     return true;
