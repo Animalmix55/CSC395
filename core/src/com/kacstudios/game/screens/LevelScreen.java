@@ -45,7 +45,7 @@ public class LevelScreen extends BaseScreen {
         };
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
-        grid = new Grid(1000, 1000, this); // create grid
+        grid = new Grid(10, 10, this); // create grid
 
         hud = new HUD(this, initialItems); // add HUD
 
