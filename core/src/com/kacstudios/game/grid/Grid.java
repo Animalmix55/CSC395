@@ -1,8 +1,11 @@
 package com.kacstudios.game.grid;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -23,7 +26,7 @@ public class Grid extends Group {
     private Texture gridSquareBgLight;
     private Texture gridSquareBgDark;
 
-    private ArrayList<Image> gridSquareImages;
+    private ArrayList<ArrayList<Image>> gridSquareImages;
 
     private GridSquare[][] gridSquares;
     private LevelScreen screen;
@@ -85,6 +88,51 @@ public class Grid extends Group {
                 }
             }
         }
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        Camera camera = getStage().getCamera();
+        float cameraHeight = camera.viewportHeight;
+        float cameraWidth = camera.viewportWidth;
+        float cameraX = camera.position.x - cameraWidth/2;
+        float cameraY = camera.position.y - cameraHeight/2;
+
+        boolean columnPlaced = false;
+        for(int xIndex = 0; xIndex < gridSquareImages.size(); xIndex++){
+            Image currentSquare = gridSquareImages.get(xIndex).get(0);
+            float x = currentSquare.getX();
+            float y = currentSquare.getY();
+            float height = currentSquare.getHeight();
+            float width = currentSquare.getWidth();
+            Rectangle cameraRectangle = new Rectangle(cameraX, cameraY, cameraWidth, cameraHeight);
+            Rectangle imageRectangle = new Rectangle(x, 0, width, getHeight());
+
+            if(!cameraRectangle.overlaps(imageRectangle)) continue; // dont try if the space isn't promising
+
+            int columnHeight = gridSquareImages.get(xIndex).size();
+            int yIndex = 0;
+            boolean imagesPlaced = false;
+            do {
+                imageRectangle = new Rectangle(x, y, width, height);
+                if(cameraRectangle.overlaps(imageRectangle)) {
+                    currentSquare.draw(batch, parentAlpha); // render
+                    imagesPlaced = true;
+                }
+
+                yIndex++;
+                if(yIndex >= columnHeight) break; // dont go outside bounds
+                currentSquare = gridSquareImages.get(xIndex).get(yIndex);
+                x = currentSquare.getX();
+                y = currentSquare.getY();
+                height = currentSquare.getHeight();
+                width = currentSquare.getWidth();
+            } while (true);
+
+            if(imagesPlaced) columnPlaced = true;
+            else if (columnPlaced) break; // don't bother checking further right...
+        }
+        super.draw(batch, parentAlpha);
     }
 
     /**
@@ -231,11 +279,6 @@ public class Grid extends Group {
     }
 
     private void buildGridBackground(int height, int width){
-        if(gridSquareImages != null){
-            for (int i = 0; i < gridSquareImages.size(); i++){
-                gridSquareImages.get(i).remove();
-            }
-        }
         gridSquareImages = new ArrayList<>();
 
         Pixmap dark = gridSquareBgDark.getTextureData().consumePixmap();
@@ -252,14 +295,15 @@ public class Grid extends Group {
         int xIndexOffset = 0;
         Texture textureResult = null; // holds the images temporarily
 
+        int imageGridX = 0;
         while (imageX < pixelWidth) {
+            gridSquareImages.add(new ArrayList<>());
             int imageWidth;
 
             imageWidth = (width * squareSideLength - imageX) < maxTextureSize? (width * squareSideLength - imageX) :
                     (maxTextureSize / (squareSideLength * 2)) * (squareSideLength * 2); // round
 
             int imageY = 0;
-
             int yIndexOffset = 0;
             while (imageY < pixelHeight) {
                 int imageHeight = (height * squareSideLength - imageY) < maxTextureSize ? (height * squareSideLength - imageY) :
@@ -280,12 +324,11 @@ public class Grid extends Group {
                 }
                 Image image = new Image(textureResult);
                 image.setPosition(imageX, imageY);
-
-                this.addActor(image);
-                gridSquareImages.add(image);
+                gridSquareImages.get(imageGridX).add(image);
 
                 imageY += imageHeight;
             }
+            imageGridX++;
             imageX += imageWidth;
         }
 
