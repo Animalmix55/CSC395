@@ -17,6 +17,7 @@ import com.kacstudios.game.utilities.TimeEngine;
 public class PauseWindow {
     private Window window;
     private Window windowsetting;
+    private Window windowexit;
     private Skin skin;
 
     public PauseWindow(LevelScreen screen){
@@ -79,14 +80,70 @@ public class PauseWindow {
 
                     if (!((InputEvent) e).getType().equals(InputEvent.Type.touchDown))
                         return false;
-
+                    window.setVisible(false);
+                    windowexit.setVisible(true);
+/*
                     TimeEngine.resume();
                     screen.setPaused(false);
                     FarmaniaGame.setActiveScreen(new MainMenu());
+
+ */
                     return true;
                 }
         );
 
+        //Exiting to main menu pop up
+
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        windowexit = new Window("Paused", skin);
+        windowexit.setVisible(false);
+        windowexit.setMovable(false);
+
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        final Label Exitlabel = new Label("Are you sure you would like to exit?", skin);
+        Exitlabel.setColor(Color.WHITE);
+        Exitlabel.setPosition(80, 100);
+
+
+        final Label Exitlabel2 = new Label("All unsaved data will be lost", skin);
+        Exitlabel2.setColor(Color.WHITE);
+        Exitlabel2.setPosition(100, 80);
+
+        final TextButton NoButton = new TextButton("No", skin);
+        NoButton.setBounds(210,10,100,50);
+        NoButton.addListener(
+                (Event e) ->
+                {
+                    if (!(e instanceof InputEvent))
+                        return false;
+
+                    if (!((InputEvent) e).getType().equals(InputEvent.Type.touchDown))
+                        return false;
+                    windowexit.setVisible(false);
+                    window.setVisible(true);
+                    return true;
+                }
+        );
+
+        final TextButton YesButton = new TextButton("Yes", skin);
+        YesButton.setBounds(100,10,100,50);
+        YesButton.addListener(
+                (Event e) ->
+                {
+                    if (!(e instanceof InputEvent))
+                        return false;
+
+                    if (!((InputEvent) e).getType().equals(InputEvent.Type.touchDown))
+                        return false;
+
+                    TimeEngine.resume();
+                    screen.setPaused(false);
+                    FarmaniaGame.setActiveScreen(new MainMenu());
+
+                    return true;
+                }
+        );
 
         //pause menu settings
 
@@ -152,15 +209,24 @@ public class PauseWindow {
                 }
         );
 
-        final TextButton ApplyButton = new TextButton("Apply", skin);
+        final TextButton RestoreButton = new TextButton("Restore", skin);
         //SettingsExitButton.setPosition(400,100);
-        ApplyButton.addListener(
+        RestoreButton.addListener(
                 (Event e) ->
                 {
                     if (!(e instanceof InputEvent))
                         return false;
 
-                    return ((InputEvent) e).getType().equals(InputEvent.Type.touchDown);
+                    if (!((InputEvent) e).getType().equals(InputEvent.Type.touchDown))
+                        return false;
+                    Global.MusicVolume=50;
+                    Global.GameVolume=50;
+                    Musicslider.setValue(Global.MusicVolume);
+                    Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
+                    Gameslider.setValue(Global.GameVolume);
+                    Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
+
+                    return true;
                 }
         );
 
@@ -182,11 +248,20 @@ public class PauseWindow {
         windowsetting.addActor(Gameslider);
         windowsetting.addActor(Musiclabel);
         windowsetting.addActor(Musicslider);
-        windowsetting.add(ApplyButton);
+        windowsetting.add(RestoreButton);
         windowsetting.add(SettingsReturnButton);
         windowsetting.pack();
         windowsetting.setBounds((Gdx.graphics.getWidth() - newWidth) / 2, (Gdx.graphics.getHeight() - newHeight) / 2, newWidth, newHeight);
         screen.getUIStage().addActor(windowsetting);
+
+        //adding buttons and label to exit menu
+        windowexit.addActor(Exitlabel);
+        windowexit.addActor(Exitlabel2);
+        windowexit.addActor(YesButton);
+        windowexit.addActor(NoButton);
+        windowexit.pack();
+        windowexit.setBounds((Gdx.graphics.getWidth() - newWidth) / 2, (Gdx.graphics.getHeight() - newHeight) / 2, newWidth, newHeight);
+        screen.getUIStage().addActor(windowexit);
     }
 
     public boolean keyDown(int keyCode)

@@ -84,13 +84,11 @@ public class Settings extends BaseScreen {
         farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
 
+        TextButton RestoreButton = new TextButton( "Restore", BaseGame.textButtonStyle );
+        RestoreButton.setPosition(900,0);
+        uiStage.addActor(RestoreButton);
 
-
-        TextButton ApplyButton = new TextButton( "Apply", BaseGame.textButtonStyle );
-        ApplyButton.setPosition(900,60);
-        uiStage.addActor(ApplyButton);
-
-        ApplyButton.addListener(
+        RestoreButton.addListener(
                 (Event e) ->
                 {
                     if ( !(e instanceof InputEvent) )
@@ -98,6 +96,13 @@ public class Settings extends BaseScreen {
 
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
+                    Global.MusicVolume=50;
+                    Global.GameVolume=50;
+                    Musicslider.setValue(Global.MusicVolume);
+                    Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
+                    Gameslider.setValue(Global.GameVolume);
+                    Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
+
 
                     return true;
                 }
