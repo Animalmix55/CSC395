@@ -19,6 +19,7 @@ import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
+import com.kacstudios.game.overlays.hud.Market;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
@@ -33,6 +34,7 @@ public class LevelScreen extends BaseScreen {
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
+    private Market market;
 
     public void initialize() {
         // placeholder initial inventory
@@ -48,6 +50,8 @@ public class LevelScreen extends BaseScreen {
         grid = new Grid(10, 10, this); // create grid
 
         hud = new HUD(this, initialItems); // add HUD
+
+        market = new Market(this); // add market overlay
 
         //pause button
 
@@ -80,7 +84,7 @@ public class LevelScreen extends BaseScreen {
 
         mainStage.addActor(grid); // add grid to stage
 //      add in farmer actor
-        farmer = new Farmer(20, 4000, mainStage);
+        farmer = new Farmer(20, 20, mainStage);
     }
 
     public void update(float dt) {
