@@ -135,6 +135,14 @@ public class Grid extends Group {
         super.draw(batch, parentAlpha);
     }
 
+    public int getGridWidth() {
+        return width;
+    }
+
+    public int getGridHeight() {
+        return height;
+    }
+
     /**
      * Adds a grid square to the game in the specified <b>GRID COORDINATE</b>. This does not use pixels.
      * Grid coordinates are measured starting from the bottom left of the grid (0,0).
@@ -148,6 +156,22 @@ public class Grid extends Group {
         if(gridSquares[x][y] != null) gridSquares[x][y].remove(); // remove old square
         gridSquares[x][y] = square;
         this.addActor(square); // register gridSquare
+        square.setParent(this, new GridVector(x, y));
+    }
+
+    /**
+     * Returns the grid square at a specific location in the grid
+     * @param x the zero-based x coordinate of the square in the grid
+     * @param y the zero-based y coordinate of the square in the grid
+     * @return the GridSquare or null if there is no square in that location.
+     */
+    public GridSquare getSquare(int x, int y){
+        if(x >= width || y >= height) return null; // don't access an illegal position
+        return gridSquares[x][y];
+    }
+
+    public GridSquare getSquare(GridVector position){
+        return getSquare(position.x, position.y);
     }
 
     /**
