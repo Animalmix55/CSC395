@@ -1,4 +1,5 @@
 package com.kacstudios.game.actors;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,6 +14,8 @@ public class Farmer extends PlayableActor {
     Animation<TextureRegion> rightAnimation;
     Animation<TextureRegion> upAnimation;
     Animation<TextureRegion> downAnimation;
+
+    FarmerAnimationFactory animationFactory = new FarmerAnimationFactory();
 
     public Farmer(float x, float y, Stage s)
     {
@@ -41,6 +44,13 @@ public class Farmer extends PlayableActor {
         upTractorAnimation = loadAnimationUnsetFromFiles(upTractor, 0.1f, true);
 
         setDirectionalAnimationPaths(leftMovementFiles, rightMovementFiles, upMovementFiles, downAnimationFiles);
+        setDownAnimation(FarmerAnimationFactory.createAnimation(
+                Color.BLACK, null,
+                Color.RED, animationFactory.getTextures().front.skinKeyframes,
+                Color.BROWN, null
+        ));
+
+
         setAcceleration(1000);
         setMaxSpeed(200);
         setDeceleration(1000);

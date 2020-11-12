@@ -99,6 +99,10 @@ public class PlayableActor extends BaseActor {
         upAnimation = loadAnimationUnsetFromFiles(up, 0.1f, true);
     }
 
+    public void setDownAnimation(Animation<TextureRegion> downAnimation) {
+        this.downAnimation = downAnimation;
+    }
+
     public void setDirectionalAnimations(Animation<TextureRegion> left, Animation<TextureRegion> right, Animation<TextureRegion> up, Animation<TextureRegion> down){
         downAnimation = down;
         leftAnimation = left;
