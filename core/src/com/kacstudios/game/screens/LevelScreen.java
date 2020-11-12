@@ -32,10 +32,27 @@ public class LevelScreen extends BaseScreen {
     PauseWindow pauseWindow;
     private HUD hud;
 
-    private Scanner fileScanner;
-    private String fileLine;
-    private String[] splitFileLine;
-    private Plant tempPlant; // allows for pushing settings of plant off of save file (need to add new temp for any other GridSquare extensions)
+    private boolean loadingFromSave;
+    private int gridWidth;
+    private int gridHeight;
+
+
+
+
+    // new level
+    public LevelScreen() {
+        loadingFromSave = false;
+    }
+
+    // loading level from save
+    public LevelScreen(int width, int height, List<Plant> plantsToImport) {
+        loadingFromSave = true;
+        gridWidth = width;
+        gridHeight = height;
+
+    }
+
+
 
     public void initialize() {
         // placeholder initial inventory
@@ -49,47 +66,14 @@ public class LevelScreen extends BaseScreen {
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
 
-        // load grid save file, draw out grid according to each line in the save file
-        try {
-            File saveFile = new File("core/assets/saves/grid.save");
-            fileScanner = new Scanner(saveFile);
 
-            fileLine = fileScanner.nextLine();
-            splitFileLine = fileLine.split(",");
-            grid = new Grid(Integer.parseInt(splitFileLine[1]), Integer.parseInt(splitFileLine[0]), this);
+        if (!loadingFromSave) {
+            grid = new Grid(8, 8, this);
+        }
+        else {
 
-            // iterate through rest of file (each line is a new GridSquare)
-            while (fileScanner.hasNextLine()) {
-                fileLine = fileScanner.nextLine();
-                splitFileLine = fileLine.split(",");
-                // check what type of GridSquare the current line is
-                switch (splitFileLine[2]) {
-                    case "plant":
-                        // check what type of Plant the current line is, and create specific plant type
-                        switch (splitFileLine[3]) {
-                            case "corn":
-                                tempPlant = new CornPlant();
-                                break;
-                            case "blueberries":
-                                tempPlant = new BlueberriesPlant();
-                                break;
-                        }
+        }
 
-                        // FOR ALL PLANTS
-                        if (splitFileLine[4].equals("t")) tempPlant.setWatered(true); // set plant to be watered if saved as watered
-                        tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
-                        grid.addGridSquare(Integer.parseInt(splitFileLine[0]),Integer.parseInt(splitFileLine[1]),tempPlant); // add square to grid
-                        break;
-                }
-            }
-        }
-        catch (FileNotFoundException e) {
-            // e.printStackTrace();
-            grid = new Grid(Integer.parseInt(splitFileLine[1]), Integer.parseInt(splitFileLine[0]), this);
-        }
-        finally {
-            fileScanner.close();
-        }
 
         hud = new HUD(this, initialItems); // add HUD
 
