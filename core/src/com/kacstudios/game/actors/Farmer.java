@@ -47,7 +47,7 @@ public class Farmer extends PlayableActor {
         setDownAnimation(FarmerAnimationFactory.createAnimation(
                 Color.BLUE, animationFactory.getTextures().front.pants.get(0),
                 Color.WHITE, animationFactory.getTextures().front.skinKeyframes,
-                Color.RED, animationFactory.getTextures().front.shirts.get(0)
+                new Color(	.749f, .129f, .129f, 1), animationFactory.getTextures().front.shirts.get(0)
         ));
 
 

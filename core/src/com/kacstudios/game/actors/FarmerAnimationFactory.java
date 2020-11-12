@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FarmerAnimationFactory {
     public class FarmerTexture {
@@ -78,10 +79,12 @@ public class FarmerAnimationFactory {
     public static Animation<TextureRegion> createAnimation(Color pantColor, TextureRegion pants,
                                               Color skinColor, ArrayList<TextureRegion> bodyKeyframes,
                                               Color shirtColor, TextureRegion shirt) {
-        TextureRegion[] animationKeyframes = new TextureRegion[bodyKeyframes.size()];
 
-        for (int i = 0; i < bodyKeyframes.size(); i++) {
-            TextureRegion bodyTexture = bodyKeyframes.get(i);
+        ArrayList<TextureRegion> bodyTextures = expandAnimation(bodyKeyframes);
+        TextureRegion[] animationKeyframes = new TextureRegion[bodyTextures.size()];
+
+        for (int i = 0; i < bodyTextures.size(); i++) {
+            TextureRegion bodyTexture = bodyTextures.get(i);
             FrameBuffer buffer = new FrameBuffer(Pixmap.Format.RGBA4444, 100, 100, false);
 
             Matrix4 m = new Matrix4();
@@ -138,6 +141,29 @@ public class FarmerAnimationFactory {
                 textureRegion.getRegionHeight() // The height of the area from the other Pixmap in pixels
         );
         return pixmap;
+    }
+
+    /**
+     * Formats a 5-frame body animation into an 8-frame animation by duplicating necessary frames.
+     * Given frames 1-5, they will be exported as 1, 2, 3, 2, 1, 4, 5, 4.
+     *
+     * If the animation is not 5 frames long, returns the same array.
+     * @param bodyAnimation
+     * @return
+     */
+    private static ArrayList<TextureRegion> expandAnimation(ArrayList<TextureRegion> bodyAnimation){
+        if(bodyAnimation.size() != 5) return bodyAnimation;
+
+        TextureRegion[] regions = new TextureRegion[8];
+        regions[0] = bodyAnimation.get(0);
+        regions[1] = bodyAnimation.get(1);
+        regions[2] = bodyAnimation.get(2);
+        regions[3] = bodyAnimation.get(1);
+        regions[4] = bodyAnimation.get(0);
+        regions[5] = bodyAnimation.get(3);
+        regions[6] = bodyAnimation.get(4);
+        regions[7] = bodyAnimation.get(3);
+        return new ArrayList<>(Arrays.asList(regions));
     }
 
     public static TextureRegion tintTextureRegion(TextureRegion texture, Color color) {
