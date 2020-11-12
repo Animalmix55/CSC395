@@ -5,11 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class Farmer extends PlayableActor {
-    Animation<TextureRegion> leftTractorAnimation;
-    Animation<TextureRegion> rightTractorAnimation;
-    Animation<TextureRegion> upTractorAnimation;
-    Animation<TextureRegion> downTractorAnimation;
-
     Animation<TextureRegion> leftAnimation;
     Animation<TextureRegion> rightAnimation;
     Animation<TextureRegion> upAnimation;
@@ -21,30 +16,11 @@ public class Farmer extends PlayableActor {
     {
         super(x,y,s, true);
 
-        String[] leftTractor = {"farmer-tractor-left.png"};
-        String[] rightTractor = {"farmer-tractor-right.png"};
-        String[] upTractor = {"farmer-tractor-up.png"};
-        String[] downTractor = {"farmer-tractor-down.png"};
-
-        downTractorAnimation = loadAnimationFromFiles(downTractor, 0.1f, true);
-        leftTractorAnimation = loadAnimationUnsetFromFiles(leftTractor, 0.1f, true);
-        rightTractorAnimation = loadAnimationUnsetFromFiles(rightTractor, 0.1f, true);
-        upTractorAnimation = loadAnimationUnsetFromFiles(upTractor, 0.1f, true);
-
         setDefaultAnimations();
         setAcceleration(1000);
         setMaxSpeed(200);
         setDeceleration(1000);
         setBoundaryPolygon(8);
-    }
-
-    public void useTractorAnimations(boolean isOnTractor) {
-        if(isOnTractor){
-            setDirectionalAnimations(leftTractorAnimation, rightTractorAnimation, upTractorAnimation, downTractorAnimation);
-        }
-        else {
-            setDirectionalAnimations(leftAnimation, rightAnimation, upAnimation, downAnimation);
-        }
     }
 
     public void setDefaultAnimations() {
@@ -77,5 +53,6 @@ public class Farmer extends PlayableActor {
                 false
         );
         setDirectionalAnimations(leftAnimation, rightAnimation, upAnimation, downAnimation);
+        setAnimationDirection(Direction.down);
     }
 }
