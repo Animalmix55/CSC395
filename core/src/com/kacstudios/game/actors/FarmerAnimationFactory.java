@@ -4,9 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
@@ -78,32 +77,45 @@ public class FarmerAnimationFactory {
 
     public static Animation<TextureRegion> createAnimation(Color pantColor, TextureRegion pants,
                                               Color skinColor, ArrayList<TextureRegion> bodyKeyframes,
-                                              Color shirtColor, TextureRegion shirt) {
+                                              Color shirtColor, TextureRegion shirt, boolean waddle) {
 
         ArrayList<TextureRegion> bodyTextures = expandAnimation(bodyKeyframes);
         TextureRegion[] animationKeyframes = new TextureRegion[bodyTextures.size()];
 
         for (int i = 0; i < bodyTextures.size(); i++) {
             TextureRegion bodyTexture = bodyTextures.get(i);
+            bodyTexture.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
             FrameBuffer buffer = new FrameBuffer(Pixmap.Format.RGBA4444, 100, 100, false);
 
             Matrix4 m = new Matrix4();
             m.setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
-
             SpriteBatch batch = new SpriteBatch();
             batch.setProjectionMatrix(m);
+            float rotationAngle = waddle? getRotation(bodyTextures.size(), i) : 0;
 
             buffer.begin();
             Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.begin();
 
-            batch.setColor(skinColor);
-            batch.draw(bodyTexture, 0, 0);
-            batch.setColor(pantColor);
-            batch.draw(pants, 0, 0);
-            batch.setColor(shirtColor);
-            batch.draw(shirt, 0, 0);
+            Sprite pantsSprite = new Sprite(pants);
+            pantsSprite.setColor(pantColor);
+            pantsSprite.setOrigin(50, 0);
+            pantsSprite.setRotation(rotationAngle);
+            pantsSprite.draw(batch);
+
+            Sprite shirtSprite = new Sprite(shirt);
+            shirtSprite.setColor(shirtColor);
+            shirtSprite.setOrigin(50, 0);
+            shirtSprite.setRotation(rotationAngle);
+            shirtSprite.draw(batch);
+
+            Sprite skinSprite = new Sprite(bodyTexture);
+            skinSprite.setColor(skinColor);
+            skinSprite.setOrigin(50, 0);
+            skinSprite.setRotation(rotationAngle);
+            skinSprite.draw(batch);
 
             batch.end();
             buffer.end();
@@ -119,6 +131,18 @@ public class FarmerAnimationFactory {
 
         animation.setPlayMode(Animation.PlayMode.LOOP);
         return animation;
+    }
+
+    /**
+     *
+     * @param totalFrames the number of frames
+     * @param frameNumber in base 0
+     * @return
+     */
+    private static float getRotation(int totalFrames, int frameNumber) {
+        float amplitude = 2;
+        double rotation = amplitude * Math.sin(((float)2*frameNumber)/(totalFrames - 1) * Math.PI);
+        return (float) rotation;
     }
 
     private static Pixmap extractPixmapFromTextureRegion(TextureRegion textureRegion) {

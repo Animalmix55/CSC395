@@ -10,7 +10,7 @@ pants-plain-frontback
   orig: 100, 100
   offset: 0, 0
   index: -1
-pants-plain-left
+pants-plain-leftright
   rotate: false
   xy: 1, 307
   size: 100, 100
