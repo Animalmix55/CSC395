@@ -176,4 +176,8 @@ public class Plant extends GridSquare {
     public float getGrowthPercentage() {
         return growthPercentage;
     }
+
+    public void setGrowthPercentage(float newPercentage) {
+        growthPercentage = newPercentage;
+    }
 }
