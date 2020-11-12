@@ -1,14 +1,17 @@
 package com.kacstudios.game.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 
 public class FarmerAnimationFactory {
-
     public class FarmerTexture {
         public ArrayList<TextureRegion> skinKeyframes = new ArrayList<>();
         public ArrayList<TextureRegion> shirts = new ArrayList<>();
@@ -78,12 +81,35 @@ public class FarmerAnimationFactory {
         TextureRegion[] animationKeyframes = new TextureRegion[bodyKeyframes.size()];
 
         for (int i = 0; i < bodyKeyframes.size(); i++) {
-            Pixmap frame = new Pixmap(100, 100, Pixmap.Format.RGBA8888);
-            
-            Pixmap bodyPixmap = extractPixmapFromTextureRegion(bodyKeyframes.get(i));
-            frame.drawPixmap(bodyPixmap, 0, 0);
+            TextureRegion bodyTexture = bodyKeyframes.get(i);
+            FrameBuffer buffer = new FrameBuffer(Pixmap.Format.RGBA4444, 100, 100, false);
 
-            animationKeyframes[i] = new TextureRegion(new Texture(frame));
+            Matrix4 m = new Matrix4();
+            m.setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
+
+            SpriteBatch batch = new SpriteBatch();
+            batch.setProjectionMatrix(m);
+
+            buffer.begin();
+            Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            batch.begin();
+
+            batch.setColor(skinColor);
+            batch.draw(bodyTexture, 0, 0);
+            batch.setColor(pantColor);
+            batch.draw(pants, 0, 0);
+            batch.setColor(shirtColor);
+            batch.draw(shirt, 0, 0);
+
+            batch.end();
+            buffer.end();
+
+            TextureRegion returnTexture = new TextureRegion(buffer.getColorBufferTexture());
+            returnTexture.flip(false, true);
+
+
+            animationKeyframes[i] = returnTexture;
         }
 
         Animation<TextureRegion> animation = new Animation<>(0.1f, animationKeyframes);
@@ -112,5 +138,32 @@ public class FarmerAnimationFactory {
                 textureRegion.getRegionHeight() // The height of the area from the other Pixmap in pixels
         );
         return pixmap;
+    }
+
+    public static TextureRegion tintTextureRegion(TextureRegion texture, Color color) {
+        FrameBuffer buffer = new FrameBuffer(Pixmap.Format.RGBA4444, 100, 100, false);
+
+        Matrix4 m = new Matrix4();
+        m.setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
+        
+        SpriteBatch batch = new SpriteBatch();
+        batch.setProjectionMatrix(m);
+
+        buffer.begin();
+        Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+
+        batch.setColor(color);
+        batch.draw(texture, 0, 0);
+        batch.setColor(Color.WHITE);
+
+        batch.end();
+        buffer.end();
+
+        TextureRegion returnTexture = new TextureRegion(buffer.getColorBufferTexture());
+        returnTexture.flip(false, true);
+
+        return returnTexture;
     }
 }

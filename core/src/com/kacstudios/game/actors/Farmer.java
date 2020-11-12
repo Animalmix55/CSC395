@@ -45,9 +45,9 @@ public class Farmer extends PlayableActor {
 
         setDirectionalAnimationPaths(leftMovementFiles, rightMovementFiles, upMovementFiles, downAnimationFiles);
         setDownAnimation(FarmerAnimationFactory.createAnimation(
-                Color.BLACK, null,
-                Color.RED, animationFactory.getTextures().front.skinKeyframes,
-                Color.BROWN, null
+                Color.BLUE, animationFactory.getTextures().front.pants.get(0),
+                Color.WHITE, animationFactory.getTextures().front.skinKeyframes,
+                Color.RED, animationFactory.getTextures().front.shirts.get(0)
         ));
 
 
