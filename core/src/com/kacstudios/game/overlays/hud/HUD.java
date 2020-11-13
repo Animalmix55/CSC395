@@ -2,12 +2,9 @@ package com.kacstudios.game.overlays.hud;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.FarmaniaFonts;
@@ -108,4 +105,6 @@ public class HUD extends Group {
     public void useItem(GridClickEvent event){
         inventoryViewer.onUseItem(event);
     }
+
+    public InventoryViewer getInventoryViewer() { return inventoryViewer; }
 }

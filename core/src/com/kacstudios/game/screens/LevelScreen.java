@@ -69,8 +69,10 @@ public class LevelScreen extends BaseScreen {
 
         grid = new Grid(gridHeight, gridWidth, this);
 
-        for (int i=0;i<savedPlants.size();i++) {
-            grid.addGridSquare(savedPlants.get(i).getSavedX(), savedPlants.get(i).getSavedY(), savedPlants.get(i));
+        if (loadingFromSave) {
+            for (int i = 0; i < savedPlants.size(); i++) {
+                grid.addGridSquare(savedPlants.get(i).getSavedX(), savedPlants.get(i).getSavedY(), savedPlants.get(i));
+            }
         }
 
         hud = new HUD(this, initialItems); // add HUD
