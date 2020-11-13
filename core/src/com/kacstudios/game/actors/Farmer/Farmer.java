@@ -1,16 +1,15 @@
-package com.kacstudios.game.actors;
+package com.kacstudios.game.actors.Farmer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.kacstudios.game.actors.PlayableActor;
 
 public class Farmer extends PlayableActor {
     Animation<TextureRegion> leftAnimation;
     Animation<TextureRegion> rightAnimation;
     Animation<TextureRegion> upAnimation;
     Animation<TextureRegion> downAnimation;
-
-    FarmerAnimationFactory animationFactory = new FarmerAnimationFactory();
 
     public Farmer(float x, float y, Stage s)
     {
@@ -26,30 +25,32 @@ public class Farmer extends PlayableActor {
     public void setDefaultAnimations() {
         Color defaultPantColor = new Color(.173f, .384f, .667f, 1);
         Color defaultShirtColor = new Color(	.749f, .129f, .129f, 1);
-        Color defaultSkinColor = Color.WHITE;
+//        Color defaultSkinColor = Color.WHITE;
+        Color defaultSkinColor = new Color(	.553f, .333f, .141f, 1);
+
 
         downAnimation = FarmerAnimationFactory.createAnimation(
-                defaultPantColor, animationFactory.getTextures().front.pants.get(0),
-                defaultSkinColor, animationFactory.getTextures().front.skinKeyframes,
-                defaultShirtColor, animationFactory.getTextures().front.shirts.get(0),
+                defaultPantColor, FarmerAnimationFactory.getTextures().front.pants.get(0),
+                defaultSkinColor, FarmerAnimationFactory.getTextures().front.skinKeyframes,
+                defaultShirtColor, FarmerAnimationFactory.getTextures().front.shirts.get(0),
                 true
         );
         upAnimation = FarmerAnimationFactory.createAnimation(
-                defaultPantColor, animationFactory.getTextures().back.pants.get(0),
-                defaultSkinColor, animationFactory.getTextures().back.skinKeyframes,
-                defaultShirtColor, animationFactory.getTextures().back.shirts.get(0),
+                defaultPantColor, FarmerAnimationFactory.getTextures().back.pants.get(0),
+                defaultSkinColor, FarmerAnimationFactory.getTextures().back.skinKeyframes,
+                defaultShirtColor, FarmerAnimationFactory.getTextures().back.shirts.get(0),
                 true
         );
         rightAnimation = FarmerAnimationFactory.createAnimation(
-                defaultPantColor, animationFactory.getTextures().right.pants.get(0),
-                defaultSkinColor, animationFactory.getTextures().right.skinKeyframes,
-                defaultShirtColor, animationFactory.getTextures().right.shirts.get(0),
+                defaultPantColor, FarmerAnimationFactory.getTextures().right.pants.get(0),
+                defaultSkinColor, FarmerAnimationFactory.getTextures().right.skinKeyframes,
+                defaultShirtColor, FarmerAnimationFactory.getTextures().right.shirts.get(0),
                 false
         );
         leftAnimation = FarmerAnimationFactory.createAnimation(
-                defaultPantColor, animationFactory.getTextures().left.pants.get(0),
-                defaultSkinColor, animationFactory.getTextures().left.skinKeyframes,
-                defaultShirtColor, animationFactory.getTextures().left.shirts.get(0),
+                defaultPantColor, FarmerAnimationFactory.getTextures().left.pants.get(0),
+                defaultSkinColor, FarmerAnimationFactory.getTextures().left.skinKeyframes,
+                defaultShirtColor, FarmerAnimationFactory.getTextures().left.shirts.get(0),
                 false
         );
         setDirectionalAnimations(leftAnimation, rightAnimation, upAnimation, downAnimation);

@@ -1,42 +1,29 @@
-package com.kacstudios.game.actors;
+package com.kacstudios.game.actors.Farmer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FarmerAnimationFactory {
-    public class FarmerTexture {
-        public ArrayList<TextureRegion> skinKeyframes = new ArrayList<>();
-        public ArrayList<TextureRegion> shirts = new ArrayList<>();
-        public ArrayList<TextureRegion> pants = new ArrayList<>();
-    }
+    private static DirectionalTextures textures = null;
 
-    public class DirectionalTextures {
-        public FarmerTexture front = new FarmerTexture();
-        public FarmerTexture back = new FarmerTexture();
-        public FarmerTexture left = new FarmerTexture();
-        public FarmerTexture right = new FarmerTexture();
-    }
-
-    public DirectionalTextures textures;
-
-    public FarmerAnimationFactory() {
-        textures = new DirectionalTextures();
-        loadTextures();
-    }
-
-    public DirectionalTextures getTextures() {
+    /**
+     * Returns the farmer textures loaded
+     * @return
+     */
+    public static DirectionalTextures getTextures() {
+        if(textures == null) loadTextures();
         return textures;
     }
 
-    public void loadTextures() {
+    public static void loadTextures() {
+        textures = new DirectionalTextures();
         TextureAtlas atlas = new TextureAtlas("farmer/Farmer.atlas");
         Array<TextureAtlas.AtlasRegion> regions = atlas.getRegions();
 
@@ -78,7 +65,6 @@ public class FarmerAnimationFactory {
     public static Animation<TextureRegion> createAnimation(Color pantColor, TextureRegion pants,
                                               Color skinColor, ArrayList<TextureRegion> bodyKeyframes,
                                               Color shirtColor, TextureRegion shirt, boolean waddle) {
-
         ArrayList<TextureRegion> bodyTextures = expandAnimation(bodyKeyframes);
         TextureRegion[] animationKeyframes = new TextureRegion[bodyTextures.size()];
 
