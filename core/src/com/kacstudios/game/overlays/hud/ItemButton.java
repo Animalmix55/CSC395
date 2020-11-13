@@ -149,7 +149,7 @@ public class ItemButton extends SelectableButton {
         this.item = item;
 
         if(item != null) {
-            Image contents = new Image(new Texture(item.getTexturePath()));
+            Image contents = new Image(item.getTexture());
             setContents(contents);
             if(item.getAmount() > 1){
                 amountLabel.setText(item.getAmount());

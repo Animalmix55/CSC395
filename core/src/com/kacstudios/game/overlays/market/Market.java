@@ -1,4 +1,4 @@
-package com.kacstudios.game.overlays.hud;
+package com.kacstudios.game.overlays.market;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -6,8 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
@@ -27,9 +29,21 @@ public class Market extends Group {
         closeButton =
                 new Image(new Texture(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE)));
         closeButton.setPosition(getWidth() - closeButton.getWidth() / 2, getHeight() - closeButton.getHeight() / 2);
+        closeButton.addCaptureListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setVisible(false);
+            }
+        });
         addActor(closeButton);
 
         setPosition((stage.getWidth() - getWidth())/2, (stage.getHeight() - getHeight())/ 2);
+
+        // CONTENTS
+
+
+        // END CONTENTS
+
         stage.addActor(this); // add Market to screen
     }
 

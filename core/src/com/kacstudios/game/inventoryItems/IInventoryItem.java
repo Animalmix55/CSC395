@@ -14,7 +14,6 @@ public abstract class IInventoryItem {
     private Integer amount = Amount.Unlimited;
     private String displayName = null;
     private String description = null;
-    private String texturePath = null;
 
     /**
      * A function to be called when a given inventory item is deployed onto the map, not necessarily in a  (when the object is
@@ -32,9 +31,7 @@ public abstract class IInventoryItem {
      * Returns the sprite for a specific item's icon.
      * @return an icon sprite (can be animated)
      */
-    public String getTexturePath(){
-        return texturePath;
-    }
+    public abstract Texture getTexture();
 
     /**
      * Returns the display name of a given item (hose, for example)
@@ -68,11 +65,5 @@ public abstract class IInventoryItem {
         this.amount = amount;
     }
 
-    /**
-     * Sets the texture path for a given item
-     * @param path
-     */
-    public void setTexturePath(String path){
-        this.texturePath = path;
-    }
+    public abstract IInventoryItem createNewInstance(int amount);
 }

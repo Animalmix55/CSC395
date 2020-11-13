@@ -10,8 +10,8 @@ import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class WateringCanItem extends IDepleteableItem {
+    private static Texture texture = new Texture("items/watering_can.png");
     public WateringCanItem(int amount){
-        setTexturePath("items/watering_can.png");
         setAmount(amount);
     }
 
@@ -43,5 +43,13 @@ public class WateringCanItem extends IDepleteableItem {
         parent.checkItem();
     }
 
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
 
+    @Override
+    public IInventoryItem createNewInstance(int amount) {
+        return new WateringCanItem(amount);
+    }
 }

@@ -154,7 +154,7 @@ public class InventoryViewer extends Group {
             if(dragItem == null){ // remove item from button
                 dragItem = mouseTarget.getItem();
                 mouseTarget.setItem(null); // remove item
-                dragItemImage = new Image(new Texture(dragItem.getTexturePath()));
+                dragItemImage = new Image(dragItem.getTexture());
                 mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
                 ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
                 viewInventoryButton.setDeleteMode(true);
