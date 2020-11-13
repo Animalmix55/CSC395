@@ -19,11 +19,13 @@ public class Market extends Group {
     public Market(LevelScreen inputScreen) {
         screen = inputScreen;
         Stage stage = screen.getUIStage();
-        background = new Image(ShapeGenerator.createRoundedRectangle(912, 332, 30, new Color(0, 0, 0, .7f)));
+        background = new Image(
+                new Texture(ShapeGenerator.createRoundedRectangle(912, 332, 30, new Color(0, 0, 0, .7f))));
         setWidth(background.getWidth());
         setHeight(background.getHeight());
         addActor(background);
-        closeButton = new Image(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE));
+        closeButton =
+                new Image(new Texture(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE)));
         closeButton.setPosition(getWidth() - closeButton.getWidth() / 2, getHeight() - closeButton.getHeight() / 2);
         addActor(closeButton);
 
