@@ -64,13 +64,16 @@ public class PlayableActor extends BaseActor {
                 Color pickedColor = null;
 
                 Texture texture = getAnimation().getKeyFrame(0).getTexture();
-
-                if (!texture.getTextureData().isPrepared()) {
-                    texture.getTextureData().prepare();
+                Pixmap pixmap;
+                try {
+                    if (!texture.getTextureData().isPrepared()) {
+                        texture.getTextureData().prepare();
+                    }
+                    pixmap = texture.getTextureData().consumePixmap();
+                    pickedColor = new Color(pixmap.getPixel((int)x, (int)y));
+                } catch (Exception ex) {
+                    pickedColor = new Color(0, 0, 0, 0); // if there is no pixmap, just allow clickthrough
                 }
-                Pixmap pixmap = texture.getTextureData().consumePixmap();
-                pickedColor = new Color(pixmap.getPixel((int)x, (int)y));
-
 
                 //Check for transparency
                 if (pickedColor != null && pickedColor.a != 0) {
