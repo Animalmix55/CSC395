@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.grid.GridVector;
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
@@ -56,7 +57,7 @@ public class LoadMenu extends BaseScreen {
         for (int levelNum=0;levelNum<5;levelNum++) {
             levelButtons[levelNum] = new TextButton(String.format("Save #%d", levelNum+1),BaseGame.textButtonStyle);
             levelButtons[levelNum].setPosition(540,540-(100*levelNum));
-            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.save",levelNum+1));
+            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNum+1));
 
             // if save file doesn't exist upon first look, grey out the text and never add an event listener
             // otherwise, add the event listener to load the clicked save file
@@ -95,7 +96,7 @@ public class LoadMenu extends BaseScreen {
         int levelHeight;
 
         Plant tempPlant;
-        List<Plant> plantImports = new ArrayList<Plant>();
+        List<Plant> plants = new ArrayList<Plant>();
 
         System.out.println(String.format("Called to load level %d",levelNumber));
         try {
@@ -107,7 +108,7 @@ public class LoadMenu extends BaseScreen {
             uiStage.addActor(loadingIndicator);
 
             // open grid save file
-            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.save",levelNumber));
+            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
             fileScanner = new Scanner(temporarySaveFile);
 
             // get grid size, store in variables
@@ -115,12 +116,12 @@ public class LoadMenu extends BaseScreen {
             splitFileLine = fileLine.split(",");
             levelWidth = Integer.parseInt(splitFileLine[0]);
             levelHeight = Integer.parseInt(splitFileLine[1]);
-            System.out.println(String.format("Width: %d Height: %d",levelWidth,levelHeight));
 
             // iterate through rest of grid squares in save file
             while (fileScanner.hasNextLine()) {
                 fileLine = fileScanner.nextLine();
                 splitFileLine = fileLine.split(",");
+
                 // check what type of GridSquare the current line is
                 switch (splitFileLine[2]) {
                     case "plant":
@@ -140,10 +141,16 @@ public class LoadMenu extends BaseScreen {
                         // FOR ALL PLANTS
                         if (splitFileLine[4].equals("t")) tempPlant.setWatered(true); // set plant to be watered if saved as watered
                         tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
-                        plantImports.add(tempPlant);
+                        tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
+                        tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+                        plants.add(tempPlant);
                         break;
                 }
             }
+
+            LevelScreen level = new LevelScreen(levelWidth, levelHeight, plants);
+            FarmaniaGame.setActiveScreen(level);
+
         }
         catch (Exception e) { e.printStackTrace(); }
         finally { fileScanner.close(); }

@@ -12,8 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.grid.Grid;
-import com.kacstudios.game.grid.plants.BlueberriesPlant;
-import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
@@ -21,9 +19,7 @@ import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.util.List;
 
 
 public class LevelScreen extends BaseScreen {
@@ -35,21 +31,26 @@ public class LevelScreen extends BaseScreen {
     private boolean loadingFromSave;
     private int gridWidth;
     private int gridHeight;
-
-
+    private List<Plant> savedPlants;
 
 
     // new level
     public LevelScreen() {
+        super(false);
         loadingFromSave = false;
+        gridWidth = 8;
+        gridHeight = 8;
+        initialize();
     }
 
     // loading level from save
     public LevelScreen(int width, int height, List<Plant> plantsToImport) {
+        super(false);
         loadingFromSave = true;
         gridWidth = width;
         gridHeight = height;
-
+        savedPlants = plantsToImport;
+        initialize();
     }
 
 
@@ -66,14 +67,11 @@ public class LevelScreen extends BaseScreen {
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
 
+        grid = new Grid(gridHeight, gridWidth, this);
 
-        if (!loadingFromSave) {
-            grid = new Grid(8, 8, this);
+        for (int i=0;i<savedPlants.size();i++) {
+            grid.addGridSquare(savedPlants.get(i).getSavedX(), savedPlants.get(i).getSavedY(), savedPlants.get(i));
         }
-        else {
-
-        }
-
 
         hud = new HUD(this, initialItems); // add HUD
 
