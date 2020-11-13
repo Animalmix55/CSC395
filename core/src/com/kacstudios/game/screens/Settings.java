@@ -15,7 +15,7 @@ import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.screens.BaseScreen;
 import com.kacstudios.game.screens.MainMenu;
-import com.kacstudios.game.utilities.Global;
+import com.kacstudios.game.utilities.Setting;
 
 
 //public class Settings extends ApplicationAdapter{
@@ -30,38 +30,38 @@ public class Settings extends BaseScreen {
     public void initialize() {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        final Label Gamelabel = new Label("Game Volume: " + Global.GameVolume, skin);
+        final Label Gamelabel = new Label("Game Volume: " + Setting.GameVolume, skin);
         Gamelabel.setColor(Color.WHITE);
-        //Gamelabel.setScale(1.5f);
+        //Gamelabel.setScale(3f);
         Gamelabel.setPosition(225, 200);
 
         final Slider Gameslider = new Slider(0,100,1,true, skin);
         //slider.setBounds(75,300,500,300);
-        Gameslider.setValue(Global.GameVolume);
+        Gameslider.setValue(Setting.GameVolume);
         Gameslider.setPosition(275,250);
         Gameslider.addListener(
                 (Event e) ->
                 {
                     Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
-                    Global.GameVolume = Math.round(Gameslider.getValue());
+                    Setting.GameVolume = Math.round(Gameslider.getValue());
                     return true;
                 }
         );
 
 
-        final Label Musiclabel = new Label("Music Volume: " + Global.MusicVolume, skin);
+        final Label Musiclabel = new Label("Music Volume: " + Setting.MusicVolume, skin);
         Musiclabel.setColor(Color.WHITE);
         Musiclabel.setPosition(425, 200);
 
         final Slider Musicslider = new Slider(0,100,1,true, skin);
         //slider.setBounds(75,300,500,300);
-        Musicslider.setValue(Global.MusicVolume);
+        Musicslider.setValue(Setting.MusicVolume);
         Musicslider.setPosition(475,250);
         Musicslider.addListener(
                 (Event e) ->
                 {
                     Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
-                    Global.MusicVolume = Math.round(Musicslider.getValue());
+                    Setting.MusicVolume = Math.round(Musicslider.getValue());
                     return true;
                 }
         );
@@ -85,7 +85,7 @@ public class Settings extends BaseScreen {
         BaseActor.setWorldBounds(farmBaseActor);
 
         TextButton RestoreButton = new TextButton( "Restore", BaseGame.textButtonStyle );
-        RestoreButton.setPosition(900,0);
+        RestoreButton.setPosition(880,60);
         uiStage.addActor(RestoreButton);
 
         RestoreButton.addListener(
@@ -96,11 +96,11 @@ public class Settings extends BaseScreen {
 
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
-                    Global.MusicVolume=50;
-                    Global.GameVolume=50;
-                    Musicslider.setValue(Global.MusicVolume);
+                    Setting.MusicVolume=50;
+                    Setting.GameVolume=50;
+                    Musicslider.setValue(Setting.MusicVolume);
                     Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
-                    Gameslider.setValue(Global.GameVolume);
+                    Gameslider.setValue(Setting.GameVolume);
                     Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
 
 

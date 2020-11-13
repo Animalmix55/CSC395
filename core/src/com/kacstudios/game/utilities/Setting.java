@@ -1,7 +1,7 @@
 package com.kacstudios.game.utilities;
-//global variables
 
-public class Global {
+public class Setting {
     public static int GameVolume = 50;
     public static int MusicVolume = 50;
 }
+
