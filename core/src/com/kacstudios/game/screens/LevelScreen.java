@@ -32,6 +32,8 @@ public class LevelScreen extends BaseScreen {
     private int gridWidth;
     private int gridHeight;
     private List<Plant> savedPlants;
+    private Object[] objectItems;
+    private IInventoryItem[] savedInventoryItems;
 
 
     // new level
@@ -44,12 +46,17 @@ public class LevelScreen extends BaseScreen {
     }
 
     // loading level from save
-    public LevelScreen(int width, int height, List<Plant> plantsToImport) {
+    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport) {
         super(false);
         loadingFromSave = true;
         gridWidth = width;
         gridHeight = height;
         savedPlants = plantsToImport;
+        objectItems = itemsToImport.toArray();
+        savedInventoryItems = new IInventoryItem[objectItems.length];
+        for (int i=0;i<objectItems.length;i++) {
+            savedInventoryItems[i] = (IInventoryItem) objectItems[i];
+        }
         initialize();
     }
 
@@ -60,7 +67,6 @@ public class LevelScreen extends BaseScreen {
         IInventoryItem[] initialItems = {
                 new CornPlantItem(15),
                 new WateringCanItem(3),
-                new BasicTractorItem(40),
                 new PesticideItem(5),
                 new BlueberriesPlantItem(5)
         };
@@ -70,12 +76,16 @@ public class LevelScreen extends BaseScreen {
         grid = new Grid(gridHeight, gridWidth, this);
 
         if (loadingFromSave) {
-            for (int i = 0; i < savedPlants.size(); i++) {
-                grid.addGridSquare(savedPlants.get(i).getSavedX(), savedPlants.get(i).getSavedY(), savedPlants.get(i));
+            for (Plant currentPlant : savedPlants) {
+                grid.addGridSquare(currentPlant.getSavedX(), currentPlant.getSavedY(), currentPlant);
             }
+            hud = new HUD(this, savedInventoryItems);
+        }
+        else {
+            hud = new HUD(this, initialItems);
         }
 
-        hud = new HUD(this, initialItems); // add HUD
+//        hud = new HUD(this, initialItems); // add HUD
 
         //pause button
 

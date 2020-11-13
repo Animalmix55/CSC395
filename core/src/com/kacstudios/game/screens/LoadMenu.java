@@ -8,10 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
-import com.kacstudios.game.grid.GridVector;
+
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
+
+import com.kacstudios.game.inventoryItems.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -97,6 +99,9 @@ public class LoadMenu extends BaseScreen {
 
         Plant tempPlant;
         List<Plant> plants = new ArrayList<Plant>();
+        IInventoryItem tempItem;
+        IDepleteableItem tempDepleteableItem;
+        List<IInventoryItem> items = new ArrayList<IInventoryItem>();
 
         System.out.println(String.format("Called to load level %d",levelNumber));
         try {
@@ -148,7 +153,55 @@ public class LoadMenu extends BaseScreen {
                 }
             }
 
-            LevelScreen level = new LevelScreen(levelWidth, levelHeight, plants);
+            // load inventory items save file into scanner
+            temporarySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
+            fileScanner.close();
+            fileScanner = new Scanner(temporarySaveFile);
+
+            // iterate through lines in items save file
+            while (fileScanner.hasNextLine()) {
+                fileLine = fileScanner.nextLine();
+                splitFileLine = fileLine.split(",");
+
+                // check what type of item is being loaded
+                switch (splitFileLine[0]) {
+                    // INVENTORY ITEMS
+                    case "II":
+                        // specify which item is being created
+                        switch(splitFileLine[1]) {
+                            case "BasicTractor":
+                                tempItem = new BasicTractorItem(Integer.parseInt(splitFileLine[2]));
+                                break;
+                            case "CornPlant":
+                                tempItem = new CornPlantItem(Integer.parseInt(splitFileLine[2]));
+                                break;
+                            default:
+                                tempItem = null;
+                        }
+                        items.add(tempItem);
+                        break;
+
+                    // DEPLETABLE ITEMS
+                    case "ID":
+                        switch(splitFileLine[1]) {
+                            case "Pesticide":
+                                tempDepleteableItem = new PesticideItem(Integer.parseInt(splitFileLine[2]));
+                                break;
+                            case "WateringCan":
+                                tempDepleteableItem = new WateringCanItem(Integer.parseInt(splitFileLine[2]));
+                                break;
+                            default:
+                                tempDepleteableItem = null;
+                        }
+                        tempDepleteableItem.setDepletionPercentage(Float.parseFloat(splitFileLine[3]));
+                        items.add(tempDepleteableItem);
+                        break;
+                }
+
+
+            }
+
+            LevelScreen level = new LevelScreen(levelWidth, levelHeight, plants, items);
             FarmaniaGame.setActiveScreen(level);
 
         }
