@@ -9,12 +9,12 @@ import com.kacstudios.game.utilities.GridClickEvent;
 public class CornPlantItem extends IInventoryItem {
     private static Texture texture = new Texture("items/corn.png");
     public CornPlantItem(){
-        //stub
+        this(1);
     }
 
     public CornPlantItem(int amount){
-        this();
         setAmount(amount);
+        setDisplayName("Corn Seed");
     }
 
     @Override

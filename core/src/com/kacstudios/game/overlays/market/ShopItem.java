@@ -30,6 +30,14 @@ public class ShopItem {
         this.accessibility = accessibility;
     }
 
+    public int getBuyPrice() {
+        return buyPrice;
+    }
+
+    public int getSellPrice() {
+        return sellPrice;
+    }
+
     /**
      * Wraps the item in a container that specifies how the item exists in a given shop page.
      * If accessibility is set to both, will duplicate the buy and sell price. Otherwise, only the desired

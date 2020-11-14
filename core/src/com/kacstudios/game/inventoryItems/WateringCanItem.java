@@ -13,6 +13,11 @@ public class WateringCanItem extends IDepleteableItem {
     private static Texture texture = new Texture("items/watering_can.png");
     public WateringCanItem(int amount){
         setAmount(amount);
+        setDisplayName("Watering Can");
+    }
+
+    public WateringCanItem() {
+        this(1);
     }
 
     @Override

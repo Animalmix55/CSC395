@@ -12,6 +12,11 @@ public class PesticideItem extends IDepleteableItem{
     private static Texture texture = new Texture("items/insecticide.png");
     public PesticideItem(int amount){
         setAmount(amount);
+        setDisplayName("Pesticide");
+    }
+
+    public PesticideItem() {
+        this(1);
     }
 
     @Override

@@ -10,6 +10,11 @@ public class BasicTractorItem extends IInventoryItem {
     private static Texture texture = new Texture("items/tractor-1.png");
     public BasicTractorItem(int amount) {
         setAmount(amount);
+        setDisplayName("Basic Tractor");
+    }
+
+    public BasicTractorItem() {
+        this(1);
     }
 
     @Override

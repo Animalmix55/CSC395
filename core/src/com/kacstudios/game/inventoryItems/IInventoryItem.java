@@ -8,10 +8,7 @@ import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public abstract class IInventoryItem {
-    public static class Amount {
-        static int Unlimited = -1;
-    }
-    private Integer amount = Amount.Unlimited;
+    private Integer amount = 1;
     private String displayName = null;
     private String description = null;
 
@@ -26,6 +23,14 @@ public abstract class IInventoryItem {
      * @param event the grid click event that signifies what grid square was selected
      */
     public abstract void onDeployment(GridClickEvent event, ItemButton parent);
+
+    protected void setDescription(String description) {
+        this.description = description;
+    }
+
+    protected void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
     /**
      * Returns the sprite for a specific item's icon.

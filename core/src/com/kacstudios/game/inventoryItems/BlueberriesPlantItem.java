@@ -8,12 +8,12 @@ import com.kacstudios.game.utilities.GridClickEvent;
 public class BlueberriesPlantItem extends IInventoryItem {
     private static Texture texture = new Texture("items/blueberries.png");
     public BlueberriesPlantItem(){
-        //stub
+        this(1);
     }
 
     public BlueberriesPlantItem(int amount){
-        this();
         setAmount(amount);
+        setDisplayName("Blueberry Seed");
     }
 
     @Override

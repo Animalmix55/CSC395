@@ -84,4 +84,45 @@ public class ShapeGenerator {
 
         return pixmap;
     }
+
+    public static Pixmap createEquilateralTriangle(int sideLength, Color fillColor, boolean pointUp) {
+        FrameBuffer frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, sideLength,
+                (int)Math.ceil(Math.sqrt(3) * (sideLength/2)),false);
+        ShapeRenderer shapeRenderer = new ShapeRenderer();
+        frameBuffer.begin();
+
+        Gdx.gl.glClearColor(0f,0f,0f,0f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        Matrix4 m = new Matrix4();
+        m.setToOrtho2D(0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(fillColor);
+        shapeRenderer.setProjectionMatrix(m);
+
+        if(pointUp) {
+            shapeRenderer.triangle(
+                    0, frameBuffer.getHeight(),
+                    frameBuffer.getWidth() / 2, 0,
+                    frameBuffer.getWidth(), frameBuffer.getHeight()
+            );
+        } else {
+            shapeRenderer.triangle(
+                    0, 0,
+                    frameBuffer.getWidth() / 2, frameBuffer.getHeight(),
+                    frameBuffer.getWidth(), 0
+            );
+        }
+        shapeRenderer.end();
+
+        ByteBuffer buf;
+        Pixmap pixmap = new Pixmap(frameBuffer.getWidth(), frameBuffer.getHeight(), Pixmap.Format.RGBA8888);
+        buf = pixmap.getPixels();
+
+        Gdx.gl.glReadPixels(0, 0, pixmap.getWidth(), pixmap.getHeight(), GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, buf);
+        frameBuffer.end();
+
+        return pixmap;
+    }
 }

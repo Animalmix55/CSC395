@@ -42,14 +42,14 @@ public class HUD extends Group {
         //ADD TIME
 
         time = new Label(TimeEngine.getFormattedString("HH:mm"),
-                new Label.LabelStyle(FarmaniaFonts.generateFont("OpenSans.ttf", 20), Color.WHITE));
+                new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 20), Color.WHITE));
         time.setY(this.getHeight()-time.getHeight()-10);
         time.setX(customizeFarmerButton.getWidth() + customizeFarmerButton.getX() + 5);
 
         this.addActor(time);
 
         date = new Label(TimeEngine.getFormattedString("MM/dd/yyyy"),
-                new Label.LabelStyle(FarmaniaFonts.generateFont("OpenSans.ttf", 15), Color.WHITE));
+                new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 15), Color.WHITE));
         date.setX(time.getX());
         date.setY(10);
 
