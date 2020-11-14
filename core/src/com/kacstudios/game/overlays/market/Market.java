@@ -97,16 +97,6 @@ public class Market extends Group {
         mainPage.setWidth(getWidth());
 
         addActor(background);
-        closeButton =
-                new Image(new Texture(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE)));
-        closeButton.setPosition(getWidth() - closeButton.getWidth() / 2, getHeight() - closeButton.getHeight() / 2);
-        closeButton.addCaptureListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setVisible(false);
-            }
-        });
-        addActor(closeButton);
 
         setPosition((stage.getWidth() - getWidth())/2, (stage.getHeight() - getHeight())/ 2);
 
@@ -157,6 +147,18 @@ public class Market extends Group {
         // END LABELS
 
         addActor(mainPage);
+
+        closeButton =
+                new Image(new Texture(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE)));
+        closeButton.setPosition(getWidth() - closeButton.getWidth() / 2, getHeight() - closeButton.getHeight() / 2);
+        closeButton.addCaptureListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setVisible(false);
+            }
+        });
+        addActor(closeButton);
+
         stage.addActor(this); // add Market to screen
 
         loadMarketPage(new MarketPage(MarketPage.getPages()[0], this));
@@ -176,7 +178,7 @@ public class Market extends Group {
 
     public void loadMarketPage(MarketPage page) {
         currentPage = page;
-        addActor(page);
+        addActorBefore(mainPage, page);
         mainPage.setVisible(false);
     }
 

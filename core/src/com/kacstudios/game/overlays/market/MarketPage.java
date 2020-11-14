@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.kacstudios.game.actors.ScrollableGroup;
 import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
@@ -15,6 +16,7 @@ import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
 public class MarketPage extends Group {
+    private ScrollableGroup scrollableGroup = new ScrollableGroup();
     private MarketPage.Data pageData;
     private Market parent;
     private int padding;
@@ -25,7 +27,6 @@ public class MarketPage extends Group {
     private static Texture circleTexture = null;
     private static Label.LabelStyle itemNameStyle =
             new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
-
 
     public class ShopItemRow extends Group {
         public Label sellQuantity;
@@ -108,14 +109,20 @@ public class MarketPage extends Group {
         setWidth(parent.getWidth());
         setHeight(parent.getHeight());
 
+        Group container = new Group();
+        scrollableGroup.setWidth(getWidth());
+        scrollableGroup.setHeight(getHeight());
+
+        container.setHeight(getHeight());
+
         initStaticAssets(); // init anything static here
 
         // draw circle
         Image circle = new Image(circleTexture);
         circle.setPosition(padding, padding);
-        addActor(circle);
+        container.addActor(circle);
 
-        addActor(backButton);
+        container.addActor(backButton);
 
         // draw title
         Label.LabelStyle titleStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 50), Color.WHITE);
@@ -123,7 +130,7 @@ public class MarketPage extends Group {
         titleLabel.setPosition(circle.getX() + circle.getWidth() + padding,
                 circle.getY() + circle.getHeight() - titleLabel.getHeight());
 
-        addActor(titleLabel);
+        container.addActor(titleLabel);
 
         // draw description
         Label.LabelStyle descriptionStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
@@ -131,17 +138,19 @@ public class MarketPage extends Group {
         descriptionLabel.setPosition(circle.getX() + circle.getWidth() + padding,
                 circle.getY() + circle.getHeight() - titleLabel.getHeight() - descriptionLabel.getHeight() - padding);
 
-        addActor(descriptionLabel);
+        container.addActor(descriptionLabel);
 
         // create buy/sell interface
         int rowTopY = (int)circle.getY() + (int)circle.getHeight();
         for (ShopItem item: pageMeta.items) {
             ShopItemRow row = new ShopItemRow(item);
             row.setPosition(getWidth() - row.getWidth(), rowTopY - row.getHeight());
-            addActor(row);
+            container.addActor(row);
             rowTopY = rowTopY - (int) row.getHeight() - padding;
         }
 
+        scrollableGroup.setContentGroup(container);
+        addActor(scrollableGroup);
     }
 
     private void initStaticAssets() {
