@@ -25,12 +25,14 @@ public class ScrollableGroup extends Group {
         Vector2 globalCursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         Vector2 localCursorPos = screenToLocalCoordinates(globalCursorPos);
 
-        if(localCursorPos.x > 0 && localCursorPos.y > 0 && localCursorPos.x < getWidth() && localCursorPos.y < getHeight()) {
-            scrollBarKnob.setVisible(true);
-            scrollBar.setVisible(true);
-        } else if (!isClicked) {
-            scrollBarKnob.setVisible(false);
-            scrollBar.setVisible(false);
+        if(scrollBarKnob != null && scrollBar != null) {
+            if (localCursorPos.x > 0 && localCursorPos.y > 0 && localCursorPos.x < getWidth() && localCursorPos.y < getHeight()) {
+                scrollBarKnob.setVisible(true);
+                scrollBar.setVisible(true);
+            } else if (!isClicked) {
+                scrollBarKnob.setVisible(false);
+                scrollBar.setVisible(false);
+            }
         }
 
         if(isClicked == true) {
@@ -55,7 +57,6 @@ public class ScrollableGroup extends Group {
         batch.setTransformMatrix(computeTransform());
         drawChildren(batch, parentAlpha);
         Gdx.gl.glDisable(Gdx.gl20.GL_SCISSOR_TEST);
-        resetTransform(batch);
     }
 
     private void createScrollBar() {

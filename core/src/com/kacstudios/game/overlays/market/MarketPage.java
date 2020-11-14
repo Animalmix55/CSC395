@@ -15,6 +15,8 @@ import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
+import java.util.ArrayList;
+
 public class MarketPage extends Group {
     private ScrollableGroup scrollableGroup = new ScrollableGroup();
     private MarketPage.Data pageData;
@@ -29,73 +31,51 @@ public class MarketPage extends Group {
             new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
 
     public class ShopItemRow extends Group {
-        public Label sellQuantity;
-
         public ShopItemRow(ShopItem item) {
             setHeight(greenBox.getHeight());
             setWidth(MarketPage.this.getWidth());
 
-            float yTop = getHeight();
-            if(item.isPurchasable()) {
-                // price stuffs
-                Image buyPriceBox = new Image(redBox);
-                buyPriceBox.setPosition(getWidth() - padding - buyPriceBox.getWidth(), yTop - buyPriceBox.getHeight());
-                addActor(buyPriceBox);
+            ArrayList<Group> rows = new ArrayList<>();
+            for (int i = 0; i < 2; i++) {
+                if (!(i == 0 && item.isPurchasable()) && !(i == 1 && item.isSellable())) continue;
+                Group container = new Group();
 
-                Label priceLabel = new Label(String.format("$%d", item.getBuyPrice()), itemNameStyle);
-                priceLabel.setPosition(buyPriceBox.getX(), buyPriceBox.getY());
-                priceLabel.setHeight(buyPriceBox.getHeight());
-                priceLabel.setWidth(buyPriceBox.getWidth());
+                Label itemNameLabel = new Label(String.format(i == 0? "Buy %ss:" : "Sell %ss:", item.getWrappedItem().getDisplayName()), itemNameStyle);
+                itemNameLabel.setPosition(padding,
+                        (redBox.getHeight() - itemNameLabel.getHeight()) / 2);
+                container.addActor(itemNameLabel);
+
+                // quantity stuffs
+                int price = i == 0? item.getBuyPrice() : item.getSellPrice();
+                Label priceLabel = new Label(String.format("$%d", price), itemNameStyle);
+                QuantityBox quantityBox = new QuantityBox() {
+                    @Override
+                    public void onQuantityChange(int quantity) {
+                        priceLabel.setText(String.format("$%d", price * quantity));
+                    }
+                };
+                quantityBox.setPosition(itemNameLabel.getX() + itemNameLabel.getWidth() + padding, 0);
+                container.addActor(quantityBox);
+                // end quantity stuffs
+
+                // price stuffs
+                Image priceBox = new Image(i == 0? redBox : greenBox);
+                priceBox.setPosition(quantityBox.getX() + quantityBox.getWidth() + padding, 0);
+                container.addActor(priceBox);
+
+                priceLabel.setPosition(priceBox.getX(), priceBox.getY());
+                priceLabel.setHeight(priceBox.getHeight());
+                priceLabel.setWidth(priceBox.getWidth());
                 priceLabel.setAlignment(Align.center);
-                addActor(priceLabel);
+                container.addActor(priceLabel);
                 // end price stuffs
 
-                // quantity stuffs
-                QuantityBox quantityBox = new QuantityBox() {
-                    @Override
-                    public void onQuantityChange(int quantity) {
-                        priceLabel.setText(String.format("$%d", item.getBuyPrice() * quantity));
-                    }
-                };
-                quantityBox.setPosition(buyPriceBox.getX() - padding - quantityBox.getWidth(), buyPriceBox.getY());
-                addActor(quantityBox);
-                // end quantity stuffs
+                container.setWidth(priceBox.getRight() + padding);
+                container.setHeight(priceBox.getHeight());
 
-                Label itemNameLabel = new Label(String.format("Buy %ss:", item.getWrappedItem().getDisplayName()), itemNameStyle);
-                itemNameLabel.setPosition(quantityBox.getX() - padding - itemNameLabel.getWidth(),
-                        yTop - quantityBox.getHeight() + (quantityBox.getHeight() - itemNameLabel.getHeight())/2);
-                addActor(itemNameLabel);
-
-                yTop -= buyPriceBox.getHeight() + padding;
-            }
-
-            if(item.isSellable()) {
-                Image sellPriceBox = new Image(greenBox);
-                sellPriceBox.setPosition(getWidth() - padding - sellPriceBox.getWidth(), yTop - sellPriceBox.getHeight());
-                addActor(sellPriceBox);
-
-                Label priceLabel = new Label(String.format("$%d", item.getSellPrice()), itemNameStyle);
-                priceLabel.setPosition(sellPriceBox.getX(), sellPriceBox.getY());
-                priceLabel.setHeight(sellPriceBox.getHeight());
-                priceLabel.setWidth(sellPriceBox.getWidth());
-                priceLabel.setAlignment(Align.center);
-                addActor(priceLabel);
-
-                // quantity stuffs
-                QuantityBox quantityBox = new QuantityBox() {
-                    @Override
-                    public void onQuantityChange(int quantity) {
-                        priceLabel.setText(String.format("$%d", item.getSellPrice() * quantity));
-                    }
-                };
-                quantityBox.setPosition(sellPriceBox.getX() - padding - quantityBox.getWidth(), sellPriceBox.getY());
-                addActor(quantityBox);
-                // end quantity stuffs
-
-                Label itemNameLabel = new Label(String.format("Sell %ss:", item.getWrappedItem().getDisplayName()), itemNameStyle);
-                itemNameLabel.setPosition(quantityBox.getX() - padding - itemNameLabel.getWidth(),
-                        yTop - quantityBox.getHeight() + (quantityBox.getHeight() - itemNameLabel.getHeight())/2);
-                addActor(itemNameLabel);
+                container.setX(i == 0? 0 : getWidth() - container.getWidth());
+                rows.add(container);
+                addActor(container);
             }
         }
     }
@@ -111,46 +91,64 @@ public class MarketPage extends Group {
 
         Group container = new Group();
         scrollableGroup.setWidth(getWidth());
-        scrollableGroup.setHeight(getHeight());
-
-        container.setHeight(getHeight());
+        scrollableGroup.setHeight(getHeight() - 2 * padding - headerHeight);
 
         initStaticAssets(); // init anything static here
 
-        // draw circle
-        Image circle = new Image(circleTexture);
-        circle.setPosition(padding, padding);
-        container.addActor(circle);
-
-        container.addActor(backButton);
-
-        // draw title
-        Label.LabelStyle titleStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 50), Color.WHITE);
-        Label titleLabel = new Label(pageMeta.getTitle(), titleStyle);
-        titleLabel.setPosition(circle.getX() + circle.getWidth() + padding,
-                circle.getY() + circle.getHeight() - titleLabel.getHeight());
-
-        container.addActor(titleLabel);
-
-        // draw description
-        Label.LabelStyle descriptionStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
-        Label descriptionLabel = new Label(pageMeta.getDescription(), descriptionStyle);
-        descriptionLabel.setPosition(circle.getX() + circle.getWidth() + padding,
-                circle.getY() + circle.getHeight() - titleLabel.getHeight() - descriptionLabel.getHeight() - padding);
-
-        container.addActor(descriptionLabel);
+        //BEGIN DRAWING THE CONTENTS OF THE SCROLL WINDOW
 
         // create buy/sell interface
-        int rowTopY = (int)circle.getY() + (int)circle.getHeight();
+        int rowBottomY = padding;
         for (ShopItem item: pageMeta.items) {
             ShopItemRow row = new ShopItemRow(item);
-            row.setPosition(getWidth() - row.getWidth(), rowTopY - row.getHeight());
+            row.setPosition(0, rowBottomY);
             container.addActor(row);
-            rowTopY = rowTopY - (int) row.getHeight() - padding;
+            rowBottomY = rowBottomY + (int) row.getHeight() + padding;
         }
+
+        container.setHeight(rowBottomY + scrollableGroup.getHeight());
+        container.setWidth(getWidth());
+
+        // draw circle
+        Image circle = new Image(circleTexture);
+        circle.setPosition(padding, container.getHeight() - circle.getHeight());
+        container.addActor(circle);
+
+        // draw icon
+        Image icon = new Image(pageMeta.icon);
+        icon.scaleBy(circle.getWidth() / icon.getWidth() - 1);
+        icon.setPosition(circle.getX() + (circle.getWidth() - icon.getWidth() * icon.getScaleX())/2,
+                circle.getY() + (circle.getHeight() - icon.getHeight() * icon.getScaleY())/2);
+        container.addActor(icon);
+
+        Group titleDescGroup = new Group();
+
+        // draw title and desc
+        Label.LabelStyle titleStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 50), Color.WHITE);
+        Label titleLabel = new Label(pageMeta.getTitle(), titleStyle);
+        Label.LabelStyle descriptionStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
+        Label descriptionLabel = new Label(pageMeta.getDescription(), descriptionStyle);
+        descriptionLabel.setWrap(true);
+        descriptionLabel.setWidth(container.getWidth() - circle.getWidth() - 2 * padding);
+        descriptionLabel.pack();
+        descriptionLabel.setWidth(container.getWidth() - circle.getWidth() - 2 * padding);
+
+        titleDescGroup.setHeight(descriptionLabel.getHeight() + padding + titleLabel.getHeight());
+        titleDescGroup.setWidth(container.getWidth());
+
+        titleLabel.setPosition(0, titleDescGroup.getHeight() - titleLabel.getHeight());
+        titleDescGroup.addActor(titleLabel);
+        descriptionLabel.setPosition(0, 0);
+        titleDescGroup.addActor(descriptionLabel);
+
+        titleDescGroup.setPosition(circle.getX() + circle.getWidth() + padding,
+                circle.getY() + Math.abs(circle.getHeight() - titleDescGroup.getHeight())/2);
+        container.addActor(titleDescGroup);
 
         scrollableGroup.setContentGroup(container);
         addActor(scrollableGroup);
+
+        addActor(backButton);
     }
 
     private void initStaticAssets() {
@@ -186,8 +184,9 @@ public class MarketPage extends Group {
     // ADDITIONAL CLASSES FOR DEFINING PAGE DATA AND PAGES BELOW...
 
     private static class Pages {
-        private static final MarketPage.Data CORN = new MarketPage.Data(0, "Corn", "test", new ShopItem[]{
-                new ShopItem(new CornPlantItem(), ShopItem.ItemAccessibility.Both, 100, 10)
+        private static final MarketPage.Data CORN = new MarketPage.Data(0, "Corn", "Ut justo sapien, dapibus vel suscipit et, tristique at velit. Aenean rhoncus sem neque, nec consequat ipsum gravida sed. Maecenas nunc neque, pretium vitae libero id, sollicitudin dapibus orci.", new ShopItem[]{
+                new ShopItem(new CornPlantItem(), ShopItem.ItemAccessibility.Both, 100, 10),
+                new ShopItem(new CornPlantItem(), ShopItem.ItemAccessibility.CanSell, 100, 10)
         });
 
         private static final MarketPage.Data BLUEBERRY = new MarketPage.Data(0, "Blueberry", "test", new ShopItem[]{

@@ -30,7 +30,7 @@ public class Market extends Group {
     /**
      * Pixels of padding around the frame
      */
-    private final int padding = 20;
+    private final int padding = 15;
 
     Group mainPage = new Group();
     MarketPage currentPage = null;
