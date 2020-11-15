@@ -91,7 +91,7 @@ public class QuantityBox extends Group {
 
     private void setQuantity(int quantity) {
         int currentQuantity = getQuantity();
-        if (quantity < 0) QuantityLabel.setText(0);
+        if (quantity < 1) QuantityLabel.setText(1);
         else QuantityLabel.setText(quantity);
 
         // call hook
