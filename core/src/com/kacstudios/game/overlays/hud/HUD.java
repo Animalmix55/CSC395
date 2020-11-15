@@ -82,7 +82,9 @@ public class HUD extends Group {
 
         Economy.subscribeToUpdate(() -> {
             money.setText("$" + Economy.getMoney() + ".00");
+            money.pack();
             customizeFarmerButton.setX(money.getWidth() + money.getX() + 10);
+            market.setX(customizeFarmerButton.getWidth() + customizeFarmerButton.getX());
         }); // subscribe to updates in balance
 
         this.addActor(money);

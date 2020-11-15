@@ -37,9 +37,13 @@ public class MarketPage extends Group {
     private static Texture circleTexture = null;
     private static Label.LabelStyle itemNameStyle =
             new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
+    private ArrayList<ShopItemRow> shopItemRows = new ArrayList<>();
 
     public class ShopItemRow extends Group {
         ShopItem item;
+        ArrayList<PriceBox> priceBoxes = new ArrayList<>();
+        ArrayList<QuantityBox> quantityBoxes = new ArrayList<>();
+
         public ShopItemRow(ShopItem item) {
             setHeight(greenBox.getHeight());
             setWidth(MarketPage.this.getWidth());
@@ -58,12 +62,25 @@ public class MarketPage extends Group {
                 // quantity stuffs
                 int price = i == 0? item.getBuyPrice() : item.getSellPrice();
                 PriceBox priceBox = new PriceBox(price, i == 0? PriceBox.PriceBoxType.Buy : PriceBox.PriceBoxType.Sell);
+
+                int finalI1 = i;
                 QuantityBox quantityBox = new QuantityBox() {
                     @Override
                     public void onQuantityChange(int quantity) {
                         priceBox.updatePrice(price * quantity);
+                        if(finalI1 == 1) {
+                            if (this.getQuantity() >
+                                    parent.getScreen().getHud().getInventoryViewer().getAmount(item.getWrappedItem().getClass())) {
+                                priceBox.setDisabled(true);
+                            }
+                            else priceBox.setDisabled(false);
+                        }
                     }
                 };
+
+                quantityBoxes.add(quantityBox);
+
+                priceBoxes.add(priceBox);
 
                 int finalI = i;
                 priceBox.addCaptureListener(new ClickListener() {
@@ -103,6 +120,29 @@ public class MarketPage extends Group {
                 Economy.addMoney(quantity * item.getSellPrice());
             }
         }
+
+        /**
+         * To be called when the economy updates
+         */
+        public void economyUpdated() {
+            priceBoxes.forEach(b -> b.economyUpdated());
+        }
+
+        /**
+         * To be called when the economy updates
+         */
+        public void inventoryUpdated() {
+            int count = quantityBoxes.size();
+            for (int i = 0; i < count; i++) {
+                if (priceBoxes.get(i).type == PriceBox.PriceBoxType.Sell) {
+                    if(quantityBoxes.get(i).getQuantity() >
+                            parent.getScreen().getHud().getInventoryViewer().getAmount(item.getWrappedItem().getClass())) {
+                        priceBoxes.get(i).setDisabled(true);
+                    }
+                    else priceBoxes.get(i).setDisabled(false);
+                }
+            }
+        }
     }
     public static class PriceBox extends Group {
         public enum PriceBoxType {
@@ -126,10 +166,6 @@ public class MarketPage extends Group {
                 case Buy:
                     regularImage = new Image(redBox);
                     hoverImage = new Image(redBoxHover);
-                    Economy.subscribeToUpdate(() -> {
-                        if(Economy.getMoney() < this.price) setDisabled(true);
-                        else setDisabled(false);
-                    });
                     break;
                 case Sell:
                     regularImage = new Image(greenBox);
@@ -152,7 +188,7 @@ public class MarketPage extends Group {
             addActor(disabled);
             addActor(priceLabel);
 
-            if(Economy.getMoney() < price) setDisabled(true); // disable on instantiation
+            if(type == PriceBoxType.Buy && Economy.getMoney() < price) setDisabled(true); // disable on instantiation
 
             addCaptureListener(new ClickListener() {
                 @Override
@@ -180,8 +216,11 @@ public class MarketPage extends Group {
         public void updatePrice(int price) {
             priceLabel.setText(String.format("$%s", price));
             this.price = price;
-            if (Economy.getMoney() < price) setDisabled(true);
-            else setDisabled(false);
+            if (type == PriceBoxType.Buy) {
+                if (Economy.getMoney() < price)
+                    setDisabled(true);
+                else setDisabled(false);
+            }
         }
 
         public void setDisabled(boolean isDisabled) {
@@ -192,6 +231,13 @@ public class MarketPage extends Group {
 
         public void onClick() {
             // stub
+        }
+
+        /**
+         * To be called when the economy is updated
+         */
+        public void economyUpdated() {
+            updatePrice(price); // checks button again
         }
     }
 
@@ -218,6 +264,7 @@ public class MarketPage extends Group {
             ShopItemRow row = new ShopItemRow(item);
             row.setPosition(0, rowBottomY);
             container.addActor(row);
+            shopItemRows.add(row);
             rowBottomY = rowBottomY + (int) row.getHeight() + padding;
         }
 
@@ -296,6 +343,21 @@ public class MarketPage extends Group {
         }
     }
 
+    /**
+     * To be called when the economy updates, to avoid having a ton of update listers.
+     */
+    public void economyUpdated() {
+        shopItemRows.forEach(r -> r.economyUpdated());
+    }
+
+    /**
+     * To be called when the inventory updates, to avoid having a ton of update listers.
+     */
+    public void inventoryUpdated() {
+        shopItemRows.forEach(r -> r.inventoryUpdated());
+    }
+
+
     // ADDITIONAL CLASSES FOR DEFINING PAGE DATA AND PAGES BELOW...
 
     private static class Pages {
@@ -328,6 +390,7 @@ public class MarketPage extends Group {
         private String title;
         private String description;
         private ShopItem[] items;
+        private MarketPage page;
 
         public Data(Texture icon, String title,
                               String description, ShopItem[] items) {

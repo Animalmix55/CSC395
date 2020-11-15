@@ -86,6 +86,7 @@ public class QuantityBox extends Group {
             }
         });
         addActor(downArrowImage);
+        onQuantityChange(getQuantity()); // ensure state is up to date
     }
 
     private void setQuantity(int quantity) {
