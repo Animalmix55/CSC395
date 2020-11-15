@@ -22,6 +22,15 @@ public abstract class BaseScreen implements Screen, InputProcessor
         initialize();
     }
 
+    public BaseScreen(boolean runInitialize)
+    {
+        mainStage = new Stage();
+        uiStage = new Stage();
+        paused = false;
+
+        if (runInitialize) initialize();
+    }
+
     public abstract void initialize();
 
     public abstract void update(float dt);
