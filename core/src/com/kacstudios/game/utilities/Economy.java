@@ -14,6 +14,10 @@ public class Economy {
         return Money;
     }
 
+    public static void Init() {
+        setMoney(4000);
+    }
+
     /**
      * Adds a given amount to the economy.
      */

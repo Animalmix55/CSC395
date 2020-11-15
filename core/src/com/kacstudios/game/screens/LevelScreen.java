@@ -16,6 +16,7 @@ import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.overlays.market.Market;
+import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
@@ -71,6 +72,7 @@ public class LevelScreen extends BaseScreen {
                 new BlueberriesPlantItem(5)
         };
         TimeEngine.Init();
+        Economy.Init();
         pauseWindow = new PauseWindow(this);
         grid = new Grid(10, 10, this); // create grid
 
