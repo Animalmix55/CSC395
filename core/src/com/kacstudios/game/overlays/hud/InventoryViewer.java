@@ -269,4 +269,34 @@ public class InventoryViewer extends Group {
 
         return true;
     }
+
+    /**
+     * Adds an item to the inventory
+     * @param item
+     * @return a boolean noting if the item was successfully added to the inventory. This can fail if the inventory is full
+     */
+    public boolean addItem(IInventoryItem item) {
+        ItemButton lastEmpty = null;
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++) {
+                ItemButton currentButton = itemButtons[x][y];
+                if(currentButton.getItem() == null) {
+                    lastEmpty = currentButton;
+                    continue;
+                }
+                IInventoryItem currentItem = itemButtons[x][y].getItem();
+                if(currentItem.getClass() == item.getClass()) {
+                    currentItem.setAmount(item.getAmount() + currentItem.getAmount()); // add on to existing item
+                    currentButton.checkItem(); // update button
+                    return true;
+                }
+            }
+        }
+
+        if(lastEmpty == null) return false;
+
+        lastEmpty.setItem(item);
+        return true;
+
+    }
 }

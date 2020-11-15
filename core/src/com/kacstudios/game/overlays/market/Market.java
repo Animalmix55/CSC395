@@ -189,4 +189,19 @@ public class Market extends Group {
     public LevelScreen getScreen() {
         return screen;
     }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if(visible) onOpen();
+        else onClose();
+    }
+
+    public void onOpen() {
+        //stub
+    }
+
+    public void onClose() {
+        //stub
+    }
 }

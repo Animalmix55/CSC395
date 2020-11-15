@@ -5,15 +5,17 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragScrollListener;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
+import javax.swing.plaf.basic.BasicSliderUI;
+
 public class ScrollableGroup extends Group {
-    private Group internalGroup;
+    private ScrollPane scrollPane;
     private Image scrollBarKnob;
     private Image scrollBar;
     private static final int scrollBarPadding = 5;
@@ -29,22 +31,23 @@ public class ScrollableGroup extends Group {
             if (localCursorPos.x > 0 && localCursorPos.y > 0 && localCursorPos.x < getWidth() && localCursorPos.y < getHeight()) {
                 scrollBarKnob.setVisible(true);
                 scrollBar.setVisible(true);
+                getStage().setScrollFocus(scrollPane);
             } else if (!isClicked) {
                 scrollBarKnob.setVisible(false);
                 scrollBar.setVisible(false);
             }
         }
 
-        if(isClicked == true) {
+        if(isClicked) {
             float knobPos = localCursorPos.y - scrollBarKnob.getHeight()/2;
             float minPos = scrollBar.getY() + scrollBarPadding;
             float maxPos = scrollBar.getY() + scrollBar.getHeight() - scrollBarPadding - scrollBarKnob.getHeight();
-            scrollBarKnob.setY(knobPos < minPos? minPos : (knobPos > maxPos? maxPos : knobPos));
+            scrollBarKnob.setY(knobPos < minPos? minPos : (Math.min(knobPos, maxPos)));
 
-            float bodyY = -((scrollBarKnob.getY() - minPos) / (maxPos - minPos)) *
-                    (internalGroup.getHeight() - getHeight());
+            float bodyY = (1 - (scrollBarKnob.getY() - minPos) / (maxPos - minPos)) *
+                    (scrollPane.getActor().getHeight() - getHeight());
 
-            internalGroup.setY(bodyY);
+            scrollPane.setScrollY(bodyY);
         }
     }
 
@@ -62,10 +65,10 @@ public class ScrollableGroup extends Group {
     private void createScrollBar() {
         if(scrollBar != null) scrollBar.remove();
         if(scrollBarKnob != null) scrollBarKnob.remove();
-        if(internalGroup.getHeight() <= getHeight()) return;
+        if(scrollPane.getActor().getHeight() <= getHeight()) return;
 
         int scrollBarHeight = (int)getHeight() - 50;
-        int knobHeight = (int) ((getHeight() / internalGroup.getHeight()) * (scrollBarHeight - 2 * scrollBarPadding));
+        int knobHeight = (int) ((getHeight() / scrollPane.getActor().getHeight()) * (scrollBarHeight - 2 * scrollBarPadding));
 
         scrollBar = new Image(new Texture(ShapeGenerator.createRoundedRectangle(10, scrollBarHeight, 5, Color.GRAY)));
         scrollBarKnob = new Image(new Texture(ShapeGenerator.createRoundedRectangle(6, knobHeight, 3, Color.WHITE)));
@@ -94,25 +97,24 @@ public class ScrollableGroup extends Group {
     }
 
     public void setContentGroup(Group contents) {
-        if(internalGroup != null) internalGroup.remove();
-        internalGroup = contents;
+        if(scrollPane != null) scrollPane.remove();
 
         if(contents != null) {
-            addActor(internalGroup);
-            updateBounds();
+            ScrollableGroup body = this;
+            scrollPane = new ScrollPane(contents);
+            scrollPane.addListener(event -> {
+                float minPos = scrollBar.getY() + scrollBarPadding;
+                float maxPos = scrollBar.getY() + scrollBar.getHeight() - scrollBarPadding - scrollBarKnob.getHeight();
+                float scrollY = scrollPane.getScrollY();
+                scrollBarKnob.setY(Math.max(Math.min(((1 - scrollY/(scrollPane.getActor().getHeight()-body.getHeight()))
+                        * (maxPos - minPos)) + minPos, maxPos), minPos));
+
+                return true;
+            });
+            scrollPane.setWidth(getWidth());
+            scrollPane.setHeight(getHeight());
+            addActor(scrollPane);
+            createScrollBar();
         }
-    }
-
-    public Group getContentGroup() {
-        return internalGroup;
-    }
-
-    /**
-     * Call whenever the bounds of the content group are changed
-     */
-    public void updateBounds() {
-        internalGroup.setPosition(0, getHeight() - internalGroup.getHeight()); // position at top
-        internalGroup.setWidth(getWidth());
-        createScrollBar();
     }
 }

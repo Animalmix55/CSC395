@@ -15,6 +15,7 @@ import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
@@ -56,40 +57,16 @@ public class MarketPage extends Group {
 
                 // quantity stuffs
                 int price = i == 0? item.getBuyPrice() : item.getSellPrice();
-                Label priceLabel = new Label(String.format("$%d", price), itemNameStyle);
+                PriceBox priceBox = new PriceBox(price, i == 0? PriceBox.PriceBoxType.Buy : PriceBox.PriceBoxType.Sell);
                 QuantityBox quantityBox = new QuantityBox() {
                     @Override
                     public void onQuantityChange(int quantity) {
-                        priceLabel.setText(String.format("$%d", price * quantity));
-                    }
-                };
-                quantityBox.setPosition(itemNameLabel.getX() + itemNameLabel.getWidth() + padding, 0);
-                container.addActor(quantityBox);
-                // end quantity stuffs
-
-                // price stuffs
-                Image priceBoxHover = new Image(i == 0? redBoxHover : greenBoxHover);
-                priceBoxHover.setVisible(false);
-                Image priceBox = new Image(i == 0? redBox : greenBox);
-                Group priceBoxGroup = new Group() {
-                    @Override
-                    public void act(float delta) {
-                        super.act(delta);
-                        Vector2 mousePos = screenToLocalCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-
-                        if(mousePos.x > 0 && mousePos.y > 0 && mousePos.x < this.getWidth() && mousePos.y < this.getHeight()) {
-                            priceBoxHover.setVisible(true);
-                            priceBox.setVisible(false);
-                        } else if (!priceBox.isVisible()){
-                            priceBoxHover.setVisible(false);
-                            priceBox.setVisible(true);
-                        }
+                        priceBox.updatePrice(price * quantity);
                     }
                 };
 
-                // buy/sell listener
                 int finalI = i;
-                priceBoxGroup.addCaptureListener(new ClickListener() {
+                priceBox.addCaptureListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         if(finalI == 0) onBuy(quantityBox.getQuantity());
@@ -97,22 +74,16 @@ public class MarketPage extends Group {
                     }
                 });
 
-                priceBoxGroup.setWidth(priceBox.getWidth());
-                priceBoxGroup.setHeight(priceBox.getHeight());
-                priceBoxGroup.setPosition(quantityBox.getX() + quantityBox.getWidth() + padding, 0);
-                priceBoxGroup.addActor(priceBox);
-                priceBoxGroup.addActor(priceBoxHover);
+                quantityBox.setPosition(itemNameLabel.getX() + itemNameLabel.getWidth() + padding, 0);
+                container.addActor(quantityBox);
+                // end quantity stuffs
 
-                priceLabel.setHeight(priceBoxGroup.getHeight());
-                priceLabel.setWidth(priceBoxGroup.getWidth());
-                priceLabel.setAlignment(Align.center);
-                priceBoxGroup.addActor(priceLabel);
+                // site price position
+                priceBox.setPosition(quantityBox.getRight() + padding, 0);
+                container.addActor(priceBox);
 
-                container.addActor(priceBoxGroup);
-                // end price stuffs
-
-                container.setWidth(priceBoxGroup.getRight() + padding);
-                container.setHeight(priceBoxGroup.getHeight());
+                container.setWidth(priceBox.getRight() + padding);
+                container.setHeight(priceBox.getHeight());
 
                 container.setX(i == 0? 0 : getWidth() - container.getWidth());
                 rows.add(container);
@@ -121,11 +92,106 @@ public class MarketPage extends Group {
         }
 
         public void onBuy(int quantity) {
-            System.out.println(parent.getScreen().getHud().getInventoryViewer().getAmount(item.getWrappedItem().getClass()));
+            if(Economy.removeMoney(quantity * item.getBuyPrice())) {
+                if(!parent.getScreen().getHud().getInventoryViewer().addItem(item.createItemInstance(quantity)))
+                    Economy.addMoney(quantity * item.getBuyPrice()); // return money if add fails
+            }
         }
 
         public void onSell(int quantity) {
-            parent.getScreen().getHud().getInventoryViewer().removeItem(item.getWrappedItem().getClass(), quantity);
+            if(parent.getScreen().getHud().getInventoryViewer().removeItem(item.getWrappedItem().getClass(), quantity)) {
+                Economy.addMoney(quantity * item.getSellPrice());
+            }
+        }
+    }
+    public static class PriceBox extends Group {
+        public enum PriceBoxType {
+            Sell,
+            Buy
+        }
+        private int price;
+        private static Texture disabledTexture = new Texture(ShapeGenerator.createRoundedRectangle(greenBox.getWidth(),
+                greenBox.getHeight(), 20, new Color(1f, 1f, 1f, .2f)));
+        private PriceBoxType type;
+        private Image hoverImage;
+        private Image regularImage;
+        private Image disabled;
+        private Label priceLabel;
+
+        public PriceBox(int price, PriceBoxType type) {
+            this.price = price;
+            this.type = type;
+
+            switch (type) {
+                case Buy:
+                    regularImage = new Image(redBox);
+                    hoverImage = new Image(redBoxHover);
+                    Economy.subscribeToUpdate(() -> {
+                        if(Economy.getMoney() < this.price) setDisabled(true);
+                        else setDisabled(false);
+                    });
+                    break;
+                case Sell:
+                    regularImage = new Image(greenBox);
+                    hoverImage = new Image(greenBoxHover);
+                    break;
+            }
+            setHeight(regularImage.getHeight());
+            setWidth(regularImage.getWidth());
+
+            disabled = new Image(disabledTexture);
+            priceLabel = new Label(String.format("$%s", price), itemNameStyle);
+            priceLabel.setHeight(getHeight());
+            priceLabel.setWidth(getWidth());
+            priceLabel.setAlignment(Align.center);
+
+            hoverImage.setVisible(false);
+            disabled.setVisible(false);
+            addActor(regularImage);
+            addActor(hoverImage);
+            addActor(disabled);
+            addActor(priceLabel);
+
+            if(Economy.getMoney() < price) setDisabled(true); // disable on instantiation
+
+            addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    onClick();
+                }
+            });
+        }
+
+        @Override
+        public void act(float delta) {
+            super.act(delta);
+            if(disabled.isVisible()) return; // don't hover if disabled
+            Vector2 mousePos = screenToLocalCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+
+            if(mousePos.x > 0 && mousePos.y > 0 && mousePos.x < this.getWidth() && mousePos.y < this.getHeight()) {
+                hoverImage.setVisible(true);
+                regularImage.setVisible(false);
+            } else if (!regularImage.isVisible()){
+                hoverImage.setVisible(false);
+                regularImage.setVisible(true);
+            }
+        }
+
+        public void updatePrice(int price) {
+            priceLabel.setText(String.format("$%s", price));
+            this.price = price;
+            if (Economy.getMoney() < price) setDisabled(true);
+            else setDisabled(false);
+        }
+
+        public void setDisabled(boolean isDisabled) {
+            regularImage.setVisible(!isDisabled);
+            hoverImage.setVisible(!isDisabled);
+            disabled.setVisible(isDisabled);
+        }
+
+        public void onClick() {
+            // stub
         }
     }
 

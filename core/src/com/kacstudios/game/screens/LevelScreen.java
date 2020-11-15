@@ -8,21 +8,58 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
+import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
+
+import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
+    private Market market;
+
+    private boolean loadingFromSave;
+    private int gridWidth;
+    private int gridHeight;
+    private List<Plant> savedPlants;
+    private Object[] objectItems;
+    private IInventoryItem[] savedInventoryItems;
+
+
+    // new level
+    public LevelScreen() {
+        super(false);
+        loadingFromSave = false;
+        gridWidth = 8;
+        gridHeight = 8;
+        initialize();
+    }
+
+    // loading level from save
+    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport) {
+        super(false);
+        loadingFromSave = true;
+        gridWidth = width;
+        gridHeight = height;
+        savedPlants = plantsToImport;
+        objectItems = itemsToImport.toArray();
+        savedInventoryItems = new IInventoryItem[objectItems.length];
+        for (int i=0;i<objectItems.length;i++) {
+            savedInventoryItems[i] = (IInventoryItem) objectItems[i];
+        }
+        initialize();
+    }
 
     public void initialize() {
         // placeholder initial inventory
@@ -50,6 +87,19 @@ public class LevelScreen extends BaseScreen {
         Button PauseButton = new Button(buttonStyle);
         PauseButton.setPosition(20, 650);
         uiStage.addActor(PauseButton);
+
+        market = new Market(this) {
+            @Override
+            public void onOpen() {
+                hud.toggleMarketButton(true);
+            }
+
+            @Override
+            public void onClose() {
+                hud.toggleMarketButton(false);
+            }
+        };
+        market.setVisible(false);
 
         PauseButton.addListener(
                 (Event e) ->
@@ -117,5 +167,13 @@ public class LevelScreen extends BaseScreen {
 
     public void handleGridClickEvent(GridClickEvent event){
         hud.handleGridClickEvent(event); // pass grid click event to hud for item
+    }
+
+    public HUD getHud() {
+        return hud;
+    }
+
+    public void openMarket(boolean isOpen) {
+        market.setVisible(isOpen);
     }
 }
