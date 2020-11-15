@@ -162,8 +162,6 @@ public class Market extends Group {
 
         stage.addActor(this); // add Market to screen
 
-        loadMarketPage(new MarketPage(MarketPage.getPages()[0], this));
-
         // propagate economy updates up the chain
         Economy.subscribeToUpdate(() -> {
             if (currentPage != null) currentPage.economyUpdated();
@@ -208,7 +206,10 @@ public class Market extends Group {
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
-        if(visible) onOpen();
+        if(visible) {
+            loadMainPage();
+            onOpen();
+        }
         else onClose();
     }
 

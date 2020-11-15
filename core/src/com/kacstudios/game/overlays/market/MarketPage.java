@@ -225,7 +225,7 @@ public class MarketPage extends Group {
 
         public void setDisabled(boolean isDisabled) {
             regularImage.setVisible(!isDisabled);
-            hoverImage.setVisible(!isDisabled);
+            hoverImage.setVisible(false);
             disabled.setVisible(isDisabled);
         }
 
