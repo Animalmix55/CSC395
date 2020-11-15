@@ -15,9 +15,9 @@ import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
 public class Market extends Group {
-    LevelScreen screen;
-    Image background;
-    Image closeButton;
+    private LevelScreen screen;
+    private Image background;
+    private Image closeButton;
 
     /**
      * The number of buttons wide
@@ -186,23 +186,7 @@ public class Market extends Group {
         return padding;
     }
 
-    /*
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        batch.end();
-        ShapeRenderer shapeRenderer = new ShapeRenderer();
-        shapeRenderer.setAutoShapeType(true);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        Gdx.gl.glEnable(Gdx.gl20.GL_BLEND);
-        Gdx.gl.glBlendFunc(Gdx.gl20.GL_SRC_ALPHA, Gdx.gl20.GL_ONE_MINUS_SRC_ALPHA);
-
-        shapeRenderer.setColor(new Color(0, 0, 0, .7f));
-        shapeRenderer.rect(0, 0, screen.getUIStage().getWidth(), screen.getUIStage().getHeight());
-
-        shapeRenderer.end();
-        Gdx.gl.glDisable(Gdx.gl20.GL_BLEND);
-        batch.begin();
-        super.draw(batch, parentAlpha);
+    public LevelScreen getScreen() {
+        return screen;
     }
-     */
 }

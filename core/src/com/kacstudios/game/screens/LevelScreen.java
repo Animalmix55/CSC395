@@ -169,4 +169,8 @@ public class LevelScreen extends BaseScreen {
     public void handleGridClickEvent(GridClickEvent event){
         hud.handleGridClickEvent(event); // pass grid click event to hud for item
     }
+
+    public HUD getHud() {
+        return hud;
+    }
 }

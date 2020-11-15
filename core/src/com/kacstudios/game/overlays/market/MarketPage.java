@@ -1,7 +1,9 @@
 package com.kacstudios.game.overlays.market;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -12,6 +14,7 @@ import com.kacstudios.game.actors.ScrollableGroup;
 import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
+import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
@@ -25,15 +28,21 @@ public class MarketPage extends Group {
     private static int headerHeight = 30;
     private static Label backButton = null;
     private static Texture greenBox = null;
+    private static Texture greenBoxHover = new Texture(ShapeGenerator.createRoundedRectangle(105, 50, 20,
+            new Color(0f, 1f, 0f, .7f)));
     private static Texture redBox = null;
+    private static Texture redBoxHover = new Texture(ShapeGenerator.createRoundedRectangle(105, 50, 20,
+            new Color(	1f, 0f, 0f, .7f)));
     private static Texture circleTexture = null;
     private static Label.LabelStyle itemNameStyle =
             new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
 
     public class ShopItemRow extends Group {
+        ShopItem item;
         public ShopItemRow(ShopItem item) {
             setHeight(greenBox.getHeight());
             setWidth(MarketPage.this.getWidth());
+            this.item = item;
 
             ArrayList<Group> rows = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
@@ -59,24 +68,64 @@ public class MarketPage extends Group {
                 // end quantity stuffs
 
                 // price stuffs
+                Image priceBoxHover = new Image(i == 0? redBoxHover : greenBoxHover);
+                priceBoxHover.setVisible(false);
                 Image priceBox = new Image(i == 0? redBox : greenBox);
-                priceBox.setPosition(quantityBox.getX() + quantityBox.getWidth() + padding, 0);
-                container.addActor(priceBox);
+                Group priceBoxGroup = new Group() {
+                    @Override
+                    public void act(float delta) {
+                        super.act(delta);
+                        Vector2 mousePos = screenToLocalCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
 
-                priceLabel.setPosition(priceBox.getX(), priceBox.getY());
-                priceLabel.setHeight(priceBox.getHeight());
-                priceLabel.setWidth(priceBox.getWidth());
+                        if(mousePos.x > 0 && mousePos.y > 0 && mousePos.x < this.getWidth() && mousePos.y < this.getHeight()) {
+                            priceBoxHover.setVisible(true);
+                            priceBox.setVisible(false);
+                        } else if (!priceBox.isVisible()){
+                            priceBoxHover.setVisible(false);
+                            priceBox.setVisible(true);
+                        }
+                    }
+                };
+
+                // buy/sell listener
+                int finalI = i;
+                priceBoxGroup.addCaptureListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        if(finalI == 0) onBuy(quantityBox.getQuantity());
+                        else onSell(quantityBox.getQuantity());
+                    }
+                });
+
+                priceBoxGroup.setWidth(priceBox.getWidth());
+                priceBoxGroup.setHeight(priceBox.getHeight());
+                priceBoxGroup.setPosition(quantityBox.getX() + quantityBox.getWidth() + padding, 0);
+                priceBoxGroup.addActor(priceBox);
+                priceBoxGroup.addActor(priceBoxHover);
+
+                priceLabel.setHeight(priceBoxGroup.getHeight());
+                priceLabel.setWidth(priceBoxGroup.getWidth());
                 priceLabel.setAlignment(Align.center);
-                container.addActor(priceLabel);
+                priceBoxGroup.addActor(priceLabel);
+
+                container.addActor(priceBoxGroup);
                 // end price stuffs
 
-                container.setWidth(priceBox.getRight() + padding);
-                container.setHeight(priceBox.getHeight());
+                container.setWidth(priceBoxGroup.getRight() + padding);
+                container.setHeight(priceBoxGroup.getHeight());
 
                 container.setX(i == 0? 0 : getWidth() - container.getWidth());
                 rows.add(container);
                 addActor(container);
             }
+        }
+
+        public void onBuy(int quantity) {
+            System.out.println(parent.getScreen().getHud().getInventoryViewer().getAmount(item.getWrappedItem().getClass()));
+        }
+
+        public void onSell(int quantity) {
+            parent.getScreen().getHud().getInventoryViewer().removeItem(item.getWrappedItem().getClass(), quantity);
         }
     }
 
