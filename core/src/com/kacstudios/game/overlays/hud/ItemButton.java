@@ -18,6 +18,7 @@ import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.SelectableButton;
+import org.w3c.dom.Text;
 
 public class ItemButton extends SelectableButton {
     private boolean isHotItem = false;
@@ -101,17 +102,19 @@ public class ItemButton extends SelectableButton {
         }
     }
 
+    private static Texture selectedTexture;
+    private static Texture unselectedTexture;
+
     /**
      * Builds selectable button with default rectangular shape
      * @param x x coord
      * @param y y coord
      */
     public ItemButton(float x, float y){
-        super(x, y, new Texture("bottombar/inventorybutton_background_selected.png"),
-                new Texture("bottombar/inventorybutton_background_unselected.png"));
+        super(x, y, getSelectedTexture(), getUnselectedTexture());
 
         Label.LabelStyle amountStyle = new Label.LabelStyle();
-        amountStyle.font = FarmaniaFonts.generateFont("OpenSans.ttf", 10);
+        amountStyle.font = FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 10);
         amountLabel = new AmountLabel("", amountStyle, this);
         amountLabel.setPosition(3, getHeight() - amountLabel.getHeight() - 7);
         amountLabel.setVisible(false);
@@ -124,6 +127,15 @@ public class ItemButton extends SelectableButton {
         percentBar.setY(getY() + 18);
         percentBar.setVisible(false);
         percentBar.setParent(this); // emulate setting parent for access to coordinates
+    }
+
+    public static Texture getUnselectedTexture() {
+        if(unselectedTexture == null) unselectedTexture = new Texture("bottombar/inventorybutton_background_unselected.png");
+        return unselectedTexture;
+    }
+    public static Texture getSelectedTexture() {
+        if(selectedTexture == null) selectedTexture = new Texture("bottombar/inventorybutton_background_selected.png");
+        return selectedTexture;
     }
 
     @Override
@@ -149,7 +161,7 @@ public class ItemButton extends SelectableButton {
         this.item = item;
 
         if(item != null) {
-            Image contents = new Image(new Texture(item.getTexturePath()));
+            Image contents = new Image(item.getTexture());
             setContents(contents);
             if(item.getAmount() > 1){
                 amountLabel.setText(item.getAmount());

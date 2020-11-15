@@ -154,7 +154,7 @@ public class InventoryViewer extends Group {
             if(dragItem == null){ // remove item from button
                 dragItem = mouseTarget.getItem();
                 mouseTarget.setItem(null); // remove item
-                dragItemImage = new Image(new Texture(dragItem.getTexturePath()));
+                dragItemImage = new Image(dragItem.getTexture());
                 mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
                 ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
                 viewInventoryButton.setDeleteMode(true);
@@ -215,5 +215,58 @@ public class InventoryViewer extends Group {
                 numPlaced++;
             }
         }
+    }
+
+
+    public ItemButton[][] getItemButtons() {
+        return itemButtons;
+    }
+
+    /**
+     * Returns the amount of items whose types can be assigned to the given parameter type
+     * @param type
+     * @return
+     */
+    public int getAmount(Class<? extends IInventoryItem> type) {
+        int amount = 0;
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++){
+                IInventoryItem item = itemButtons[x][y].getItem();
+                if (item != null && type.isAssignableFrom(item.getClass()))
+                    amount += itemButtons[x][y].getItem().getAmount();
+            }
+        }
+
+        return amount;
+    }
+
+    public boolean removeItem(Class<? extends IInventoryItem> type, int amount) {
+        if(getAmount(type) < amount) return false;
+
+        int amountLeft = amount;
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++){
+                IInventoryItem item = itemButtons[x][y].getItem();
+                if (item != null && type.isAssignableFrom(item.getClass())) {
+                    if (item.getAmount() > amountLeft) {
+                        item.setAmount(item.getAmount() - amountLeft);
+                        itemButtons[x][y].checkItem(); // update button
+                        return true;
+                    }
+                    else if (item.getAmount() == amountLeft) {
+                        itemButtons[x][y].setItem(null); // remove item
+                        return true;
+                    }
+                    else {
+                        amountLeft -= item.getAmount();
+                        item.setAmount(0);
+                        itemButtons[x][y].checkItem(); // update button
+                    }
+                }
+
+            }
+        }
+
+        return true;
     }
 }

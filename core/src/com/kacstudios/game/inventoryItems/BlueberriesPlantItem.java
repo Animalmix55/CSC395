@@ -1,17 +1,19 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class BlueberriesPlantItem extends IInventoryItem {
+    private static Texture texture = new Texture("items/blueberries.png");
     public BlueberriesPlantItem(){
-        setTexturePath("items/blueberries.png");
+        this(1);
     }
 
     public BlueberriesPlantItem(int amount){
-        this();
         setAmount(amount);
+        setDisplayName("Blueberry Seed");
     }
 
     @Override
@@ -30,5 +32,15 @@ public class BlueberriesPlantItem extends IInventoryItem {
 
             parent.checkItem(); // update button display amount
         }
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
+
+    @Override
+    public IInventoryItem createNewInstance(int amount) {
+        return new BlueberriesPlantItem(amount);
     }
 }

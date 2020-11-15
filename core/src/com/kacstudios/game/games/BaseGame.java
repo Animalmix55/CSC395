@@ -49,7 +49,7 @@ public abstract class BaseGame extends Game
 
         // parameters for generating a custom bitmap font
         FreeTypeFontGenerator fontGenerator =
-                new FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"));
+                new FreeTypeFontGenerator(Gdx.files.internal("fonts/OpenSans-Bold.ttf"));
         FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = 48;
         fontParameters.color = Color.WHITE;
