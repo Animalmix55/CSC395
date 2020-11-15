@@ -12,12 +12,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
+
+import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
@@ -26,20 +29,64 @@ public class LevelScreen extends BaseScreen {
     private HUD hud;
     private Market market;
 
+    private boolean loadingFromSave;
+    private int gridWidth;
+    private int gridHeight;
+    private List<Plant> savedPlants;
+    private Object[] objectItems;
+    private IInventoryItem[] savedInventoryItems;
+
+
+    // new level
+    public LevelScreen() {
+        super(false);
+        loadingFromSave = false;
+        gridWidth = 8;
+        gridHeight = 8;
+        initialize();
+    }
+
+    // loading level from save
+    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport) {
+        super(false);
+        loadingFromSave = true;
+        gridWidth = width;
+        gridHeight = height;
+        savedPlants = plantsToImport;
+        objectItems = itemsToImport.toArray();
+        savedInventoryItems = new IInventoryItem[objectItems.length];
+        for (int i=0;i<objectItems.length;i++) {
+            savedInventoryItems[i] = (IInventoryItem) objectItems[i];
+        }
+        initialize();
+    }
+
+
+
     public void initialize() {
         // placeholder initial inventory
         IInventoryItem[] initialItems = {
                 new CornPlantItem(15),
                 new WateringCanItem(3),
-                new BasicTractorItem(40),
                 new PesticideItem(5),
                 new BlueberriesPlantItem(5)
         };
         TimeEngine.Init();
         pauseWindow = new PauseWindow(this);
-        grid = new Grid(10, 10, this); // create grid
 
-        hud = new HUD(this, initialItems); // add HUD
+        grid = new Grid(gridHeight, gridWidth, this);
+
+        if (loadingFromSave) {
+            for (Plant currentPlant : savedPlants) {
+                grid.addGridSquare(currentPlant.getSavedX(), currentPlant.getSavedY(), currentPlant);
+            }
+            hud = new HUD(this, savedInventoryItems);
+        }
+        else {
+            hud = new HUD(this, initialItems);
+        }
+
+//        hud = new HUD(this, initialItems); // add HUD
 
         market = new Market(this); // add market overlay
 
