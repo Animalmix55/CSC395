@@ -18,6 +18,7 @@ import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
+import com.kacstudios.game.windows.PauseMenu;
 import com.kacstudios.game.windows.PauseWindow;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class LevelScreen extends BaseScreen {
     PauseWindow pauseWindow;
     private HUD hud;
     private Market market;
+    private PauseMenu pauseMenu;
 
     private boolean loadingFromSave;
     private int gridWidth;
@@ -88,7 +90,8 @@ public class LevelScreen extends BaseScreen {
 
 //        hud = new HUD(this, initialItems); // add HUD
 
-        market = new Market(this); // add market overlay
+//        market = new Market(this); // add market overlay
+        pauseMenu = new PauseMenu(this);
 
         //pause button
 
