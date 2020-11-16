@@ -1,5 +1,6 @@
 package com.kacstudios.game.overlays.hud;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -7,19 +8,20 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.screens.LevelScreen;
-import com.kacstudios.game.utilities.FarmaniaFonts;
-import com.kacstudios.game.utilities.GridClickEvent;
-import com.kacstudios.game.utilities.TimeEngine;
+import com.kacstudios.game.utilities.*;
 
 public class HUD extends Group {
     LevelScreen screen;
     Image background;
     Label time;
     Label date;
+    Label money;
     CustomizeFarmerButton customizeFarmerButton;
+    MarketButton market;
     InventoryViewer inventoryViewer;
 
     public HUD(LevelScreen inputScreen){
@@ -32,24 +34,17 @@ public class HUD extends Group {
         this.addActor(background);
         this.setX((screen.getUIStage().getWidth() - 1280)/2); // center
 
-        //ADD CUSTOMIZATION BUTTON
-        customizeFarmerButton = new CustomizeFarmerButton();
-        customizeFarmerButton.setX(5);
-        customizeFarmerButton.setY((background.getHeight() - customizeFarmerButton.getHeight()) / 2);
-
-        this.addActor(customizeFarmerButton);
-
         //ADD TIME
 
         time = new Label(TimeEngine.getFormattedString("HH:mm"),
-                new Label.LabelStyle(FarmaniaFonts.generateFont("OpenSans.ttf", 20), Color.WHITE));
+                new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 20), Color.WHITE));
         time.setY(this.getHeight()-time.getHeight()-10);
-        time.setX(customizeFarmerButton.getWidth() + customizeFarmerButton.getX() + 5);
+        time.setX(15);
 
         this.addActor(time);
 
         date = new Label(TimeEngine.getFormattedString("MM/dd/yyyy"),
-                new Label.LabelStyle(FarmaniaFonts.generateFont("OpenSans.ttf", 15), Color.WHITE));
+                new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 15), Color.WHITE));
         date.setX(time.getX());
         date.setY(10);
 
@@ -77,6 +72,35 @@ public class HUD extends Group {
         this.addActor(tripleTimeButton);
 
         // END TIME CONTROL BUTTONS
+
+        // adding label for money
+
+        money = new Label(TimeEngine.getFormattedString("$" + Economy.getMoney() + ".00"),
+                new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 20), Color.WHITE));
+        money.setX(tripleTimeButton.getX() + tripleTimeButton.getWidth() + 22);
+        money.setY((background.getHeight() - money.getHeight())/2);
+
+        Economy.subscribeToUpdate(() -> {
+            money.setText("$" + Economy.getMoney() + ".00");
+            money.pack();
+            customizeFarmerButton.setX(money.getWidth() + money.getX() + 10);
+            market.setX(customizeFarmerButton.getWidth() + customizeFarmerButton.getX());
+        }); // subscribe to updates in balance
+
+        this.addActor(money);
+
+        //ADD CUSTOMIZATION BUTTON
+        customizeFarmerButton = new CustomizeFarmerButton();
+        customizeFarmerButton.setX(money.getWidth() + money.getX() + 10);
+        customizeFarmerButton.setY((background.getHeight() - customizeFarmerButton.getHeight()) / 2);
+        addActor(customizeFarmerButton);
+
+        //ADD MARKET BUTTON
+        market = new MarketButton(this);
+        market.setX(customizeFarmerButton.getWidth() + customizeFarmerButton.getX());
+        market.setY((background.getHeight() - market.getHeight()) / 2);
+
+        this.addActor(market);
 
         // Set up inventory viewer
         inventoryViewer = new InventoryViewer();
@@ -107,5 +131,17 @@ public class HUD extends Group {
      */
     public void useItem(GridClickEvent event){
         inventoryViewer.onUseItem(event);
+    }
+
+    public InventoryViewer getInventoryViewer() {
+        return inventoryViewer;
+    }
+
+    public void toggleMarketButton(boolean isOpen) {
+        market.setSelected(isOpen);
+    }
+
+    public LevelScreen getScreen() {
+        return screen;
     }
 }

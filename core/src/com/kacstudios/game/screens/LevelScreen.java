@@ -4,14 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer;
@@ -19,15 +16,17 @@ import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.CornPlant;
+import com.kacstudios.game.actors.Farmer.Farmer;
+import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
+import com.kacstudios.game.overlays.market.Market;
+import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseWindow;
 
-
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.List;
 
 public class LevelScreen extends BaseScreen {
@@ -35,6 +34,39 @@ public class LevelScreen extends BaseScreen {
     private Grid grid;
     PauseWindow pauseWindow;
     private HUD hud;
+    private Market market;
+
+    private boolean loadingFromSave;
+    private int gridWidth;
+    private int gridHeight;
+    private List<Plant> savedPlants;
+    private Object[] objectItems;
+    private IInventoryItem[] savedInventoryItems;
+
+
+    // new level
+    public LevelScreen() {
+        super(false);
+        loadingFromSave = false;
+        gridWidth = 8;
+        gridHeight = 8;
+        initialize();
+    }
+
+    // loading level from save
+    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport) {
+        super(false);
+        loadingFromSave = true;
+        gridWidth = width;
+        gridHeight = height;
+        savedPlants = plantsToImport;
+        objectItems = itemsToImport.toArray();
+        savedInventoryItems = new IInventoryItem[objectItems.length];
+        for (int i=0;i<objectItems.length;i++) {
+            savedInventoryItems[i] = (IInventoryItem) objectItems[i];
+        }
+        initialize();
+    }
 
     public void initialize() {
         // placeholder initial inventory
@@ -46,6 +78,7 @@ public class LevelScreen extends BaseScreen {
                 new BlueberriesPlantItem(100)
         };
         TimeEngine.Init();
+        Economy.Init();
         pauseWindow = new PauseWindow(this);
         grid = new Grid(10, 10, this); // create grid
 
@@ -72,6 +105,19 @@ public class LevelScreen extends BaseScreen {
         Button PauseButton = new Button(buttonStyle);
         PauseButton.setPosition(20, 650);
         uiStage.addActor(PauseButton);
+
+        market = new Market(this) {
+            @Override
+            public void onOpen() {
+                hud.toggleMarketButton(true);
+            }
+
+            @Override
+            public void onClose() {
+                hud.toggleMarketButton(false);
+            }
+        };
+        market.setVisible(false);
 
         PauseButton.addListener(
                 (Event e) ->
@@ -139,5 +185,13 @@ public class LevelScreen extends BaseScreen {
 
     public void handleGridClickEvent(GridClickEvent event){
         hud.handleGridClickEvent(event); // pass grid click event to hud for item
+    }
+
+    public HUD getHud() {
+        return hud;
+    }
+
+    public void openMarket(boolean isOpen) {
+        market.setVisible(isOpen);
     }
 }
