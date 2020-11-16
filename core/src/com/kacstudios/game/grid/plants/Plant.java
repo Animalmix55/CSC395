@@ -30,6 +30,7 @@ public class Plant extends GridSquare {
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
+    private int disasterType;
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
@@ -155,9 +156,11 @@ public class Plant extends GridSquare {
         this.growthRateModifier = 1;
     }
 
-    public Disaster getDisaster() {
-        return disaster;
-    }
+    public Disaster getDisaster() { return disaster; }
+
+    public void setDisasterType(int dType) { disasterType = dType;}
+
+    public int getDisasterType() {return disasterType; }
 
     /**
      * Kills the plant

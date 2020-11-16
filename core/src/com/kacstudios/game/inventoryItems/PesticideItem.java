@@ -34,7 +34,7 @@ public class PesticideItem extends IDepleteableItem{
             else{ disaster.setInsecticideAmount(disaster.getInsecticideAmount() - 1); }
 
             //CHANGE QUANTITIES LOGIC
-            float newPercent = getDepletionPercentage() + 0.10f;
+            float newPercent = getDepletionPercentage() + 0.05f;
             setDepletionPercentage(newPercent <= 1? newPercent : 1);
 
             if(getDepletionPercentage() >= 1){

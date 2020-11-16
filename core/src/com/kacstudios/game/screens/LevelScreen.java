@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.kacstudios.game.disasters.FireDisaster;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.CornPlant;
@@ -71,7 +72,8 @@ public class LevelScreen extends BaseScreen {
                 new WateringCanItem(3),
                 new BasicTractorItem(40),
                 new PesticideItem(5),
-                new BlueberriesPlantItem(100)
+                new BlueberriesPlantItem(100),
+                new WaterBucketItem(1)
         };
         TimeEngine.Init();
         Economy.Init();
@@ -79,7 +81,7 @@ public class LevelScreen extends BaseScreen {
         grid = new Grid(10, 10, this); // create grid
 
         CornPlant test = new CornPlant();
-        test.setDisaster(new InsectDisaster(test));
+        test.setDisaster(new FireDisaster((test)));
 
         grid.addGridSquare(5, 6, new CornPlant());
         grid.addGridSquare(6, 6, new CornPlant());
@@ -87,6 +89,16 @@ public class LevelScreen extends BaseScreen {
         grid.addGridSquare(6, 5, new CornPlant());
         grid.addGridSquare(4, 5, new CornPlant());
         grid.addGridSquare(5, 5, test);
+
+        CornPlant test2 = new CornPlant();
+        test2.setDisaster(new InsectDisaster((test2)));
+
+        grid.addGridSquare(0, 0, new CornPlant());
+        grid.addGridSquare(0, 1, new CornPlant());
+        grid.addGridSquare(0, 2, new CornPlant());
+        grid.addGridSquare(1, 1, new CornPlant());
+        grid.addGridSquare(1, 2, new CornPlant());
+        grid.addGridSquare(1, 3, test2);
 
         hud = new HUD(this, initialItems); // add HUD
 
