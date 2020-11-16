@@ -10,8 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.kacstudios.game.actors.Farmer.Farmer;
+import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.grid.plants.CornPlant;
+import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
@@ -65,16 +67,26 @@ public class LevelScreen extends BaseScreen {
     public void initialize() {
         // placeholder initial inventory
         IInventoryItem[] initialItems = {
-                new CornPlantItem(15),
+                new CornPlantItem(100),
                 new WateringCanItem(3),
                 new BasicTractorItem(40),
                 new PesticideItem(5),
-                new BlueberriesPlantItem(5)
+                new BlueberriesPlantItem(100)
         };
         TimeEngine.Init();
         Economy.Init();
         pauseWindow = new PauseWindow(this);
         grid = new Grid(10, 10, this); // create grid
+
+        CornPlant test = new CornPlant();
+        test.setDisaster(new InsectDisaster(test));
+
+        grid.addGridSquare(5, 6, new CornPlant());
+        grid.addGridSquare(6, 6, new CornPlant());
+        grid.addGridSquare(5, 4, new CornPlant());
+        grid.addGridSquare(6, 5, new CornPlant());
+        grid.addGridSquare(4, 5, new CornPlant());
+        grid.addGridSquare(5, 5, test);
 
         hud = new HUD(this, initialItems); // add HUD
 
@@ -122,7 +134,7 @@ public class LevelScreen extends BaseScreen {
 
         mainStage.addActor(grid); // add grid to stage
 //      add in farmer actor
-        farmer = new Farmer(20, 4000, mainStage);
+        farmer = new Farmer(20, 20, mainStage);
     }
 
     public void update(float dt) {
