@@ -13,6 +13,7 @@ public class PauseMenuButton extends Group {
     private Image background;
     private Label buttonLabel;
     private Label.LabelStyle buttonLabelStyle;
+    private Slider privateButtonSlider;
 
     public PauseMenuButton(String buttonText, int x, int y) {
         background = new Image(
@@ -76,14 +77,19 @@ public class PauseMenuButton extends Group {
         setY(y);
         addActor(background);
 
-        buttonLabelStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 24), Color.BLACK);
+        buttonLabelStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 12), Color.BLACK);
         buttonLabel = new Label(buttonText, buttonLabelStyle);
         buttonLabel.setX(16);
         buttonLabel.setY(24 - (buttonLabel.getHeight() / 2));
         addActor(buttonLabel);
 
-        buttonSlider.setX(background.getWidth() - buttonSlider.getWidth() - 16);
-        buttonSlider.setY(24 - (buttonSlider.getHeight() / 2));
-        addActor(buttonSlider);
+        privateButtonSlider = buttonSlider;
+        privateButtonSlider.setX(background.getWidth() - buttonSlider.getWidth() - 16);
+        privateButtonSlider.setY(24 - (buttonSlider.getHeight() / 2));
+        addActor(privateButtonSlider);
+    }
+
+    public Slider getPrivateButtonSlider() {
+        return privateButtonSlider;
     }
 }

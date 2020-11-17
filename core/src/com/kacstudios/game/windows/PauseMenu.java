@@ -3,6 +3,7 @@ package com.kacstudios.game.windows;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
+import com.kacstudios.game.utilities.Global;
 import com.kacstudios.game.utilities.ShapeGenerator;
 import com.kacstudios.game.utilities.TimeEngine;
 
@@ -73,6 +75,12 @@ public class PauseMenu extends Group {
         });
         pauseButtons.addActor(saveButton);
         PauseMenuButton optionsButton = new PauseMenuButton("Options", pauseMenuButtonX, (331 - (pauseMenuButtonHeight/2)));
+        optionsButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_options();
+            }
+        });
         pauseButtons.addActor(optionsButton);
         PauseMenuButton exitButton = new PauseMenuButton("Exit Game", pauseMenuButtonX, (273 - (pauseMenuButtonHeight/2)));
         exitButton.addCaptureListener(new ClickListener() {
@@ -82,8 +90,9 @@ public class PauseMenu extends Group {
             }
         });
         pauseButtons.addActor(exitButton);
-
         addActor(pauseButtons);
+
+
 
 
 
@@ -116,8 +125,9 @@ public class PauseMenu extends Group {
                     new PauseMenuButton(String.format("Save %d",i+1), pauseMenuButtonX, (447-(58*i) - (pauseMenuButtonHeight/2)))
             );
         }
-
         addActor(saveButtons);
+
+
 
 
 
@@ -126,14 +136,62 @@ public class PauseMenu extends Group {
         // CODE FOR ADDING OPTIONS MENU ASSETS
         // no background is added here since the options menu will be the same size as the default menu size
         PauseMenuButton options_gameVolumeSlider = new PauseMenuButton(
-                "Game",
+                "Game Volume",
+                new Slider(0,100,1,false, new Skin(Gdx.files.internal("uiskin.json"))),
+                pauseMenuButtonX,
+                (447 - (pauseMenuButtonHeight/2))
+        );
+        options_gameVolumeSlider.getPrivateButtonSlider().setValue(Global.GameVolume);
+        options_gameVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Global.GameVolume = Math.round(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
+            }
+        });
+        optionsButtons.addActor(options_gameVolumeSlider);
+
+        PauseMenuButton options_musicVolumeSlider = new PauseMenuButton(
+                "Music Volume",
                 new Slider(0,100,1,false, new Skin(Gdx.files.internal("uiskin.json"))),
                 pauseMenuButtonX,
                 (389 - (pauseMenuButtonHeight/2))
         );
-        optionsButtons.addActor(options_gameVolumeSlider);
+        options_musicVolumeSlider.getPrivateButtonSlider().setValue(Global.MusicVolume);
+        options_musicVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Global.MusicVolume = Math.round(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
+            }
+        });
 
+        optionsButtons.addActor(options_musicVolumeSlider);
+        PauseMenuButton options_resetToDefault = new PauseMenuButton("Reset to Default", pauseMenuButtonX, (331 - (pauseMenuButtonHeight / 2)));
+        options_resetToDefault.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Global.GameVolume = 50;
+                Global.MusicVolume = 50;
+                options_gameVolumeSlider.getPrivateButtonSlider().setValue(Global.GameVolume);
+                options_musicVolumeSlider.getPrivateButtonSlider().setValue(Global.MusicVolume);
+
+            }
+        });
+        optionsButtons.addActor(options_resetToDefault);
+
+        PauseMenuButton options_saveSettings = new PauseMenuButton("Return", pauseMenuButtonX, (273 - (pauseMenuButtonHeight / 2)));
+        options_saveSettings.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_pause();
+            }
+        });
+        optionsButtons.addActor(options_saveSettings);
         addActor(optionsButtons);
+
+
+
+
+
 
 
         // CODE FOR ADDING EXIT MENU ASSETS
@@ -161,8 +219,6 @@ public class PauseMenu extends Group {
             }
         });
         exitButtons.addActor(exit_cancelButton);
-
-
         addActor(exitButtons);
 
 
@@ -172,16 +228,12 @@ public class PauseMenu extends Group {
 
 
 
-
-
-
-
-
-
         // set everything invisible here, so that when it's added into the levelscreen, the pause menu doesn't show up by default
+        defaultBackground.setVisible(false);
         pauseButtons.setVisible(false);
         saveButtons.setVisible(false);
         saveBackground.setVisible(false);
+        optionsButtons.setVisible(false);
         exitButtons.setVisible(false);
 
         // add to screen UI
@@ -204,6 +256,8 @@ public class PauseMenu extends Group {
         // set save menu invisible
         saveButtons.setVisible(false);
         saveBackground.setVisible(false);
+        // set options menu invisible
+        optionsButtons.setVisible(false);
         // set exit menu invisible
         exitButtons.setVisible(false);
         // set original menu visible
@@ -224,6 +278,25 @@ public class PauseMenu extends Group {
         saveBackground.setVisible(true);
     }
 
+
+    /**
+     * Sets the pause menu to showing the options menu (volume, reset to default)
+     * Function works by setting default menu ( setMenu_pause() ) to invisible, and then setting itself to being visible
+     */
+    public void setMenu_options() {
+        // set default menu invisible, but keep background visible since it is used in options menu
+        defaultBackground.setVisible(true);
+        pauseButtons.setVisible(false);
+        // set options menu buttons visible
+        optionsButtons.setVisible(true);
+    }
+
+
+
+    /**
+     * Sets the pause menu to showing the exit menu (Are you sure you want to exit?)
+     * Function works by setting default menu ( setMenu_pause() ) to invisible, and then setting itself to being visible
+     */
     public void setMenu_exit() {
         // set default menu invisible, but keep background visible since it is used in exit menu
         defaultBackground.setVisible(true);
