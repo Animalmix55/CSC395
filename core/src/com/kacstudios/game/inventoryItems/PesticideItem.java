@@ -13,6 +13,7 @@ public class PesticideItem extends IDepleteableItem{
     public PesticideItem(int amount){
         setAmount(amount);
         setDisplayName("Pesticide");
+        setInventoryItemType("ID");
     }
 
     public PesticideItem() {

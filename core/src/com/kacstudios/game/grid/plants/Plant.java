@@ -30,6 +30,8 @@ public class Plant extends GridSquare {
     private Image deadImage;
     private InsectDisaster insect;
 
+    private String plantType; // used when saving game to define what type of plant is being saved
+
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super(false);
         drySoil = new Image(new Texture("soil.png"));
@@ -191,4 +193,8 @@ public class Plant extends GridSquare {
     public int getSavedX() { return savedX; }
 
     public int getSavedY() { return savedY; }
+
+    public void setPlantName(String plantName) { plantType = plantName; }
+
+    public String getPlantName() { return plantType; }
 }

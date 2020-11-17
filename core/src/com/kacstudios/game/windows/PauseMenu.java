@@ -18,6 +18,8 @@ import com.kacstudios.game.utilities.Global;
 import com.kacstudios.game.utilities.ShapeGenerator;
 import com.kacstudios.game.utilities.TimeEngine;
 
+import static com.kacstudios.game.screens.LoadMenu.saveLevel;
+
 public class PauseMenu extends Group {
     private LevelScreen screen;
     private Image defaultBackground;
@@ -124,6 +126,17 @@ public class PauseMenu extends Group {
             saveButtons.addActor(
                     new PauseMenuButton(String.format("Save %d",i+1), pauseMenuButtonX, (447-(58*i) - (pauseMenuButtonHeight/2)))
             );
+        }
+        for (int i=0;i<5;i++) {
+            int finalI = i;
+            saveButtons.getChildren().get(i+1).addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    System.out.println(String.format("Clicked to save #%d", finalI +1));
+                    saveLevel(screen,finalI+1);
+                    setMenu_pause();
+                }
+            });
         }
         addActor(saveButtons);
 

@@ -2,6 +2,7 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -9,16 +10,21 @@ import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
 
+import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
 
 import com.kacstudios.game.inventoryItems.*;
+import com.kacstudios.game.overlays.hud.ItemButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.io.FileWriter;
+
 
 public class LoadMenu extends BaseScreen {
 
@@ -28,6 +34,7 @@ public class LoadMenu extends BaseScreen {
 
     // used for cycling files in and out to be used in file streams
     private File temporarySaveFile;
+//    private FileHandle temporarySaveFile;
 
     // used for iteration through save file lines
     private Scanner fileScanner;
@@ -60,11 +67,13 @@ public class LoadMenu extends BaseScreen {
             levelButtons[levelNum] = new TextButton(String.format("Save #%d", levelNum+1),BaseGame.textButtonStyle);
             levelButtons[levelNum].setPosition(540,540-(100*levelNum));
             temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNum+1));
+//            temporarySaveFile = Gdx.files.internal(String.format("core/assets/saves/grid%d.mcconnell",levelNum+1));
 
             // if save file doesn't exist upon first look, grey out the text and never add an event listener
             // otherwise, add the event listener to load the clicked save file
             if (!temporarySaveFile.exists()) levelButtons[levelNum].setStyle(BaseGame.textButtonStyleGray);
             else {
+                System.out.println("save found");
                 int finalLevelNum = levelNum+1; // needed because of use in lambda function
                 levelButtons[levelNum].addListener(
                         (Event e) -> {
@@ -113,11 +122,13 @@ public class LoadMenu extends BaseScreen {
             uiStage.addActor(loadingIndicator);
 
             // open grid save file
+//            temporarySaveFile = Gdx.files.internal(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
             temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
             fileScanner = new Scanner(temporarySaveFile);
 
             // get grid size, store in variables
             fileLine = fileScanner.nextLine();
+//            fileLine = temporarySaveFile.readString();
             splitFileLine = fileLine.split(",");
             levelWidth = Integer.parseInt(splitFileLine[0]);
             levelHeight = Integer.parseInt(splitFileLine[1]);
@@ -148,6 +159,7 @@ public class LoadMenu extends BaseScreen {
                         tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
                         tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
                         tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+                        if (splitFileLine[8].equals("t")) tempPlant.setDead(true);
                         plants.add(tempPlant);
                         break;
                 }
@@ -155,6 +167,7 @@ public class LoadMenu extends BaseScreen {
 
             // load inventory items save file into scanner
             temporarySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
+//            temporarySaveFile = Gdx.files.internal(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
             fileScanner.close();
             fileScanner = new Scanner(temporarySaveFile);
 
@@ -169,11 +182,14 @@ public class LoadMenu extends BaseScreen {
                     case "II":
                         // specify which item is being created
                         switch(splitFileLine[1]) {
-                            case "BasicTractor":
+                            case "Basic Tractor":
                                 tempItem = new BasicTractorItem(Integer.parseInt(splitFileLine[2]));
                                 break;
-                            case "CornPlant":
+                            case "Corn Seed":
                                 tempItem = new CornPlantItem(Integer.parseInt(splitFileLine[2]));
+                                break;
+                            case "Blueberry Seed":
+                                tempItem = new BlueberriesPlantItem(Integer.parseInt(splitFileLine[2]));
                                 break;
                             default:
                                 tempItem = null;
@@ -187,7 +203,7 @@ public class LoadMenu extends BaseScreen {
                             case "Pesticide":
                                 tempDepleteableItem = new PesticideItem(Integer.parseInt(splitFileLine[2]));
                                 break;
-                            case "WateringCan":
+                            case "Watering Can":
                                 tempDepleteableItem = new WateringCanItem(Integer.parseInt(splitFileLine[2]));
                                 break;
                             default:
@@ -207,6 +223,105 @@ public class LoadMenu extends BaseScreen {
         }
         catch (Exception e) { e.printStackTrace(); }
         finally { fileScanner.close(); }
+    }
+
+    public static void saveLevel(LevelScreen screen, int levelNumber) {
+        // save grid
+        GridSquare[][] loadedSquares = screen.getGrid().getGridSquares();
+        Plant tempPlant;
+        String[] tempLine;
+        ArrayList<String> gridLinesToWrite = new ArrayList<String>(); // lines that will be iterated when grid file is opened to write
+        gridLinesToWrite.add(String.format("%d,%d", screen.getGrid().getGridWidth(), screen.getGrid().getGridHeight() ));
+        for (int column=0;column<loadedSquares.length;column++) {
+            for (int row=0;row<loadedSquares[column].length;row++) {
+                if (loadedSquares[column][row] != null) {
+                    // do this for every grid square:
+                    if ( loadedSquares[column][row].getClass().getName().startsWith("com.kacstudios.game.grid.plants") ) {
+                        tempLine = new String[9];
+                        tempLine[0] = String.valueOf(column);
+                        tempLine[1] = String.valueOf(row);
+                        tempLine[2] = "plant";
+                        tempPlant = (Plant) loadedSquares[column][row];
+                        tempLine[3] = tempPlant.getPlantName();
+                        if (tempPlant.getWatered()) tempLine[4] = "t";
+                        else tempLine[4] = "f";
+                        // insert disaster save code here
+                        tempLine[5] = "0";
+                        tempLine[6] = "0";
+                        // end disaster code
+                        tempLine[7] = String.valueOf(tempPlant.getGrowthPercentage());
+                        if (tempPlant.getDead()) tempLine[8] = "t";
+                        else tempLine[8] = "f";
+                        String arrayConvertedToString = "";
+                        for (String element : tempLine) {
+                            arrayConvertedToString += element+",";
+                        }
+                        arrayConvertedToString = arrayConvertedToString.substring(0,arrayConvertedToString.length()-1);
+                        gridLinesToWrite.add(arrayConvertedToString);
+                    }
+
+                }
+            }
+        }
+        // save inventory
+        ArrayList<String> inventoryLinesToWrite = new ArrayList<String>(); // lines that will be iterated when grid file is opened to write
+        String tempInventoryLine;
+
+        ItemButton[][] loadedInventory = screen.getHud().getInventoryViewer().getItemButtons();
+        for (int column=0;column<loadedInventory.length;column++) {
+            for (int row=0;row<loadedInventory[column].length;row++) {
+                if (loadedInventory[column][row].getItem() != null) {
+                    tempInventoryLine = getInventorySaveLine(loadedInventory[column][row]);
+                    inventoryLinesToWrite.add(tempInventoryLine);
+                }
+            }
+        }
+
+        File gridSaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
+        File inventorySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
+
+        try {
+            FileWriter writer = new FileWriter(gridSaveFile);
+            for (int i=0;i<gridLinesToWrite.size();i++) {
+                writer.write(gridLinesToWrite.get(i) + "\n");
+            }
+            writer.close();
+            writer = new FileWriter(inventorySaveFile);
+            for (int i=0;i<inventoryLinesToWrite.size();i++) {
+                writer.write(inventoryLinesToWrite.get(i) + "\n");
+            }
+            writer.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Converts a given item button to the proper line to be written into the save file
+     * @param itemButton
+     * @return String containing exact line to be added to file
+     */
+    private static String getInventorySaveLine(ItemButton itemButton) {
+        IInventoryItem item = itemButton.getItem();
+        String itemName = item.getDisplayName();
+        String itemType = item.getInventoryItemType();
+        IDepleteableItem tempDepletion;
+        String retString;
+        switch(itemType) {
+            case "II":
+                retString = String.format("%s,%s,%s","II",itemName,item.getAmount());
+                break;
+            case "ID":
+                tempDepletion = (IDepleteableItem) item;
+                retString = String.format("%s,%s,%s,%s","ID",itemName,item.getAmount(),tempDepletion.getDepletionPercentage());
+                break;
+            default:
+                retString = "";
+                break;
+        }
+        return retString;
     }
 
 }

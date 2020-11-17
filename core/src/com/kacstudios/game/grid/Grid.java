@@ -335,4 +335,8 @@ public class Grid extends Group {
         dark.dispose();
         light.dispose();
     }
+
+    public int getGridWidth() { return width; }
+
+    public int getGridHeight() { return height; }
 }
