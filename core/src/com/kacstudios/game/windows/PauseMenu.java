@@ -1,14 +1,20 @@
 package com.kacstudios.game.windows;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.screens.LevelScreen;
+import com.kacstudios.game.screens.MainMenu;
 import com.kacstudios.game.utilities.ShapeGenerator;
+import com.kacstudios.game.utilities.TimeEngine;
 
 public class PauseMenu extends Group {
     private LevelScreen screen;
@@ -26,13 +32,14 @@ public class PauseMenu extends Group {
 
     Group pauseButtons = new Group();
     Group saveButtons = new Group();
+    Group optionsButtons = new Group();
+    Group exitButtons = new Group();
 
     public PauseMenu(LevelScreen inputScreen) {
         screen = inputScreen;
-        setWidth(pauseMenuWidth);
-        setHeight(pauseMenuHeight);
-        setBounds(0,0,pauseMenuWidth,pauseMenuHeight);
 
+
+        // CODE FOR ADDING DEFAULT MENU ASSETS (INITIAL PAUSE MENU)
         defaultBackground = new Image(
                 new Texture(ShapeGenerator.createRoundedRectangle(
                         pauseMenuWidth,
@@ -52,6 +59,8 @@ public class PauseMenu extends Group {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 setMenu_resume();
+                TimeEngine.resume();
+                inputScreen.setPaused(false);
             }
         });
         pauseButtons.addActor(resumeButton);
@@ -66,6 +75,12 @@ public class PauseMenu extends Group {
         PauseMenuButton optionsButton = new PauseMenuButton("Options", pauseMenuButtonX, (331 - (pauseMenuButtonHeight/2)));
         pauseButtons.addActor(optionsButton);
         PauseMenuButton exitButton = new PauseMenuButton("Exit Game", pauseMenuButtonX, (273 - (pauseMenuButtonHeight/2)));
+        exitButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_exit();
+            }
+        });
         pauseButtons.addActor(exitButton);
 
         addActor(pauseButtons);
@@ -74,7 +89,7 @@ public class PauseMenu extends Group {
 
 
 
-
+        // CODE FOR ADDING SAVE MENU ASSETS
         saveBackground = new Image(
                 new Texture(ShapeGenerator.createRoundedRectangle(
                         pauseMenuWidth,
@@ -106,28 +121,100 @@ public class PauseMenu extends Group {
 
 
 
-        // set everything invisible here
+
+
+        // CODE FOR ADDING OPTIONS MENU ASSETS
+        // no background is added here since the options menu will be the same size as the default menu size
+        PauseMenuButton options_gameVolumeSlider = new PauseMenuButton(
+                "Game",
+                new Slider(0,100,1,false, new Skin(Gdx.files.internal("uiskin.json"))),
+                pauseMenuButtonX,
+                (389 - (pauseMenuButtonHeight/2))
+        );
+        optionsButtons.addActor(options_gameVolumeSlider);
+
+        addActor(optionsButtons);
+
+
+        // CODE FOR ADDING EXIT MENU ASSETS
+        // no background is added here since the exit menu will be the same size as the default menu size
+        PauseMenuButton confirmLine1 = new PauseMenuButton("Unsaved changes will be lost",pauseMenuButtonX, (447 - (pauseMenuButtonHeight/2)), 16, Color.WHITE, Color.CLEAR);
+        exitButtons.addActor(confirmLine1);
+        PauseMenuButton confirmLine2 = new PauseMenuButton("Are you sure you want to continue?",pauseMenuButtonX, (389 - (pauseMenuButtonHeight/2)), 16, Color.WHITE, Color.CLEAR);
+        exitButtons.addActor(confirmLine2);
+
+        PauseMenuButton exit_confirmButton = new PauseMenuButton("Yes", pauseMenuButtonX, (331 - (pauseMenuButtonHeight/2)));
+        exit_confirmButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                TimeEngine.resume();
+                screen.setPaused(false);
+                FarmaniaGame.setActiveScreen(new MainMenu());
+            }
+        });
+        exitButtons.addActor(exit_confirmButton);
+        PauseMenuButton exit_cancelButton = new PauseMenuButton("No", pauseMenuButtonX, (273 - (pauseMenuButtonHeight/2)));
+        exit_cancelButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_pause();
+            }
+        });
+        exitButtons.addActor(exit_cancelButton);
+
+
+        addActor(exitButtons);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // set everything invisible here, so that when it's added into the levelscreen, the pause menu doesn't show up by default
+        pauseButtons.setVisible(false);
         saveButtons.setVisible(false);
         saveBackground.setVisible(false);
+        exitButtons.setVisible(false);
 
         // add to screen UI
         screen.getUIStage().addActor(this);
     }
 
+    /**
+     * Sets pause menu as being invisible by setting the default menu invisible
+     */
     public void setMenu_resume() {
         defaultBackground.setVisible(false);
         pauseButtons.setVisible(false);
     }
 
+    /**
+     * Sets the pause menu to the default, starting pause menu (resume, save, options, exit game)
+     * Function works by setting all other existing actors to invisible, and then setting itself to being visible
+     */
     public void setMenu_pause() {
         // set save menu invisible
         saveButtons.setVisible(false);
         saveBackground.setVisible(false);
+        // set exit menu invisible
+        exitButtons.setVisible(false);
         // set original menu visible
         defaultBackground.setVisible(true);
         pauseButtons.setVisible(true);
     }
 
+    /**
+     * Sets the pause menu to showing the save menu (back, save 1, save 2, etc.)
+     * Function works by setting default menu ( setMenu_pause() ) to invisible, and then setting itself to being visible
+     */
     public void setMenu_save() {
         // set default menu invisible
         defaultBackground.setVisible(false);
@@ -135,5 +222,13 @@ public class PauseMenu extends Group {
         // set save menu visible
         saveButtons.setVisible(true);
         saveBackground.setVisible(true);
+    }
+
+    public void setMenu_exit() {
+        // set default menu invisible, but keep background visible since it is used in exit menu
+        defaultBackground.setVisible(true);
+        pauseButtons.setVisible(false);
+        // set exit menu buttons visible
+        exitButtons.setVisible(true);
     }
 }

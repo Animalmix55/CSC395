@@ -26,7 +26,6 @@ import java.util.List;
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
     private Grid grid;
-    PauseWindow pauseWindow;
     private HUD hud;
     private Market market;
     private PauseMenu pauseMenu;
@@ -74,7 +73,6 @@ public class LevelScreen extends BaseScreen {
                 new BlueberriesPlantItem(5)
         };
         TimeEngine.Init();
-        pauseWindow = new PauseWindow(this);
 
         grid = new Grid(gridHeight, gridWidth, this);
 
@@ -116,7 +114,8 @@ public class LevelScreen extends BaseScreen {
 
                     setPaused(true);
                     TimeEngine.pause();
-                    pauseWindow.setVisible();
+                    pauseMenu.setVisible(true);
+                    pauseMenu.setMenu_pause();
 
                     return false;
                 }
@@ -139,8 +138,8 @@ public class LevelScreen extends BaseScreen {
     }
 
     public boolean keyDown(int keyCode) {
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            pauseWindow.setVisible();
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {}
+            // insert pause code here
 
         return true;
     }
