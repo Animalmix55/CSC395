@@ -2,11 +2,7 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.kacstudios.game.actors.Farmer;
-import com.kacstudios.game.utilities.TimeEngine;
 
 /**
  * @author Lee Stemkoski

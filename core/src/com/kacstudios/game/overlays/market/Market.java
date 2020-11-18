@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.screens.LevelScreen;
+import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
@@ -161,7 +162,15 @@ public class Market extends Group {
 
         stage.addActor(this); // add Market to screen
 
-        loadMarketPage(new MarketPage(MarketPage.getPages()[0], this));
+        // propagate economy updates up the chain
+        Economy.subscribeToUpdate(() -> {
+            if (currentPage != null) currentPage.economyUpdated();
+        });
+
+        // propagate inventory updates up the chain
+        parent.getScreen().getHud().getInventoryViewer().addUpdateListener(() -> {
+            if (currentPage != null) currentPage.inventoryUpdated();
+        });
     }
 
     /**
@@ -177,8 +186,12 @@ public class Market extends Group {
     }
 
     public void loadMarketPage(MarketPage page) {
+        if(currentPage != null) currentPage.remove();
         currentPage = page;
-        addActorBefore(mainPage, page);
+
+        if(page != null) {
+            addActorBefore(mainPage, page);
+        }
         mainPage.setVisible(false);
     }
 
@@ -188,5 +201,23 @@ public class Market extends Group {
 
     public LevelScreen getScreen() {
         return screen;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if(visible) {
+            loadMainPage();
+            onOpen();
+        }
+        else onClose();
+    }
+
+    public void onOpen() {
+        //stub
+    }
+
+    public void onClose() {
+        //stub
     }
 }

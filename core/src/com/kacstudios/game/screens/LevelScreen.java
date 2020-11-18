@@ -8,15 +8,17 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.kacstudios.game.actors.Farmer;
 import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.grid.plants.CornPlant;
+import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.overlays.market.Market;
+import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseMenu;
@@ -68,20 +70,20 @@ public class LevelScreen extends BaseScreen {
         initialize();
     }
 
-
-
     public void initialize() {
         // placeholder initial inventory
         IInventoryItem[] initialItems = {
-                new CornPlantItem(15),
+                new CornPlantItem(100),
                 new WateringCanItem(3),
+                new BasicTractorItem(40),
                 new PesticideItem(5),
-                new BlueberriesPlantItem(5)
+                new BlueberriesPlantItem(100)
         };
         if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
         else TimeEngine.Init();
 
-        grid = new Grid(gridHeight, gridWidth, this);
+        CornPlant test = new CornPlant();
+        test.setDisaster(new InsectDisaster(test));
 
         if (loadingFromSave) {
             for (Plant currentPlant : savedPlants) {
@@ -107,6 +109,19 @@ public class LevelScreen extends BaseScreen {
         Button PauseButton = new Button(buttonStyle);
         PauseButton.setPosition(20, 650);
         uiStage.addActor(PauseButton);
+
+        market = new Market(this) {
+            @Override
+            public void onOpen() {
+                hud.toggleMarketButton(true);
+            }
+
+            @Override
+            public void onClose() {
+                hud.toggleMarketButton(false);
+            }
+        };
+        market.setVisible(false);
 
         PauseButton.addListener(
                 (Event e) ->
@@ -207,4 +222,7 @@ public class LevelScreen extends BaseScreen {
     }
 
     public PauseMenu getPauseMenu() { return pauseMenu; }
+    public void openMarket(boolean isOpen) {
+        market.setVisible(isOpen);
+    }
 }

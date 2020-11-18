@@ -2,6 +2,7 @@ package com.kacstudios.game.actors;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.screens.LevelScreen;
 
 import java.awt.geom.Point2D;

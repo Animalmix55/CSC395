@@ -27,11 +27,11 @@ public class PesticideItem extends IDepleteableItem{
         if(Plant.class.isAssignableFrom(event.getGridSquare().getClass())){
             //ACTION LOGIC
             Plant target = (Plant) event.getGridSquare();
-            InsectDisaster disaster = target.getInsect();
+            InsectDisaster disaster = (InsectDisaster) target.getDisaster();
 
             if(disaster == null) return;
 
-            if(disaster.getInsecticideAmount() == 1){ disaster.endDisaster(); }
+            if(disaster.getInsecticideAmount() == 1){ target.setDisaster(null); }
             else{ disaster.setInsecticideAmount(disaster.getInsecticideAmount() - 1); }
 
             //CHANGE QUANTITIES LOGIC

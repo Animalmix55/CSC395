@@ -221,6 +221,7 @@ public class ItemButton extends SelectableButton {
         if(!amountLabel.getText().equals(item.getAmount().toString())) { // update amount label
             amountLabel.setText(item.getAmount());
             if(item.getAmount() <= 1) amountLabel.setVisible(false);
+            else if (!amountLabel.isVisible()) amountLabel.setVisible(true);
         }
         if(IDepleteableItem.class.isAssignableFrom(item.getClass())) // update percent label
             percentBar.setPercent(1 - ((IDepleteableItem)item).getDepletionPercentage());

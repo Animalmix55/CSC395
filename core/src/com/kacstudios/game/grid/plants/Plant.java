@@ -2,6 +2,7 @@ package com.kacstudios.game.grid.plants;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.kacstudios.game.disasters.Disaster;
 import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.utilities.TimeEngine;
@@ -28,12 +29,12 @@ public class Plant extends GridSquare {
     private LocalDateTime startTime = TimeEngine.getDateTime();
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
-    private InsectDisaster insect;
+    private Disaster disaster;
 
     private String plantType; // used when saving game to define what type of plant is being saved
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
-        super(false);
+        super();
         drySoil = new Image(new Texture("soil.png"));
         wetSoil = new Image(new Texture("soil-wet.png"));
         deadImage = new Image(new Texture(deadTexturePath));
@@ -44,10 +45,13 @@ public class Plant extends GridSquare {
         addActor(wetSoil);
         addActor(deadImage);
         setGrowthTextures(growthTexturePaths);
-        if(InsectDisaster.generateRandom() < 3){
-            insect =  new InsectDisaster(this);
-            addActor(insect);
-        }
+    }
+
+    public void setDisaster(Disaster disaster) {
+        if(this.disaster != null) this.disaster.remove();
+        this.disaster = disaster;
+
+        if(this.disaster != null) addActor(disaster);
     }
 
     private void setGrowthTextures(String[] textureNames) {
@@ -96,7 +100,6 @@ public class Plant extends GridSquare {
     @Override
     public void act(float dt) {
         super.act(dt);
-
         if(!fullyGrown && !isDead)
         {
             float tempGrowthPercentage = getPercentPerSecond() * dt + growthPercentage; // update growth percentage
@@ -146,17 +149,16 @@ public class Plant extends GridSquare {
         this.growthRateModifier = growthRateModifier;
     }
 
+    public float getGrowthRateModifier() {
+        return growthRateModifier;
+    }
+
     public void resetGrowthRateModifier(){
         this.growthRateModifier = 1;
     }
 
-    public InsectDisaster getInsect() { return insect; }
-
-    public void setInsect(InsectDisaster disaster){
-        if(insect != null) insect.remove(); // remove old
-
-        insect = disaster;
-        if(insect != null) addActor(insect);
+    public Disaster getDisaster() {
+        return disaster;
     }
 
     /**
