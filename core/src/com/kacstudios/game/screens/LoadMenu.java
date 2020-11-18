@@ -6,8 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kacstudios.game.actors.BaseActor;
-import com.kacstudios.game.actors.Farmer;
-import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
@@ -19,6 +17,7 @@ import com.kacstudios.game.grid.plants.Plant;
 
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.utilities.TimeEngine;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,13 +70,11 @@ public class LoadMenu extends BaseScreen {
             levelButtons[levelNum] = new TextButton(String.format("Save #%d", levelNum+1),BaseGame.textButtonStyle);
             levelButtons[levelNum].setPosition(540,540-(100*levelNum));
             temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNum+1));
-//            temporarySaveFile = Gdx.files.internal(String.format("core/assets/saves/grid%d.mcconnell",levelNum+1));
 
             // if save file doesn't exist upon first look, grey out the text and never add an event listener
             // otherwise, add the event listener to load the clicked save file
             if (!temporarySaveFile.exists()) levelButtons[levelNum].setStyle(BaseGame.textButtonStyleGray);
             else {
-                System.out.println("save found");
                 int finalLevelNum = levelNum+1; // needed because of use in lambda function
                 levelButtons[levelNum].addListener(
                         (Event e) -> {
@@ -115,8 +112,8 @@ public class LoadMenu extends BaseScreen {
         IInventoryItem tempItem;
         IDepleteableItem tempDepleteableItem;
         List<IInventoryItem> items = new ArrayList<IInventoryItem>();
+        String time;
 
-        System.out.println(String.format("Called to load level %d",levelNumber));
         try {
             // get rid of level choice, back button, and replace with loading indicator
             for (TextButton individualButton : levelButtons) individualButton.setVisible(false);
@@ -134,6 +131,7 @@ public class LoadMenu extends BaseScreen {
             splitFileLine = fileLine.split(",");
             levelWidth = Integer.parseInt(splitFileLine[0]);
             levelHeight = Integer.parseInt(splitFileLine[1]);
+            time = splitFileLine[2];
 
             // iterate through rest of grid squares in save file
             while (fileScanner.hasNextLine()) {
@@ -227,7 +225,7 @@ public class LoadMenu extends BaseScreen {
             float farmerCoordinateX = Float.parseFloat(splitFileLine[1]);
             float farmerCoordinateY = Float.parseFloat(splitFileLine[2]);
 
-            level = new LevelScreen(levelWidth, levelHeight, plants, items);
+            level = new LevelScreen(levelWidth, levelHeight, plants, items, time);
             level.getFarmer().setX(farmerCoordinateX);
             level.getFarmer().setY(farmerCoordinateY);
 
@@ -255,7 +253,7 @@ public class LoadMenu extends BaseScreen {
         Plant tempPlant;
         String[] tempLine;
         ArrayList<String> gridLinesToWrite = new ArrayList<String>(); // lines that will be iterated when grid file is opened to write
-        gridLinesToWrite.add(String.format("%d,%d", screen.getGrid().getGridWidth(), screen.getGrid().getGridHeight() ));
+        gridLinesToWrite.add(String.format("%d,%d,%s", screen.getGrid().getGridWidth(), screen.getGrid().getGridHeight(), TimeEngine.getDateTime().toString() ));
         for (int column=0;column<loadedSquares.length;column++) {
             for (int row=0;row<loadedSquares[column].length;row++) {
                 if (loadedSquares[column][row] != null) {

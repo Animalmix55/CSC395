@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
@@ -24,6 +23,7 @@ import com.kacstudios.game.windows.PauseMenu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
@@ -39,7 +39,7 @@ public class LevelScreen extends BaseScreen {
     private List<Plant> savedPlants;
     private Object[] objectItems;
     private IInventoryItem[] savedInventoryItems;
-    private List<PlayableActor> savedActors;
+    private String savedTime;
     private int saveFileNum = -1;
 
 
@@ -53,7 +53,7 @@ public class LevelScreen extends BaseScreen {
     }
 
     // loading level from save
-    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport) {
+    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport, String timeImport) {
         super(false);
         loadingFromSave = true;
         gridWidth = width;
@@ -64,6 +64,7 @@ public class LevelScreen extends BaseScreen {
         for (int i=0;i<objectItems.length;i++) {
             savedInventoryItems[i] = (IInventoryItem) objectItems[i];
         }
+        savedTime = timeImport;
         initialize();
     }
 
@@ -77,7 +78,8 @@ public class LevelScreen extends BaseScreen {
                 new PesticideItem(5),
                 new BlueberriesPlantItem(5)
         };
-        TimeEngine.Init();
+        if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
+        else TimeEngine.Init();
 
         grid = new Grid(gridHeight, gridWidth, this);
 
@@ -163,7 +165,7 @@ public class LevelScreen extends BaseScreen {
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.B)) {
-            System.out.println(getAddedActors());
+            System.out.println(TimeEngine.getDateTime());
         }
         return true;
     }
