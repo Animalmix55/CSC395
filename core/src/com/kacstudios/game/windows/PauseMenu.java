@@ -32,6 +32,7 @@ public class PauseMenu extends Group {
     private final int pauseMenuButtonX = 640 - (pauseMenuButtonWidth/2);
     private final int pauseMenuButtonHeight = 48;
 
+    PauseMenuButton[] pauseButtonsArray;
     Group pauseButtons = new Group();
     Group saveButtons = new Group();
     Group optionsButtons = new Group();
@@ -121,9 +122,13 @@ public class PauseMenu extends Group {
             }
         });
         saveButtons.addActor(save_backButton);
+        pauseButtonsArray = new PauseMenuButton[5];
+        for (int i=0;i<5;i++) {
+            pauseButtonsArray[i] = new PauseMenuButton(String.format("Save #%d",i+1), pauseMenuButtonX, (447-(58*i) - (pauseMenuButtonHeight/2)));
+        }
         for (int i=0;i<5;i++) {
             saveButtons.addActor(
-                    new PauseMenuButton(String.format("Save %d",i+1), pauseMenuButtonX, (447-(58*i) - (pauseMenuButtonHeight/2)))
+                    pauseButtonsArray[i]
             );
         }
         for (int i=0;i<5;i++) {
@@ -132,6 +137,7 @@ public class PauseMenu extends Group {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     saveLevel(screen,finalI+1);
+                    saveMenu_setCurrentLevel(finalI+1);
                     setMenu_pause();
                 }
             });
@@ -327,4 +333,12 @@ public class PauseMenu extends Group {
     public void setCurrentMenu(String menu) { currentPauseMenu = menu; }
 
     public String getCurrentMenu() { return currentPauseMenu; }
+
+    public void saveMenu_setCurrentLevel(int currentLevel) {
+        // reset all buttons to not show current level
+        for (int i=0;i<5;i++) {
+            pauseButtonsArray[i].setButtonLabelText( String.format("Save #%d",i+1) );
+        }
+        pauseButtonsArray[currentLevel-1].setButtonLabelText( String.format("Save #%d (current)",currentLevel) );
+    }
 }
