@@ -131,7 +131,6 @@ public class PauseMenu extends Group {
             saveButtons.getChildren().get(i+1).addCaptureListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    System.out.println(String.format("Clicked to save #%d", finalI +1));
                     saveLevel(screen,finalI+1);
                     setMenu_pause();
                 }

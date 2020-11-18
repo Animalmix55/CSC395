@@ -17,6 +17,7 @@ import com.kacstudios.game.grid.plants.Plant;
 
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.TimeEngine;
 
 import java.io.File;
@@ -113,6 +114,7 @@ public class LoadMenu extends BaseScreen {
         IDepleteableItem tempDepleteableItem;
         List<IInventoryItem> items = new ArrayList<IInventoryItem>();
         String time;
+        int money;
 
         try {
             // get rid of level choice, back button, and replace with loading indicator
@@ -132,6 +134,7 @@ public class LoadMenu extends BaseScreen {
             levelWidth = Integer.parseInt(splitFileLine[0]);
             levelHeight = Integer.parseInt(splitFileLine[1]);
             time = splitFileLine[2];
+            money = Integer.parseInt(splitFileLine[3]);
 
             // iterate through rest of grid squares in save file
             while (fileScanner.hasNextLine()) {
@@ -228,6 +231,8 @@ public class LoadMenu extends BaseScreen {
             level = new LevelScreen(levelWidth, levelHeight, plants, items, time);
             level.getFarmer().setX(farmerCoordinateX);
             level.getFarmer().setY(farmerCoordinateY);
+            Economy.setMoney( money );
+
 
             while (fileScanner.hasNextLine()) {
                 fileLine = fileScanner.nextLine();
@@ -253,7 +258,7 @@ public class LoadMenu extends BaseScreen {
         Plant tempPlant;
         String[] tempLine;
         ArrayList<String> gridLinesToWrite = new ArrayList<String>(); // lines that will be iterated when grid file is opened to write
-        gridLinesToWrite.add(String.format("%d,%d,%s", screen.getGrid().getGridWidth(), screen.getGrid().getGridHeight(), TimeEngine.getDateTime().toString() ));
+        gridLinesToWrite.add(String.format("%d,%d,%s,%d", screen.getGrid().getGridWidth(), screen.getGrid().getGridHeight(), TimeEngine.getDateTime().toString(), Economy.getMoney() ));
         for (int column=0;column<loadedSquares.length;column++) {
             for (int row=0;row<loadedSquares[column].length;row++) {
                 if (loadedSquares[column][row] != null) {
