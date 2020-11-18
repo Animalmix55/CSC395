@@ -22,7 +22,7 @@ import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
-import com.kacstudios.game.windows.PauseMenu;
+import com.kacstudios.game.overlays.pause.PauseMenu;
 
 import java.util.ArrayList;
 import java.util.List;
