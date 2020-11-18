@@ -36,7 +36,7 @@ public class Economy {
         return true;
     }
 
-    private static void setMoney(int amount) {
+    public static void setMoney(int amount) {
         Money = amount;
         informSubscribers();
     }
