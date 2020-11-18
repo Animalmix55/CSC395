@@ -1,7 +1,9 @@
 package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -10,6 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
@@ -39,14 +44,17 @@ public class Settings extends BaseScreen {
         //slider.setBounds(75,300,500,300);
         Gameslider.setValue(Setting.GameVolume);
         Gameslider.setPosition(275,250);
-        Gameslider.addListener(
-                (Event e) ->
-                {
-                    Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
-                    Setting.GameVolume = Math.round(Gameslider.getValue());
-                    return true;
-                }
-        );
+        Gameslider.addCaptureListener(new DragListener() {
+            @Override
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
+            }
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
+                Setting.GameVolume = Math.round(Gameslider.getValue());
+                Setting.saveGlobalSettingsToFile();
+            }
+        });
 
 
         final Label Musiclabel = new Label("Music Volume: " + Setting.MusicVolume, skin);
@@ -57,14 +65,17 @@ public class Settings extends BaseScreen {
         //slider.setBounds(75,300,500,300);
         Musicslider.setValue(Setting.MusicVolume);
         Musicslider.setPosition(475,250);
-        Musicslider.addListener(
-                (Event e) ->
-                {
-                    Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
-                    Setting.MusicVolume = Math.round(Musicslider.getValue());
-                    return true;
-                }
-        );
+        Musicslider.addCaptureListener(new DragListener() {
+            @Override
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
+            }
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
+                Setting.MusicVolume = Math.round(Musicslider.getValue());
+                Setting.saveGlobalSettingsToFile();
+            }
+        });
 
 
         uiStage.addActor(Gamelabel);
@@ -87,26 +98,18 @@ public class Settings extends BaseScreen {
         TextButton RestoreButton = new TextButton( "Restore", BaseGame.textButtonStyle );
         RestoreButton.setPosition(880,60);
         uiStage.addActor(RestoreButton);
-
-        RestoreButton.addListener(
-                (Event e) ->
-                {
-                    if ( !(e instanceof InputEvent) )
-                        return false;
-
-                    if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
-                        return false;
-                    Setting.MusicVolume=50;
-                    Setting.GameVolume=50;
-                    Musicslider.setValue(Setting.MusicVolume);
-                    Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
-                    Gameslider.setValue(Setting.GameVolume);
-                    Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
-
-
-                    return true;
-                }
-        );
+        RestoreButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Setting.MusicVolume = 50;
+                Setting.GameVolume = 50;
+                Musicslider.setValue(Setting.MusicVolume);
+                Musiclabel.setText("Music Volume: " + Setting.MusicVolume);
+                Gameslider.setValue(Setting.GameVolume);
+                Gamelabel.setText("Game Volume: " + Setting.GameVolume);
+                Setting.saveGlobalSettingsToFile();
+            }
+        });
 
         TextButton ExitButton = new TextButton( "Exit", BaseGame.textButtonStyle );
         ExitButton.setPosition(1095,60);
