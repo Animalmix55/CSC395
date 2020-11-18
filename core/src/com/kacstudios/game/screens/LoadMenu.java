@@ -260,6 +260,8 @@ public class LoadMenu extends BaseScreen {
                 }
             }
         }
+
+        
         // save inventory
         ArrayList<String> inventoryLinesToWrite = new ArrayList<String>(); // lines that will be iterated when grid file is opened to write
         String tempInventoryLine;
@@ -274,8 +276,19 @@ public class LoadMenu extends BaseScreen {
             }
         }
 
+
+        // save actors
+        ArrayList<String> actorsLinesToWrite = new ArrayList<String>();
+        String tempActorsLine;
+        actorsLinesToWrite.add( String.format("Farmer,%f,%f",screen.getFarmer().getX(),screen.getFarmer().getY()) );
+        for (int i=0;i<screen.getAddedActors().size();i++) {
+            actorsLinesToWrite.add( String.format("%s,%f,%f", screen.getAddedActors().get(i).getActorName(), screen.getAddedActors().get(i).getX(), screen.getAddedActors().get(i).getY() ) );
+        }
+
+
         File gridSaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
         File inventorySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
+        File actorsSaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
 
         try {
             fileWriter = new FileWriter(gridSaveFile);
@@ -286,6 +299,11 @@ public class LoadMenu extends BaseScreen {
             fileWriter = new FileWriter(inventorySaveFile);
             for (int i=0;i<inventoryLinesToWrite.size();i++) {
                 fileWriter.write(inventoryLinesToWrite.get(i) + "\n");
+            }
+            fileWriter.close();
+            fileWriter = new FileWriter(actorsSaveFile);
+            for (int i=0;i<actorsLinesToWrite.size();i++) {
+                fileWriter.write(actorsLinesToWrite.get(i) + "\n");
             }
             fileWriter.close();
         }

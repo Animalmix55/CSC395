@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.Farmer;
+import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
@@ -20,10 +22,12 @@ import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseMenu;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
+    private ArrayList<PlayableActor> addedActors;
     private Grid grid;
     private HUD hud;
     private Market market;
@@ -122,6 +126,7 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //      add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
+        addedActors = new ArrayList<PlayableActor>();
     }
 
     public void update(float dt) {
@@ -156,12 +161,17 @@ public class LevelScreen extends BaseScreen {
                 pauseMenu.setVisible(true);
             }
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.B)) {
+            System.out.println(getAddedActors());
+        }
         return true;
     }
 
     public Farmer getFarmer(){
         return farmer;
     }
+
+    public ArrayList<PlayableActor> getAddedActors() { return addedActors; }
 
     public Stage getMainStage(){
         return mainStage;
