@@ -19,7 +19,6 @@ import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 import com.kacstudios.game.windows.PauseMenu;
-import com.kacstudios.game.windows.PauseWindow;
 
 import java.util.List;
 
@@ -36,6 +35,7 @@ public class LevelScreen extends BaseScreen {
     private List<Plant> savedPlants;
     private Object[] objectItems;
     private IInventoryItem[] savedInventoryItems;
+    private int saveFileNum = -1;
 
 
     // new level
@@ -85,8 +85,6 @@ public class LevelScreen extends BaseScreen {
         else {
             hud = new HUD(this, initialItems);
         }
-
-//        hud = new HUD(this, initialItems); // add HUD
 
 //        market = new Market(this); // add market overlay
         pauseMenu = new PauseMenu(this);
@@ -138,9 +136,26 @@ public class LevelScreen extends BaseScreen {
     }
 
     public boolean keyDown(int keyCode) {
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {}
-            // insert pause code here
-
+        // escape key used for pause/going back in pause menu
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            if (pauseMenu.getCurrentMenu() != null) {
+                if (pauseMenu.getCurrentMenu() == "pause") {
+                    setPaused(false);
+                    TimeEngine.resume();
+                    pauseMenu.setMenu_resume();
+                    pauseMenu.setVisible(false);
+                }
+                else {
+                    pauseMenu.setMenu_pause();
+                }
+            }
+            else {
+                setPaused(true);
+                TimeEngine.pause();
+                pauseMenu.setMenu_pause();
+                pauseMenu.setVisible(true);
+            }
+        }
         return true;
     }
 
@@ -175,4 +190,6 @@ public class LevelScreen extends BaseScreen {
     public HUD getHud() {
         return hud;
     }
+
+    public PauseMenu getPauseMenu() { return pauseMenu; }
 }

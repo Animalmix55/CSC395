@@ -92,4 +92,6 @@ public class PauseMenuButton extends Group {
     public Slider getPrivateButtonSlider() {
         return privateButtonSlider;
     }
+
+    public void setButtonLabelText(String newText) { buttonLabel.setText(newText); }
 }

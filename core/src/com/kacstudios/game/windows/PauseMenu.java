@@ -39,9 +39,10 @@ public class PauseMenu extends Group {
     Group optionsButtons = new Group();
     Group exitButtons = new Group();
 
+    private String currentPauseMenu;
+
     public PauseMenu(LevelScreen inputScreen) {
         screen = inputScreen;
-
 
         // CODE FOR ADDING DEFAULT MENU ASSETS (INITIAL PAUSE MENU)
         defaultBackground = new Image(
@@ -259,6 +260,7 @@ public class PauseMenu extends Group {
     public void setMenu_resume() {
         defaultBackground.setVisible(false);
         pauseButtons.setVisible(false);
+        setCurrentMenu(null);
     }
 
     /**
@@ -276,6 +278,7 @@ public class PauseMenu extends Group {
         // set original menu visible
         defaultBackground.setVisible(true);
         pauseButtons.setVisible(true);
+        setCurrentMenu("pause");
     }
 
     /**
@@ -289,6 +292,7 @@ public class PauseMenu extends Group {
         // set save menu visible
         saveButtons.setVisible(true);
         saveBackground.setVisible(true);
+        setCurrentMenu("save");
     }
 
 
@@ -302,6 +306,7 @@ public class PauseMenu extends Group {
         pauseButtons.setVisible(false);
         // set options menu buttons visible
         optionsButtons.setVisible(true);
+        setCurrentMenu("options");
     }
 
 
@@ -316,5 +321,10 @@ public class PauseMenu extends Group {
         pauseButtons.setVisible(false);
         // set exit menu buttons visible
         exitButtons.setVisible(true);
+        setCurrentMenu("exit");
     }
+
+    public void setCurrentMenu(String menu) { currentPauseMenu = menu; }
+
+    public String getCurrentMenu() { return currentPauseMenu; }
 }

@@ -2,7 +2,6 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -122,13 +121,11 @@ public class LoadMenu extends BaseScreen {
             uiStage.addActor(loadingIndicator);
 
             // open grid save file
-//            temporarySaveFile = Gdx.files.internal(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
             temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
             fileScanner = new Scanner(temporarySaveFile);
 
             // get grid size, store in variables
             fileLine = fileScanner.nextLine();
-//            fileLine = temporarySaveFile.readString();
             splitFileLine = fileLine.split(",");
             levelWidth = Integer.parseInt(splitFileLine[0]);
             levelHeight = Integer.parseInt(splitFileLine[1]);
@@ -167,7 +164,6 @@ public class LoadMenu extends BaseScreen {
 
             // load inventory items save file into scanner
             temporarySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
-//            temporarySaveFile = Gdx.files.internal(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
             fileScanner.close();
             fileScanner = new Scanner(temporarySaveFile);
 
