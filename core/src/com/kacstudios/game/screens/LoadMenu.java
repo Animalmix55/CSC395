@@ -6,6 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.actors.Farmer;
+import com.kacstudios.game.actors.PlayableActor;
+import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
 
@@ -27,13 +30,14 @@ import java.io.FileWriter;
 
 public class LoadMenu extends BaseScreen {
 
+    private LevelScreen level;
+
     // list of buttons for saves (Save #1, Save #2, etc)
     private TextButton[] levelButtons;
     private TextButton backButton;
 
     // used for cycling files in and out to be used in file streams
     private File temporarySaveFile;
-//    private FileHandle temporarySaveFile;
 
     // used for iteration through save file lines
     private Scanner fileScanner;
@@ -214,7 +218,30 @@ public class LoadMenu extends BaseScreen {
 
             }
 
-            LevelScreen level = new LevelScreen(levelWidth, levelHeight, plants, items);
+            temporarySaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
+            fileScanner.close();
+            fileScanner = new Scanner(temporarySaveFile);
+
+            fileLine = fileScanner.nextLine();
+            splitFileLine = fileLine.split(",");
+            float farmerCoordinateX = Float.parseFloat(splitFileLine[1]);
+            float farmerCoordinateY = Float.parseFloat(splitFileLine[2]);
+
+            level = new LevelScreen(levelWidth, levelHeight, plants, items);
+            level.getFarmer().setX(farmerCoordinateX);
+            level.getFarmer().setY(farmerCoordinateY);
+
+            while (fileScanner.hasNextLine()) {
+                fileLine = fileScanner.nextLine();
+                splitFileLine = fileLine.split(",");
+                switch (splitFileLine[0]) {
+                    case "BasicTractor":
+                        level.addSecondaryActor( new Tractor( Float.parseFloat(splitFileLine[1]), Float.parseFloat(splitFileLine[2]), level ) );
+                        break;
+                }
+            }
+
+
             FarmaniaGame.setActiveScreen(level);
 
         }
@@ -261,7 +288,7 @@ public class LoadMenu extends BaseScreen {
             }
         }
 
-        
+
         // save inventory
         ArrayList<String> inventoryLinesToWrite = new ArrayList<String>(); // lines that will be iterated when grid file is opened to write
         String tempInventoryLine;

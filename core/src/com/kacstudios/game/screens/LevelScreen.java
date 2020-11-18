@@ -27,7 +27,7 @@ import java.util.List;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
-    private ArrayList<PlayableActor> addedActors;
+    private List<PlayableActor> addedActors;
     private Grid grid;
     private HUD hud;
     private Market market;
@@ -39,6 +39,7 @@ public class LevelScreen extends BaseScreen {
     private List<Plant> savedPlants;
     private Object[] objectItems;
     private IInventoryItem[] savedInventoryItems;
+    private List<PlayableActor> savedActors;
     private int saveFileNum = -1;
 
 
@@ -171,7 +172,9 @@ public class LevelScreen extends BaseScreen {
         return farmer;
     }
 
-    public ArrayList<PlayableActor> getAddedActors() { return addedActors; }
+    public List<PlayableActor> getAddedActors() { return addedActors; }
+
+    public void addSecondaryActor(PlayableActor actor) { addedActors.add(actor); }
 
     public Stage getMainStage(){
         return mainStage;
