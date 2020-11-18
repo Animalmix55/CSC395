@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Global {
+public class Setting {
     public static int GameVolume = 50;
     public static int MusicVolume = 50;
 

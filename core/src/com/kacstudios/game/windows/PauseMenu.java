@@ -3,18 +3,16 @@ package com.kacstudios.game.windows;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
-import com.kacstudios.game.utilities.Global;
+import com.kacstudios.game.utilities.Setting;
 import com.kacstudios.game.utilities.ShapeGenerator;
 import com.kacstudios.game.utilities.TimeEngine;
 
@@ -155,12 +153,12 @@ public class PauseMenu extends Group {
                 pauseMenuButtonX,
                 (447 - (pauseMenuButtonHeight/2))
         );
-        options_gameVolumeSlider.getPrivateButtonSlider().setValue(Global.GameVolume);
+        options_gameVolumeSlider.getPrivateButtonSlider().setValue(Setting.GameVolume);
         options_gameVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Global.GameVolume = Math.round(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
-                Global.saveGlobalSettingsToFile();
+                Setting.GameVolume = Math.round(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
+                Setting.saveGlobalSettingsToFile();
             }
         });
         optionsButtons.addActor(options_gameVolumeSlider);
@@ -171,12 +169,12 @@ public class PauseMenu extends Group {
                 pauseMenuButtonX,
                 (389 - (pauseMenuButtonHeight/2))
         );
-        options_musicVolumeSlider.getPrivateButtonSlider().setValue(Global.MusicVolume);
+        options_musicVolumeSlider.getPrivateButtonSlider().setValue(Setting.MusicVolume);
         options_musicVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Global.MusicVolume = Math.round(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
-                Global.saveGlobalSettingsToFile();
+                Setting.MusicVolume = Math.round(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
+                Setting.saveGlobalSettingsToFile();
             }
         });
 
@@ -185,11 +183,11 @@ public class PauseMenu extends Group {
         options_resetToDefault.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Global.GameVolume = 50;
-                Global.MusicVolume = 50;
-                options_gameVolumeSlider.getPrivateButtonSlider().setValue(Global.GameVolume);
-                options_musicVolumeSlider.getPrivateButtonSlider().setValue(Global.MusicVolume);
-                Global.saveGlobalSettingsToFile();
+                Setting.GameVolume = 50;
+                Setting.MusicVolume = 50;
+                options_gameVolumeSlider.getPrivateButtonSlider().setValue(Setting.GameVolume);
+                options_musicVolumeSlider.getPrivateButtonSlider().setValue(Setting.MusicVolume);
+                Setting.saveGlobalSettingsToFile();
 
             }
         });

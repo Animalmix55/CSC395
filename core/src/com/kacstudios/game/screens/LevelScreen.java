@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.actors.PlayableActor;
+import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.actors.Farmer.Farmer;
@@ -81,7 +82,9 @@ public class LevelScreen extends BaseScreen {
         };
         if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
         else TimeEngine.Init();
+        Economy.Init();
 
+        grid = new Grid(gridHeight, gridWidth, this);
         CornPlant test = new CornPlant();
         test.setDisaster(new InsectDisaster(test));
 

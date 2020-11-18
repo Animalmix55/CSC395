@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kacstudios.game.screens.MainMenu;
-import com.kacstudios.game.utilities.Global;
+import com.kacstudios.game.utilities.Setting;
 
 public class FarmaniaGame extends BaseGame {
 
@@ -13,7 +13,7 @@ public class FarmaniaGame extends BaseGame {
 
 	public void create () {
 		super.create();
-		Global.loadGlobalSettingsFromFile();
+		Setting.loadGlobalSettingsFromFile();
 		setActiveScreen( new MainMenu() );
 		camera = new PerspectiveCamera();
 		viewport = new FitViewport(1280,720, camera);
