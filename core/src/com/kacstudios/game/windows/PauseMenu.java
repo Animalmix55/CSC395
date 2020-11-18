@@ -160,6 +160,7 @@ public class PauseMenu extends Group {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Global.GameVolume = Math.round(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
+                Global.saveGlobalSettingsToFile();
             }
         });
         optionsButtons.addActor(options_gameVolumeSlider);
@@ -175,6 +176,7 @@ public class PauseMenu extends Group {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Global.MusicVolume = Math.round(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
+                Global.saveGlobalSettingsToFile();
             }
         });
 
@@ -187,6 +189,7 @@ public class PauseMenu extends Group {
                 Global.MusicVolume = 50;
                 options_gameVolumeSlider.getPrivateButtonSlider().setValue(Global.GameVolume);
                 options_musicVolumeSlider.getPrivateButtonSlider().setValue(Global.MusicVolume);
+                Global.saveGlobalSettingsToFile();
 
             }
         });

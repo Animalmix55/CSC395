@@ -39,6 +39,7 @@ public class LoadMenu extends BaseScreen {
     private Scanner fileScanner;
     private String fileLine;
     private String[] splitFileLine;
+    private static FileWriter fileWriter;
 
     public void initialize() {
         // set background/map limits
@@ -277,16 +278,16 @@ public class LoadMenu extends BaseScreen {
         File inventorySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
 
         try {
-            FileWriter writer = new FileWriter(gridSaveFile);
+            fileWriter = new FileWriter(gridSaveFile);
             for (int i=0;i<gridLinesToWrite.size();i++) {
-                writer.write(gridLinesToWrite.get(i) + "\n");
+                fileWriter.write(gridLinesToWrite.get(i) + "\n");
             }
-            writer.close();
-            writer = new FileWriter(inventorySaveFile);
+            fileWriter.close();
+            fileWriter = new FileWriter(inventorySaveFile);
             for (int i=0;i<inventoryLinesToWrite.size();i++) {
-                writer.write(inventoryLinesToWrite.get(i) + "\n");
+                fileWriter.write(inventoryLinesToWrite.get(i) + "\n");
             }
-            writer.close();
+            fileWriter.close();
         }
         catch (IOException e) {
             e.printStackTrace();
