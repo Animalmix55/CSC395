@@ -232,7 +232,7 @@ public class LoadMenu extends BaseScreen {
             level.getFarmer().setX(farmerCoordinateX);
             level.getFarmer().setY(farmerCoordinateY);
             Economy.setMoney( money );
-
+            level.getPauseMenu().saveMenu_setCurrentLevel(levelNumber);
 
             while (fileScanner.hasNextLine()) {
                 fileLine = fileScanner.nextLine();
