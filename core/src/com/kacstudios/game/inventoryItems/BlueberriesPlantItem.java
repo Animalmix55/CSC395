@@ -1,10 +1,17 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
+import com.kacstudios.game.utilities.Setting;
 
 public class BlueberriesPlantItem extends IInventoryItem {
+    public static Music PlantingSound;
+    public static float volume= Setting.GameVolume*0.01f;
+
     public BlueberriesPlantItem(){
         setTexturePath("items/blueberries.png");
     }
@@ -27,7 +34,9 @@ public class BlueberriesPlantItem extends IInventoryItem {
             if(amount == 0){ // amount of -1 signifies unlimited
                 parent.setItem(null); // remove from button
             }
-
+            PlantingSound = Gdx.audio.newMusic(Gdx.files.internal("SoundEffects/planting-sounds.ogg"));
+            PlantingSound.setVolume(volume);
+            PlantingSound.play();
             parent.checkItem(); // update button display amount
         }
     }

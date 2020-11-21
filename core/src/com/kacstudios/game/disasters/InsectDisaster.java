@@ -11,6 +11,9 @@ import java.util.Random;
 
 public class InsectDisaster extends BaseActor {
 
+    //for insect noise
+    //public boolean isactive true then sound loop on
+
     public int insecticideAmount;
     public LocalDateTime attackStartTime;
     public boolean isActive = false;

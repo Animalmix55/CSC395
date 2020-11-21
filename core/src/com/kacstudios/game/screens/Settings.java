@@ -13,15 +13,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
-import com.kacstudios.game.screens.BaseScreen;
-import com.kacstudios.game.screens.MainMenu;
+import com.kacstudios.game.grid.plants.BlueberriesPlant;
+import com.kacstudios.game.inventoryItems.BasicTractorItem;
+import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
+import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.utilities.Setting;
+
+import java.util.Set;
 
 
 //public class Settings extends ApplicationAdapter{
 public class Settings extends BaseScreen {
     //private List<Slider> slider;
-
     private Skin skin;
     private Stage stage;
     private Slider Gameslider;
@@ -44,6 +47,13 @@ public class Settings extends BaseScreen {
                 {
                     Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
                     Setting.GameVolume = Math.round(Gameslider.getValue());
+
+                    //updates game effect volume
+                    FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
+                    CornPlantItem.volume = Setting.GameVolume*0.01f;
+                    BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
+                    BasicTractorItem.TractorSound.setVolume(Setting.GameVolume*0.01f);
+
                     return true;
                 }
         );
@@ -62,6 +72,9 @@ public class Settings extends BaseScreen {
                 {
                     Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
                     Setting.MusicVolume = Math.round(Musicslider.getValue());
+
+                    FarmaniaGame.music.setVolume(FarmaniaGame.musicid,Setting.MusicVolume*0.01f);
+
                     return true;
                 }
         );

@@ -2,6 +2,7 @@ package com.kacstudios.game.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,9 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.utilities.Setting;
 import com.kacstudios.game.utilities.TimeEngine;
-
-import java.util.ArrayList;
 
 /**
  * An actor which has 4 directional animations and can take control of the camera
@@ -148,6 +149,10 @@ public class PlayableActor extends BaseActor {
 
     @Override
     public void act(float dt) {
+        //walkingSound = Gdx.audio.newMusic(Gdx.files.internal("SoundEffects/walking.ogg"));
+        //walkingSound.setLooping(true);
+        //walkingSound.setVolume(0);
+
         super.act(dt);
         if (isFocused) {
             // configure sprite direction
@@ -174,14 +179,22 @@ public class PlayableActor extends BaseActor {
             }
 
             // configure acceleration
-            if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)){
                 accelerateAtAngle(180);
-            if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                FarmaniaGame.walkingSound.play();}
+            if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
                 accelerateAtAngle(0);
-            if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))
+                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                FarmaniaGame.walkingSound.play();}
+            if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)){
                 accelerateAtAngle(90);
-            if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))
+                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                FarmaniaGame.walkingSound.play();}
+            if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 accelerateAtAngle(270);
+                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                FarmaniaGame.walkingSound.play();}
 
             if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
 

@@ -1,8 +1,12 @@
 package com.kacstudios.game.actors;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.screens.LevelScreen;
+import com.kacstudios.game.utilities.Setting;
 
 import java.awt.geom.Point2D;
 
@@ -35,9 +39,16 @@ public class Tractor extends PlayableActor {
 
     @Override
     public void onClick() {
-        if (getFocused()) removeFarmer();
+
+        if (getFocused()){
+            removeFarmer();
+            BasicTractorItem.TractorSound.setVolume(0);
+        }
         else {
-            if (getDistanceFromFarmer() < 200) addFarmer();
+            if (getDistanceFromFarmer() < 200){
+                addFarmer();
+                BasicTractorItem.TractorSound.setVolume(Setting.GameVolume*0.01f);
+            }
         };
     }
 

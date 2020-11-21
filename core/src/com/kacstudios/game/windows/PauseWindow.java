@@ -9,6 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.inventoryItems.BasicTractorItem;
+import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
+import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
 import com.kacstudios.game.utilities.Setting;
@@ -170,6 +173,15 @@ public class PauseWindow {
                 {
                     Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
                     Setting.GameVolume = Math.round(Gameslider.getValue());
+
+                    //updating Gamenoise volume
+                    FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
+                    //updates game sound effects
+                    CornPlantItem.volume = Setting.GameVolume*0.01f;
+                    BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
+                    BasicTractorItem.TractorSound.setVolume(Setting.GameVolume*0.01f);
+
+
                     return true;
                 }
         );
@@ -190,6 +202,10 @@ public class PauseWindow {
                 {
                     Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
                     Setting.MusicVolume = Math.round(Musicslider.getValue());
+
+                    //updating music volume
+                    FarmaniaGame.music.setVolume(FarmaniaGame.musicid,Setting.MusicVolume*0.01f);
+
                     return true;
                 }
         );
