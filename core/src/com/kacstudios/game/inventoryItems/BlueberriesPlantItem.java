@@ -3,22 +3,25 @@ package com.kacstudios.game.inventoryItems;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.Setting;
 
 public class BlueberriesPlantItem extends IInventoryItem {
+    private static Texture texture = new Texture("items/blueberries.png");
     public static Music PlantingSound;
     public static float volume= Setting.GameVolume*0.01f;
 
     public BlueberriesPlantItem(){
-        setTexturePath("items/blueberries.png");
+        this(1);
     }
 
     public BlueberriesPlantItem(int amount){
-        this();
         setAmount(amount);
+        setDisplayName("Blueberry Seed");
+        setInventoryItemType("II");
     }
 
     @Override
@@ -39,5 +42,15 @@ public class BlueberriesPlantItem extends IInventoryItem {
             PlantingSound.play();
             parent.checkItem(); // update button display amount
         }
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
+
+    @Override
+    public IInventoryItem createNewInstance(int amount) {
+        return new BlueberriesPlantItem(amount);
     }
 }

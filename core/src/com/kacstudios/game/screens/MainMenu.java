@@ -9,9 +9,8 @@ import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
 
+
 public class MainMenu extends BaseScreen {
-
-
 
     public void initialize() {
 
@@ -31,6 +30,7 @@ public class MainMenu extends BaseScreen {
         TextButton NewButton = new TextButton( "New", BaseGame.textButtonStyle );
         NewButton.setPosition(280,200);
         uiStage.addActor(NewButton);
+
 
         NewButton.addListener(
                 (Event e) ->
@@ -60,7 +60,7 @@ public class MainMenu extends BaseScreen {
                     if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) )
                         return false;
 
-                    FarmaniaGame.setActiveScreen( new LevelScreen() );
+                    FarmaniaGame.setActiveScreen( new LoadMenu() );
                     return true;
                 }
         );

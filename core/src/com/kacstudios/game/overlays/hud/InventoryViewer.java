@@ -14,6 +14,7 @@ import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
 
+import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -30,7 +31,7 @@ public class InventoryViewer extends Group {
     private ItemButton mouseTarget;
     private IInventoryItem dragItem;
     private Image dragItemImage;
-    private Vector2 originalPos;
+    private ArrayList<Runnable> updateListeners = new ArrayList<>();
 
     public InventoryViewer(){
         background = new Image(new Texture("bottombar/background-inventory-extension.png"));
@@ -95,7 +96,6 @@ public class InventoryViewer extends Group {
                 mouseDownTime = LocalDateTime.now(); // use system time
                 if(event.getTarget().getClass() == ItemButton.class) mouseTarget = (ItemButton) event.getTarget();
                 else mouseTarget = (ItemButton) event.getTarget().getParent();
-                originalPos = new Vector2(mouseTarget.getX(), mouseTarget.getY());
 
                 return true;
             }
@@ -128,8 +128,15 @@ public class InventoryViewer extends Group {
                     }
                 }
 
+                ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
+                viewInventoryButton.setDeleteMode(false);
+
                 if(!placed) { // put the item back where it was...
                     mouseTarget.setItem(dragItem);
+                }
+                else if (viewInventoryButton.getItem() != null){
+                    viewInventoryButton.setItem(null);
+                    informSubscribers();
                 }
 
                 dragItemImage.remove();
@@ -148,8 +155,10 @@ public class InventoryViewer extends Group {
             if(dragItem == null){ // remove item from button
                 dragItem = mouseTarget.getItem();
                 mouseTarget.setItem(null); // remove item
-                dragItemImage = new Image(new Texture(dragItem.getTexturePath()));
+                dragItemImage = new Image(dragItem.getTexture());
                 mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
+                ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
+                viewInventoryButton.setDeleteMode(true);
             }
 
             Vector3 globalCursorPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -177,6 +186,7 @@ public class InventoryViewer extends Group {
                 itemButtons[i][0].onUseItem(event);
             }
         }
+        informSubscribers();
     }
 
     private IInventoryItem[] compressItems(IInventoryItem[] items) {
@@ -207,5 +217,115 @@ public class InventoryViewer extends Group {
                 numPlaced++;
             }
         }
+        informSubscribers();
+    }
+
+
+    public ItemButton[][] getItemButtons() {
+        return itemButtons;
+    }
+
+    /**
+     * Returns the amount of items whose types can be assigned to the given parameter type
+     * @param type
+     * @return
+     */
+    public int getAmount(Class<? extends IInventoryItem> type) {
+        int amount = 0;
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++){
+                IInventoryItem item = itemButtons[x][y].getItem();
+                if (item != null && type.isAssignableFrom(item.getClass()))
+                    amount += itemButtons[x][y].getItem().getAmount();
+            }
+        }
+
+        return amount;
+    }
+
+    public boolean removeItem(Class<? extends IInventoryItem> type, int amount) {
+        if(getAmount(type) < amount) return false;
+
+        int amountLeft = amount;
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++){
+                IInventoryItem item = itemButtons[x][y].getItem();
+                if (item != null && type.isAssignableFrom(item.getClass())) {
+                    if (item.getAmount() > amountLeft) {
+                        item.setAmount(item.getAmount() - amountLeft);
+                        itemButtons[x][y].checkItem(); // update button
+                        informSubscribers();
+                        return true;
+                    }
+                    else if (item.getAmount() == amountLeft) {
+                        itemButtons[x][y].setItem(null); // remove item
+                        informSubscribers();
+                        return true;
+                    }
+                    else {
+                        amountLeft -= item.getAmount();
+                        item.setAmount(0);
+                        itemButtons[x][y].checkItem(); // update button
+                    }
+                }
+
+            }
+        }
+
+        informSubscribers();
+        return true;
+    }
+
+    /**
+     * Adds an item to the inventory
+     * @param item
+     * @return a boolean noting if the item was successfully added to the inventory. This can fail if the inventory is full
+     */
+    public boolean addItem(IInventoryItem item) {
+        ItemButton lastEmpty = null;
+        for (int x = 0; x < columns; x++) {
+            for (int y = 0; y < rows; y++) {
+                ItemButton currentButton = itemButtons[x][y];
+                if(currentButton.getItem() == null) {
+                    lastEmpty = currentButton;
+                    continue;
+                }
+                IInventoryItem currentItem = itemButtons[x][y].getItem();
+                if(currentItem.getClass() == item.getClass()) {
+                    currentItem.setAmount(item.getAmount() + currentItem.getAmount()); // add on to existing item
+                    currentButton.checkItem(); // update button
+
+                    informSubscribers();
+                    return true;
+                }
+            }
+        }
+
+        if(lastEmpty == null) return false;
+
+        lastEmpty.setItem(item);
+        informSubscribers();
+        return true;
+    }
+
+    /**
+     * Provides a function the inventory which is run every time it updates.
+     * @param onChange
+     */
+    public void addUpdateListener(Runnable onChange) {
+        updateListeners.add(onChange);
+    }
+
+    /**
+     * Sends off an event to any objects subscribed to inventory content changes
+     */
+    private void informSubscribers() {
+        updateListeners.forEach(u -> {
+            try {
+                u.run();
+            } catch (Exception e) {
+                updateListeners.remove(u);
+            }
+        });
     }
 }

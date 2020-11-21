@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.kacstudios.game.inventoryItems.BasicTractorItem;
+import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.Setting;
 
@@ -17,6 +18,7 @@ public class Tractor extends PlayableActor {
 
     public Tractor (float x, float y, LevelScreen s) {
         super(x,y,s.getMainStage(), false);
+        setActorName("BasicTractor");
         screen = s;
         farmer = s.getFarmer();
 

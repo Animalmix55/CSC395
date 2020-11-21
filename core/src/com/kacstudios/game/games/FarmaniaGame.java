@@ -26,7 +26,7 @@ public class FarmaniaGame extends BaseGame {
 
 	public void create () {
 		super.create();
-
+		Setting.loadGlobalSettingsFromFile();
 
 		music = Gdx.audio.newSound(Gdx.files.internal("MusicAndGame/Music.ogg"));
 		long musicid = music.loop(Setting.MusicVolume*0.01f);
@@ -41,8 +41,6 @@ public class FarmaniaGame extends BaseGame {
 		//walkingSound.setLooping(true);
 		walkingSound.setVolume(0);
 		//walkingSound.play();
-
-
 		setActiveScreen( new MainMenu() );
 		camera = new PerspectiveCamera();
 		viewport = new FitViewport(1280,720, camera);

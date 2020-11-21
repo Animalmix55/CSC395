@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
@@ -131,6 +132,7 @@ public class PauseWindow {
 
         final TextButton YesButton = new TextButton("Yes", skin);
         YesButton.setBounds(100,10,100,50);
+
         YesButton.addListener(
                 (Event e) ->
                 {

@@ -208,7 +208,7 @@ public class BaseActor extends Group
      * @param loop should the animation loop
      * @return animation created (useful for storing multiple animations)
      */
-    public Animation<TextureRegion> loadAnimationUnsetFromFiles(String[] fileNames, float frameDuration, boolean loop)
+    public static Animation<TextureRegion> loadAnimationUnsetFromFiles(String[] fileNames, float frameDuration, boolean loop)
     {
         int fileCount = fileNames.length;
         Array<TextureRegion> textureArray = new Array<TextureRegion>();

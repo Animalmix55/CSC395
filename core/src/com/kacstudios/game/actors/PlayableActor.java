@@ -40,6 +40,8 @@ public class PlayableActor extends BaseActor {
     private int prevKey = Input.Keys.D;
     private MoveToAction action;
 
+    private String actorName;
+
     public PlayableActor(float x, float y, Stage s, boolean focused) {
         super(x, y, s);
         this.isFocused = focused;
@@ -65,13 +67,16 @@ public class PlayableActor extends BaseActor {
                 Color pickedColor = null;
 
                 Texture texture = getAnimation().getKeyFrame(0).getTexture();
-
-                if (!texture.getTextureData().isPrepared()) {
-                    texture.getTextureData().prepare();
+                Pixmap pixmap;
+                try {
+                    if (!texture.getTextureData().isPrepared()) {
+                        texture.getTextureData().prepare();
+                    }
+                    pixmap = texture.getTextureData().consumePixmap();
+                    pickedColor = new Color(pixmap.getPixel((int)x, (int)y));
+                } catch (Exception ex) {
+                    pickedColor = new Color(0, 0, 0, 0); // if there is no pixmap, just allow clickthrough
                 }
-                Pixmap pixmap = texture.getTextureData().consumePixmap();
-                pickedColor = new Color(pixmap.getPixel((int)x, (int)y));
-
 
                 //Check for transparency
                 if (pickedColor != null && pickedColor.a != 0) {
@@ -264,5 +269,9 @@ public class PlayableActor extends BaseActor {
 
         return vector;
     }
+
+    public void setActorName(String name) { actorName = name; }
+
+    public String getActorName() { return actorName; }
 
 }

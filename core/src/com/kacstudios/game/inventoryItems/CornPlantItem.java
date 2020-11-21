@@ -1,5 +1,6 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -13,13 +14,15 @@ public class CornPlantItem extends IInventoryItem {
     public static Music PlantingSound;
     public static float volume=Setting.GameVolume*0.01f;
 
+    private static Texture texture = new Texture("items/corn.png");
     public CornPlantItem(){
-        setTexturePath("items/corn.png");
+        this(1);
     }
 
     public CornPlantItem(int amount){
-        this();
         setAmount(amount);
+        setDisplayName("Corn Seed");
+        setInventoryItemType("II");
     }
 
     @Override
@@ -40,5 +43,15 @@ public class CornPlantItem extends IInventoryItem {
             PlantingSound.play();
             parent.checkItem(); // update button display amount
         }
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
+
+    @Override
+    public IInventoryItem createNewInstance(int amount) {
+        return new CornPlantItem(amount);
     }
 }

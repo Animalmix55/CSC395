@@ -1,5 +1,6 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
@@ -7,9 +8,16 @@ import com.kacstudios.game.utilities.GridClickEvent;
 
 
 public class PesticideItem extends IDepleteableItem{
+
+    private static Texture texture = new Texture("items/insecticide.png");
     public PesticideItem(int amount){
-        setTexturePath("items/insecticide.png");
         setAmount(amount);
+        setDisplayName("Pesticide");
+        setInventoryItemType("ID");
+    }
+
+    public PesticideItem() {
+        this(1);
     }
 
     @Override
@@ -19,11 +27,11 @@ public class PesticideItem extends IDepleteableItem{
         if(Plant.class.isAssignableFrom(event.getGridSquare().getClass())){
             //ACTION LOGIC
             Plant target = (Plant) event.getGridSquare();
-            InsectDisaster disaster = target.getInsect();
+            InsectDisaster disaster = (InsectDisaster) target.getDisaster();
 
             if(disaster == null) return;
 
-            if(disaster.getInsecticideAmount() == 1){ disaster.endDisaster(); }
+            if(disaster.getInsecticideAmount() == 1){ target.setDisaster(null); }
             else{ disaster.setInsecticideAmount(disaster.getInsecticideAmount() - 1); }
 
             //CHANGE QUANTITIES LOGIC
@@ -40,5 +48,15 @@ public class PesticideItem extends IDepleteableItem{
         }
         parent.checkItem();
 
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
+
+    @Override
+    public IInventoryItem createNewInstance(int amount) {
+        return new PesticideItem(amount);
     }
 }
