@@ -18,10 +18,10 @@ public class QuantityBox extends Group {
     private static Texture quantityBox = new Texture(ShapeGenerator.createRoundedRectangle(80, 50, 20,
             new Color(1f, 1f, 1f, .4f)));
     private static Texture upArrow = new Texture(
-            ShapeGenerator.createEquilateralTriangle(15, new Color(0, 0, 0, .7f), true)
+            ShapeGenerator.createEquilateralTriangle(15, new Color(0, 0, 0, .7f), ShapeGenerator.Direction.up)
     );
     private static Texture downArrow = new Texture(
-            ShapeGenerator.createEquilateralTriangle(15,  new Color(0, 0, 0, .7f), false)
+            ShapeGenerator.createEquilateralTriangle(15,  new Color(0, 0, 0, .7f), ShapeGenerator.Direction.down)
     );
     private Label QuantityLabel;
     private static Label.LabelStyle itemNameStyle =

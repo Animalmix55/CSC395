@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.kacstudios.game.actors.GridExpandPrompt;
 import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.Grid;
@@ -148,6 +149,7 @@ public class LevelScreen extends BaseScreen {
 //      add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
         addedActors = new ArrayList<PlayableActor>();
+        new GridExpandPrompt(this);
     }
 
     public void update(float dt) {
