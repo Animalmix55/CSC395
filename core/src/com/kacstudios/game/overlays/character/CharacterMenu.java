@@ -207,12 +207,16 @@ public class CharacterMenu extends Group {
 
 
 
-        setMenu_default();
         closeMenu();
         screen.getUIStage().addActor(this);
     }
 
     public void closeMenu() {
+        char_preview_background.setVisible(false);
+        headButtons.setVisible(false);
+        shirtButtons.setVisible(false);
+        skinButtons.setVisible(false);
+        pantsButtons.setVisible(false);
         background.setVisible(false);
         mainButtons.setVisible(false);
         char_preview_background.setVisible(false);
