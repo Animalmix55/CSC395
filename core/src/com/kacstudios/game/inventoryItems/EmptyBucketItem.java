@@ -7,7 +7,7 @@ import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.inventoryItems.WaterBucketItem;
 
-public class EmptyBucketItem extends IDepleteableItem{
+public class EmptyBucketItem extends IInventoryItem{
 
     private static Texture texture = new Texture("items/EmptyBucket.png");
 

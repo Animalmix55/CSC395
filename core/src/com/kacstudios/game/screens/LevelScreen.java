@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.kacstudios.game.disasters.FireDisaster;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.grid.WaterSource;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
@@ -99,6 +100,8 @@ public class LevelScreen extends BaseScreen {
         grid.addGridSquare(1, 1, new CornPlant());
         grid.addGridSquare(1, 2, new CornPlant());
         grid.addGridSquare(1, 3, test2);
+
+        grid.addGridSquare(3,3,new WaterSource());
 
         hud = new HUD(this, initialItems); // add HUD
 

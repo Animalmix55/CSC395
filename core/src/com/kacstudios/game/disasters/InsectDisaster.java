@@ -21,7 +21,7 @@ public class InsectDisaster extends PropagatingDisaster {
                 loadAnimationUnsetFromFiles(
                         new String[]{"pest-1.png", "pest-2.png", "pest-3.png", "pest-4.png"}, 0.1f,true),
                 40,
-                .25f,
+                .5f,
                 .25f
         );
         insecticideAmount = generateRandom(1, 5);

@@ -31,8 +31,6 @@ public class PropagatingDisaster extends Disaster {
     @Override
     public void act(float dt) {
         secondsSinceLastSpread += dt;
-        // Insect = 0, Fire = 1
-        int disasterType = plant.getDisasterType();
 
         if (secondsSinceLastSpread > 1/spreadFrequency) {
             ArrayList<GridSquare> adjSquares = plant.getAdjacentSquares();
@@ -42,11 +40,12 @@ public class PropagatingDisaster extends Disaster {
                 GridSquare target = adjSquares.get(rnd);
                 if (Plant.class.isAssignableFrom(target.getClass())) {
                     Plant targetPlant = (Plant) target;
-                    if (targetPlant.getDisaster() == null && !targetPlant.getDead())
-                        if(disasterType == 0 && !targetPlant.getDead())
-                            targetPlant.setDisaster(new InsectDisaster(targetPlant));
-                        if(disasterType == 1 && !targetPlant.getDead())
-                            targetPlant.setDisaster(new FireDisaster((targetPlant)));
+                    if (targetPlant.getDisaster() == null && !targetPlant.getDead()) {
+                        if (plant.getDisaster().getClass() == InsectDisaster.class){
+                            targetPlant.setDisaster(new InsectDisaster(targetPlant));}
+                        if (plant.getDisaster().getClass() == FireDisaster.class){
+                            targetPlant.setDisaster(new FireDisaster((targetPlant)));}
+                    }
 
                 }
             }
