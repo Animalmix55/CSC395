@@ -1,6 +1,5 @@
 package com.kacstudios.game.overlays.character;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -24,6 +23,7 @@ public class CharacterMenu extends Group {
     private final int charMenuButtonHeight = 48;
 
     Group mainButtons = new Group();
+    Group headButtons = new Group();
     Group shirtButtons = new Group();
     Group skinButtons = new Group();
     Group pantsButtons = new Group();
@@ -55,6 +55,11 @@ public class CharacterMenu extends Group {
 
 
         CharacterMenuButton main_headButton = new CharacterMenuButton("Head",charMenuButtonX,354);
+        main_headButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) { setMenu_head();
+            }
+        });
         mainButtons.addActor(main_headButton);
         CharacterMenuButton main_shirtButton = new CharacterMenuButton("Shirt",charMenuButtonX,296);
         main_shirtButton.addCaptureListener(new ClickListener() {
@@ -79,6 +84,43 @@ public class CharacterMenu extends Group {
         });
         mainButtons.addActor(main_skinButton);
         addActor(mainButtons);
+
+
+
+
+
+
+
+
+
+
+
+        CharacterMenuRGB head_rgbMenu = new CharacterMenuRGB(charMenuButtonX, 180);
+        // set rgb values here
+        headButtons.addActor(head_rgbMenu);
+
+        CharacterMenuButton head_backButton = new CharacterMenuButton("Back",charMenuButtonX, 354, true, true);
+        head_backButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_default();
+            }
+        });
+        headButtons.addActor(head_backButton);
+
+        CharacterMenuButton head_button1 = new CharacterMenuButton(charMenuButtonX+221,354,"farmer/menu/plain.png");
+        headButtons.addActor(head_button1);
+
+        CharacterMenuButton head_button2 = new CharacterMenuButton(charMenuButtonX+285,354,"farmer/menu/plaid.png");
+        headButtons.addActor(head_button2);
+
+        addActor(headButtons);
+
+
+
+
+
+
 
 
 
@@ -165,10 +207,8 @@ public class CharacterMenu extends Group {
 
 
 
-
-        // debug
         setMenu_default();
-        setMenu_pants();
+        closeMenu();
         screen.getUIStage().addActor(this);
     }
 
@@ -181,12 +221,18 @@ public class CharacterMenu extends Group {
     public void setMenu_default() {
         // set all other menu assets invisible here
         char_preview_background.setVisible(true);
+        headButtons.setVisible(false);
         shirtButtons.setVisible(false);
         skinButtons.setVisible(false);
         pantsButtons.setVisible(false);
         // set original menu visible
         background.setVisible(true);
         mainButtons.setVisible(true);
+    }
+
+    public void setMenu_head() {
+        mainButtons.setVisible(false);
+        headButtons.setVisible(true);
     }
 
     public void setMenu_shirt() {
