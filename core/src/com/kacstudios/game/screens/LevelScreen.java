@@ -17,6 +17,7 @@ import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
+import com.kacstudios.game.overlays.character.CharacterMenu;
 import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.Economy;
@@ -35,6 +36,7 @@ public class LevelScreen extends BaseScreen {
     private HUD hud;
     private Market market;
     private PauseMenu pauseMenu;
+    private CharacterMenu characterMenu;
 
     private boolean loadingFromSave;
     private int gridWidth;
@@ -98,8 +100,9 @@ public class LevelScreen extends BaseScreen {
             hud = new HUD(this, initialItems);
         }
 
-//        market = new Market(this); // add market overlay
         pauseMenu = new PauseMenu(this);
+
+        characterMenu = new CharacterMenu(this);
 
         //pause button
 
