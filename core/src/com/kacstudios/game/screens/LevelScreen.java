@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.kacstudios.game.actors.GridExpandPrompt;
+import com.kacstudios.game.actors.gridexpansion.GridExpandPrompt;
 import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.Grid;
@@ -84,6 +84,7 @@ public class LevelScreen extends BaseScreen {
         if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
         else TimeEngine.Init();
         Economy.Init();
+        Economy.addMoney(100000000); // for testing
 
         grid = new Grid(gridHeight, gridWidth, this);
         CornPlant test = new CornPlant();
