@@ -13,7 +13,6 @@ public class FireDisaster extends PropagatingDisaster{
                 .4f
 
         );
-        plant.setDisasterType(1);
     }
 
     @Override

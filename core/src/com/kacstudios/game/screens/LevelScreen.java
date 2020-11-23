@@ -81,27 +81,18 @@ public class LevelScreen extends BaseScreen {
         pauseWindow = new PauseWindow(this);
         grid = new Grid(10, 10, this); // create grid
 
-        CornPlant test = new CornPlant();
-        test.setDisaster(new FireDisaster((test)));
-
-        grid.addGridSquare(5, 6, new CornPlant());
-        grid.addGridSquare(6, 6, new CornPlant());
-        grid.addGridSquare(5, 4, new CornPlant());
-        grid.addGridSquare(6, 5, new CornPlant());
-        grid.addGridSquare(4, 5, new CornPlant());
-        grid.addGridSquare(5, 5, test);
-
-        CornPlant test2 = new CornPlant();
-        test2.setDisaster(new InsectDisaster((test2)));
-
-        grid.addGridSquare(0, 0, new CornPlant());
-        grid.addGridSquare(0, 1, new CornPlant());
-        grid.addGridSquare(0, 2, new CornPlant());
-        grid.addGridSquare(1, 1, new CornPlant());
-        grid.addGridSquare(1, 2, new CornPlant());
-        grid.addGridSquare(1, 3, test2);
-
-        grid.addGridSquare(3,3,new WaterSource());
+//        Testing Fire/Water
+//        CornPlant test = new CornPlant();
+//        test.setDisaster(new FireDisaster((test)));
+//
+//        grid.addGridSquare(5, 6, new CornPlant());
+//        grid.addGridSquare(6, 6, new CornPlant());
+//        grid.addGridSquare(5, 4, new CornPlant());
+//        grid.addGridSquare(6, 5, new CornPlant());
+//        grid.addGridSquare(4, 5, new CornPlant());
+//        grid.addGridSquare(5, 5, test);
+//
+//        grid.addGridSquare(3,3,new WaterSource());
 
         hud = new HUD(this, initialItems); // add HUD
 
