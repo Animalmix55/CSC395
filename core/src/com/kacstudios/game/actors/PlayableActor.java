@@ -109,6 +109,8 @@ public class PlayableActor extends BaseActor {
         leftAnimation = left;
         rightAnimation = right;
         upAnimation = up;
+
+        setAnimationDirection(Direction.down); //update on screen
     }
 
     public static double angleBetweenTwoPointsWithFixedPoint(double point1X, double point1Y,

@@ -102,7 +102,6 @@ public class LevelScreen extends BaseScreen {
 
         pauseMenu = new PauseMenu(this);
 
-        characterMenu = new CharacterMenu(this);
 
         //pause button
 
@@ -150,6 +149,21 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //      add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
+
+        characterMenu = new CharacterMenu(farmer) {
+            @Override
+            public void onClose() {
+                getHud().toggleCustomizationButton(false);
+            }
+
+            @Override
+            public void onOpen() {
+                super.onOpen();
+                getHud().toggleCustomizationButton(true);
+            }
+        }; //needs farmer to exist
+        getUIStage().addActor(characterMenu);
+
         addedActors = new ArrayList<PlayableActor>();
     }
 
@@ -230,5 +244,9 @@ public class LevelScreen extends BaseScreen {
     public PauseMenu getPauseMenu() { return pauseMenu; }
     public void openMarket(boolean isOpen) {
         market.setVisible(isOpen);
+    }
+    public void openCustomization(boolean isOpen) {
+        if (isOpen) characterMenu.setMenu_default();
+        else characterMenu.closeMenu();
     }
 }

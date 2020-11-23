@@ -12,6 +12,17 @@ import java.util.Arrays;
 
 public class FarmerAnimationFactory {
     private static DirectionalTextures textures = null;
+    public enum Direction {
+        up,
+        left,
+        right,
+        down
+    }
+    public enum CustomizationPart {
+        head,
+        shirt,
+        pants
+    }
 
     /**
      * Returns the farmer textures loaded
@@ -22,7 +33,7 @@ public class FarmerAnimationFactory {
         return textures;
     }
 
-    public static void loadTextures() {
+    private static void loadTextures() {
         textures = new DirectionalTextures();
         TextureAtlas atlas = new TextureAtlas("farmer/Farmer.atlas");
         Array<TextureAtlas.AtlasRegion> regions = atlas.getRegions();
@@ -44,6 +55,10 @@ public class FarmerAnimationFactory {
                 targetTextures.add(textures.right);
             }
 
+            //remove the trailing directional explanations
+            String[] regionNameSlices = region.name.split("-");
+            region.name = String.join("-", Arrays.copyOfRange(regionNameSlices, 0, regionNameSlices.length - 1));
+
             if (region.name.contains("pants")) {
                 targetTextures.forEach(t -> {
                     t.pants.add(region);
@@ -59,13 +74,20 @@ public class FarmerAnimationFactory {
                     t.skinKeyframes.add(region);
                 });
             }
+
+            if (region.name.contains("head")) {
+                targetTextures.forEach(t -> {
+                    t.heads.add(region);
+                });
+            }
         }
     }
 
-    public static Animation<TextureRegion> createAnimation(Color pantColor, TextureRegion pants,
-                                              Color skinColor, ArrayList<TextureRegion> bodyKeyframes,
-                                              Color shirtColor, TextureRegion shirt, boolean waddle) {
-        ArrayList<TextureRegion> bodyTextures = expandAnimation(bodyKeyframes);
+    private static Animation<TextureRegion> createAnimation(Color pantColor, TextureAtlas.AtlasRegion pants,
+                                              Color skinColor, ArrayList<TextureAtlas.AtlasRegion> bodyKeyframes,
+                                              Color shirtColor, TextureRegion shirt,
+                                              Color headColor, TextureRegion head, boolean waddle) {
+        ArrayList<TextureAtlas.AtlasRegion> bodyTextures = expandAnimation(bodyKeyframes);
         TextureRegion[] animationKeyframes = new TextureRegion[bodyTextures.size()];
 
         for (int i = 0; i < bodyTextures.size(); i++) {
@@ -103,6 +125,14 @@ public class FarmerAnimationFactory {
             skinSprite.setRotation(rotationAngle);
             skinSprite.draw(batch);
 
+            if(head != null) {
+                Sprite headSprite = new Sprite(head);
+                headSprite.setColor(headColor);
+                headSprite.setOrigin(50, 0);
+                headSprite.setRotation(rotationAngle);
+                headSprite.draw(batch);
+            }
+
             batch.end();
             buffer.end();
 
@@ -131,28 +161,6 @@ public class FarmerAnimationFactory {
         return (float) rotation;
     }
 
-    private static Pixmap extractPixmapFromTextureRegion(TextureRegion textureRegion) {
-        TextureData textureData = textureRegion.getTexture().getTextureData();
-        if (!textureData.isPrepared()) {
-            textureData.prepare();
-        }
-        Pixmap pixmap = new Pixmap(
-                textureRegion.getRegionWidth(),
-                textureRegion.getRegionHeight(),
-                textureData.getFormat()
-        );
-        pixmap.drawPixmap(
-                textureData.consumePixmap(), // The other Pixmap
-                0, // The target x-coordinate (top left corner)
-                0, // The target y-coordinate (top left corner)
-                textureRegion.getRegionX(), // The source x-coordinate (top left corner)
-                textureRegion.getRegionY(), // The source y-coordinate (top left corner)
-                textureRegion.getRegionWidth(), // The width of the area from the other Pixmap in pixels
-                textureRegion.getRegionHeight() // The height of the area from the other Pixmap in pixels
-        );
-        return pixmap;
-    }
-
     /**
      * Formats a 5-frame body animation into an 8-frame animation by duplicating necessary frames.
      * Given frames 1-5, they will be exported as 1, 2, 3, 2, 1, 4, 5, 4.
@@ -161,10 +169,10 @@ public class FarmerAnimationFactory {
      * @param bodyAnimation
      * @return
      */
-    private static ArrayList<TextureRegion> expandAnimation(ArrayList<TextureRegion> bodyAnimation){
+    private static ArrayList<TextureAtlas.AtlasRegion> expandAnimation(ArrayList<TextureAtlas.AtlasRegion> bodyAnimation){
         if(bodyAnimation.size() != 5) return bodyAnimation;
 
-        TextureRegion[] regions = new TextureRegion[8];
+        TextureAtlas.AtlasRegion[] regions = new TextureAtlas.AtlasRegion[8];
         regions[0] = bodyAnimation.get(0);
         regions[1] = bodyAnimation.get(1);
         regions[2] = bodyAnimation.get(2);
@@ -201,5 +209,107 @@ public class FarmerAnimationFactory {
         returnTexture.flip(false, true);
 
         return returnTexture;
+    }
+
+    /**
+     * Retrieves the first grayscale texture for a given part of the farmer with a region name containing the filter.
+     * @param direction
+     * @param part
+     * @return texture
+     */
+    private static TextureAtlas.AtlasRegion retrievePart(Direction direction, CustomizationPart part, String filter) {
+        ArrayList<TextureAtlas.AtlasRegion> partTextures = retrievePartTextures(part, direction);
+        TextureAtlas.AtlasRegion defText;
+
+        if(part == CustomizationPart.head) defText = null; // no defaulting for headwear
+        else defText = partTextures.get(0);
+
+        for (TextureAtlas.AtlasRegion texture: partTextures) {
+            if(texture.name.equals(filter)) return texture;
+            if(texture.name.contains("plain")) defText = texture;
+        }
+        return defText; // if not found, default
+    }
+
+    public static ArrayList<TextureAtlas.AtlasRegion> retrievePartTextures(CustomizationPart part, Direction direction) {
+        FarmerTexture folder;
+        DirectionalTextures textures = getTextures();
+
+        switch (direction) {
+            case left:
+                folder = textures.left;
+                break;
+            case right:
+                folder = textures.right;
+                break;
+            default:
+            case down:
+                folder = textures.front;
+                break;
+            case up:
+                folder = textures.back;
+                break;
+        }
+        ArrayList<TextureAtlas.AtlasRegion> partTextures;
+        switch (part) {
+            case head:
+                partTextures = folder.heads;
+                break;
+            case pants:
+                partTextures = folder.pants;
+                break;
+            default:
+            case shirt:
+                partTextures = folder.shirts;
+                break;
+        }
+
+        return partTextures;
+    }
+
+    public static TextureRegion generatePreviewFrame(Farmer.FarmerTextureData textureData) {
+        return FarmerAnimationFactory.createAnimation(
+                textureData.pantsColor, retrievePart(Direction.down, CustomizationPart.pants, textureData.pantsName),
+                textureData.skinColor, FarmerAnimationFactory.getTextures().front.skinKeyframes,
+                textureData.shirtColor, retrievePart(Direction.down, CustomizationPart.shirt, textureData.shirtName),
+                textureData.headColor, retrievePart(Direction.down, CustomizationPart.head, textureData.headName),
+                false
+        ).getKeyFrame(0);
+    }
+
+    public static void updateFarmerTextures(Farmer farmer) {
+
+        Farmer.FarmerTextureData textureData = farmer.getTextureData();
+
+        Animation<TextureRegion> downAnimation = FarmerAnimationFactory.createAnimation(
+                textureData.pantsColor, retrievePart(Direction.down, CustomizationPart.pants, textureData.pantsName),
+                textureData.skinColor, FarmerAnimationFactory.getTextures().front.skinKeyframes,
+                textureData.shirtColor, retrievePart(Direction.down, CustomizationPart.shirt, textureData.shirtName),
+                textureData.headColor, retrievePart(Direction.down, CustomizationPart.head, textureData.headName),
+                true
+        );
+        Animation<TextureRegion> upAnimation = FarmerAnimationFactory.createAnimation(
+                textureData.pantsColor, retrievePart(Direction.up, CustomizationPart.pants, textureData.pantsName),
+                textureData.skinColor, FarmerAnimationFactory.getTextures().back.skinKeyframes,
+                textureData.shirtColor, retrievePart(Direction.up, CustomizationPart.shirt, textureData.shirtName),
+                textureData.headColor, retrievePart(Direction.up, CustomizationPart.head, textureData.headName),
+                true
+        );
+        Animation<TextureRegion> rightAnimation = FarmerAnimationFactory.createAnimation(
+                textureData.pantsColor, retrievePart(Direction.right, CustomizationPart.pants, textureData.pantsName),
+                textureData.skinColor, FarmerAnimationFactory.getTextures().right.skinKeyframes,
+                textureData.shirtColor, retrievePart(Direction.right, CustomizationPart.shirt, textureData.shirtName),
+                textureData.headColor, retrievePart(Direction.right, CustomizationPart.head, textureData.headName),
+                false
+        );
+        Animation<TextureRegion> leftAnimation = FarmerAnimationFactory.createAnimation(
+                textureData.pantsColor, retrievePart(Direction.left, CustomizationPart.pants, textureData.pantsName),
+                textureData.skinColor, FarmerAnimationFactory.getTextures().left.skinKeyframes,
+                textureData.shirtColor, retrievePart(Direction.left, CustomizationPart.shirt, textureData.shirtName),
+                textureData.headColor, retrievePart(Direction.left, CustomizationPart.head, textureData.headName),
+                false
+        );
+
+        farmer.setDirectionalAnimations(leftAnimation, rightAnimation, upAnimation, downAnimation);
     }
 }

@@ -1,7 +1,9 @@
 package com.kacstudios.game.overlays.character;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -10,28 +12,37 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
+import java.nio.ByteBuffer;
+
 public class CharacterMenuButton extends Group {
     private Image outline;
     private Image background;
     private Label buttonLabel;
     private Label.LabelStyle buttonLabelStyle;
 
-    private final int buttonWidth = 332;
-    private final int buttonWidthHalf = 160;
-    private final int buttonHeight = 48;
-    private final int buttonCornerRadius = 16;
+    private static final int buttonWidth = 332;
+    private static final int buttonWidthHalf = 160;
+    private static final int buttonHeight = 48;
+    private static final int buttonCornerRadius = 16;
+
+    private static Texture fullBackgroundTexture = new Texture(ShapeGenerator.createRoundedRectangle(
+            buttonWidth,
+            buttonHeight,
+            buttonCornerRadius,
+            Color.WHITE
+    ));
+
+    private static Texture halfBackgroundTexture = new Texture(ShapeGenerator.createRoundedRectangle(
+            buttonWidthHalf,
+            buttonHeight,
+            buttonCornerRadius,
+            Color.WHITE
+    ));
+
 
     // standard full width button, white background
     public CharacterMenuButton(String buttonText, int x, int y) {
-        background = new Image(
-                new Texture(ShapeGenerator.createRoundedRectangle(
-                        buttonWidth,
-                        buttonHeight,
-                        buttonCornerRadius,
-                        Color.WHITE
-                )
-                )
-        );
+        background = new Image(fullBackgroundTexture);
         setWidth(background.getWidth());
         setHeight(background.getHeight());
         setX(x);
@@ -47,28 +58,10 @@ public class CharacterMenuButton extends Group {
 
     // customizable width/background button
     public CharacterMenuButton(String buttonText, int x, int y, boolean backgroundVisible, boolean half) {
-        Color backgroundColor;
-        if (backgroundVisible) backgroundColor = Color.WHITE;
-        else backgroundColor = Color.CLEAR;
+        if (!half) background = new Image(fullBackgroundTexture);
+        else background = new Image(halfBackgroundTexture);
 
-        if (!half) background = new Image(
-                new Texture(ShapeGenerator.createRoundedRectangle(
-                        buttonWidth,
-                        buttonHeight,
-                        buttonCornerRadius,
-                        backgroundColor
-                )
-                )
-        );
-        else background = new Image(
-                new Texture(ShapeGenerator.createRoundedRectangle(
-                        buttonWidthHalf,
-                        buttonHeight,
-                        buttonCornerRadius,
-                        backgroundColor
-                )
-                )
-        );
+        background.setVisible(backgroundVisible);
         setWidth(background.getWidth());
         setHeight(background.getHeight());
         setX(x);
@@ -85,32 +78,8 @@ public class CharacterMenuButton extends Group {
         addActor(buttonLabel);
     }
 
-    // preset button
-    public CharacterMenuButton(int x, int y, String texturePath) {
-        outline = new Image(
-                new Texture(ShapeGenerator.createRoundedRectangle(
-                        52,
-                        52,
-                        16,
-                        Color.WHITE
-                )
-                )
-        );
-        outline.setX(-2);
-        outline.setY(-2);
-        outline.setVisible(false);
-        addActor(outline);
-        background = new Image( new Texture( texturePath ) );
-        setX(x);
-        setY(y);
-        background.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (outline.isVisible()) outline.setVisible(false);
-                else outline.setVisible(true);
-            }
-        });
-        addActor(background);
+    public void onClick() {
+        // pass
     }
 
 

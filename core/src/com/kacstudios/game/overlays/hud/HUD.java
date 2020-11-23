@@ -90,7 +90,12 @@ public class HUD extends Group {
         this.addActor(money);
 
         //ADD CUSTOMIZATION BUTTON
-        customizeFarmerButton = new CustomizeFarmerButton();
+        customizeFarmerButton = new CustomizeFarmerButton() {
+            @Override
+            public void onClick(InputEvent event, float x, float y) {
+                screen.openCustomization(!getSelected());
+            }
+        };
         customizeFarmerButton.setX(money.getWidth() + money.getX() + 10);
         customizeFarmerButton.setY((background.getHeight() - customizeFarmerButton.getHeight()) / 2);
         addActor(customizeFarmerButton);
@@ -139,6 +144,10 @@ public class HUD extends Group {
 
     public void toggleMarketButton(boolean isOpen) {
         market.setSelected(isOpen);
+    }
+
+    public void toggleCustomizationButton(boolean isOpen) {
+        customizeFarmerButton.setSelected(isOpen);
     }
 
     public LevelScreen getScreen() {

@@ -31,6 +31,7 @@ public class CharacterMenuRGB extends Group {
     public CharacterMenuRGB(int x, int y) {
         // y value should be set to bottom bar y value
         backgrounds = new Image[3];
+        setWidth(buttonWidth);
 
         buttonLabelStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 24), Color.BLACK);
 
@@ -63,9 +64,9 @@ public class CharacterMenuRGB extends Group {
             addActor(labels[i]);
         }
 
-        slider_r = new Slider(0,255,1,false, new Skin(Gdx.files.internal("uiskin.json")));
-        slider_g = new Slider(0,255,1,false, new Skin(Gdx.files.internal("uiskin.json")));
-        slider_b = new Slider(0,255,1,false, new Skin(Gdx.files.internal("uiskin.json")));
+        slider_r = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("uiskin.json")));
+        slider_g = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("uiskin.json")));
+        slider_b = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("uiskin.json")));
         sliders = new Slider[3];
         sliders[0] = slider_b;
         sliders[1] = slider_g;
@@ -77,13 +78,21 @@ public class CharacterMenuRGB extends Group {
             sliders[i].addCaptureListener(new DragListener() {
                 @Override
                 public void drag(InputEvent event, float x, float y, int pointer) {
-                    labels[finali].setText( String.format("%s (%d)",labelPrefixes[finali], (int) sliders[finali].getValue()) );
+                    labels[finali].setText( String.format("%s (%d%%)",labelPrefixes[finali], (int) (sliders[finali].getValue() * 100)) );
+                    onSliderChange(slider_r.getValue(), slider_g.getValue(), slider_b.getValue());
+                }
+
+                @Override
+                public void dragStop(InputEvent event, float x, float y, int pointer) {
+                    onStopSliding(slider_r.getValue(), slider_g.getValue(), slider_b.getValue());
                 }
             });
             sliders[i].addCaptureListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    labels[finali].setText( String.format("%s (%d)",labelPrefixes[finali], (int) sliders[finali].getValue()) );
+                    labels[finali].setText( String.format("%s (%d%%)",labelPrefixes[finali], (int) (sliders[finali].getValue() * 100)) );
+                    onSliderChange(slider_r.getValue(), slider_g.getValue(), slider_b.getValue());
+                    onStopSliding(slider_r.getValue(), slider_g.getValue(), slider_b.getValue());
                 }
             });
             addActor(sliders[i]);
@@ -95,12 +104,21 @@ public class CharacterMenuRGB extends Group {
         return new float[]{slider_r.getValue(),slider_g.getValue(),slider_b.getValue()};
     }
 
-    public void setSliderValues(float r, float g, float b) {
+    public void setSliders(float r, float g, float b) {
         slider_r.setValue(r);
         slider_g.setValue(g);
         slider_b.setValue(b);
-        label_r.setText( String.format("%s (%d)","Red", (int) slider_r.getValue() ) );
-        label_g.setText( String.format("%s (%d)","Green", (int) slider_g.getValue() ) );
-        label_b.setText( String.format("%s (%d)","Blue", (int) slider_b.getValue() ) );
+
+        for (int i = 0; i < sliders.length; i++) {
+            labels[i].setText(String.format("%s (%d%%)", labelPrefixes[i], (int) (sliders[i].getValue() * 100)));
+        }
+    }
+
+    public void onSliderChange(float r, float g, float b) {
+        // pass
+    }
+
+    public void onStopSliding(float r, float g, float b) {
+        // pass
     }
 }
