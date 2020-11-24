@@ -12,7 +12,8 @@ public class Farmer extends PlayableActor {
     Animation<TextureRegion> downAnimation;
     FarmerTextureData textureData = new FarmerTextureData();
 
-    public class FarmerTextureData {
+    public static class FarmerTextureData {
+        public FarmerTextureData() {}
         public String headName;
         public Color headColor;
         public String shirtName;
@@ -63,6 +64,18 @@ public class Farmer extends PlayableActor {
 
     public FarmerTextureData getTextureData() {
         return textureData;
+    }
+
+    public String[] getFarmerTextureSaveState() {
+        return new String[]{
+                textureData.headName,
+                textureData.headColor.toString(),
+                textureData.shirtName,
+                textureData.shirtColor.toString(),
+                textureData.pantsName,
+                textureData.pantsColor.toString(),
+                textureData.skinColor.toString()
+        };
     }
 
     public void updateTextures() {

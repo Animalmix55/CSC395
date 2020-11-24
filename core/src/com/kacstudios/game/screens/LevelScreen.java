@@ -200,7 +200,7 @@ public class LevelScreen extends BaseScreen {
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.B)) {
-            System.out.println(TimeEngine.getDateTime());
+            // insert debug statements here
         }
         return true;
     }

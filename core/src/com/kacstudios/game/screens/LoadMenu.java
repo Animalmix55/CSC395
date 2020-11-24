@@ -2,10 +2,12 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
@@ -114,6 +116,7 @@ public class LoadMenu extends BaseScreen {
         IDepleteableItem tempDepleteableItem;
         List<IInventoryItem> items = new ArrayList<IInventoryItem>();
         String time;
+        Farmer.FarmerTextureData customization = new Farmer.FarmerTextureData();
         int money;
 
         try {
@@ -218,22 +221,29 @@ public class LoadMenu extends BaseScreen {
 
 
             }
-
+            // switch over to actors file
             temporarySaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
             fileScanner.close();
             fileScanner = new Scanner(temporarySaveFile);
 
+            // pull farmer location and save into variable
             fileLine = fileScanner.nextLine();
             splitFileLine = fileLine.split(",");
             float farmerCoordinateX = Float.parseFloat(splitFileLine[1]);
             float farmerCoordinateY = Float.parseFloat(splitFileLine[2]);
 
+            // create level, set previously stored farmer location
             level = new LevelScreen(levelWidth, levelHeight, plants, items, time);
             level.getFarmer().setX(farmerCoordinateX);
             level.getFarmer().setY(farmerCoordinateY);
+
+            // set money
             Economy.setMoney( money );
+
+            // set current level indicator within pause menu
             level.getPauseMenu().saveMenu_setCurrentLevel(levelNumber);
 
+            // iterate other existing actors and place them accordingly
             while (fileScanner.hasNextLine()) {
                 fileLine = fileScanner.nextLine();
                 splitFileLine = fileLine.split(",");
@@ -243,6 +253,21 @@ public class LoadMenu extends BaseScreen {
                         break;
                 }
             }
+
+            // set farmer customization
+            temporarySaveFile = new File(String.format("core/assets/saves/farmer%d.mcconnell",levelNumber));
+            fileScanner.close();
+            fileScanner = new Scanner(temporarySaveFile);
+            customization.headName = fileScanner.nextLine();
+            customization.headColor = Color.valueOf( fileScanner.nextLine() );
+            customization.shirtName = fileScanner.nextLine();
+            customization.shirtColor = Color.valueOf( fileScanner.nextLine() );
+            customization.pantsName = fileScanner.nextLine();
+            customization.pantsColor = Color.valueOf( fileScanner.nextLine() );
+            customization.skinColor = Color.valueOf( fileScanner.nextLine() );
+            fileScanner.close();
+            level.getFarmer().setTextureData(customization);
+            level.getFarmer().updateTextures();
 
 
             FarmaniaGame.setActiveScreen(level);
@@ -315,11 +340,16 @@ public class LoadMenu extends BaseScreen {
             actorsLinesToWrite.add( String.format("%s,%f,%f", screen.getAddedActors().get(i).getActorName(), screen.getAddedActors().get(i).getX(), screen.getAddedActors().get(i).getY() ) );
         }
 
+        // save farmer customization
+        String[] farmerState = screen.getFarmer().getFarmerTextureSaveState();
 
+        // set file names according to level number
         File gridSaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
         File inventorySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
         File actorsSaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
+        File farmerSaveFile = new File(String.format("core/assets/saves/farmer%d.mcconnell",levelNumber));
 
+        // write to save files
         try {
             fileWriter = new FileWriter(gridSaveFile);
             for (int i=0;i<gridLinesToWrite.size();i++) {
@@ -334,6 +364,11 @@ public class LoadMenu extends BaseScreen {
             fileWriter = new FileWriter(actorsSaveFile);
             for (int i=0;i<actorsLinesToWrite.size();i++) {
                 fileWriter.write(actorsLinesToWrite.get(i) + "\n");
+            }
+            fileWriter.close();
+            fileWriter = new FileWriter(farmerSaveFile);
+            for (String farmerLine : farmerState) {
+                fileWriter.write(farmerLine + "\n");
             }
             fileWriter.close();
         }
