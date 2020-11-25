@@ -3,240 +3,233 @@ Farmer.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-head-cory-front
+head-short-back
   rotate: false
   xy: 1, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-head-short-back
+head-short-front
   rotate: false
   xy: 1, 307
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-head-short-front
+head-short-left
   rotate: false
   xy: 103, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-head-short-left
+head-short-right
   rotate: false
   xy: 1, 205
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-head-short-right
+pants-plain-frontback
   rotate: false
   xy: 103, 307
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-pants-plain-frontback
+pants-plain-leftright
   rotate: false
   xy: 205, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-pants-plain-leftright
+shirt-kac-front
   rotate: false
   xy: 1, 103
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-shirt-kac-front
+shirt-plaid-frontback
   rotate: false
   xy: 103, 205
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-shirt-plaid-frontback
+shirt-plaid-left
   rotate: false
   xy: 205, 307
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-shirt-plaid-left
+shirt-plaid-right
   rotate: false
   xy: 307, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-shirt-plaid-right
+shirt-plain-frontback
   rotate: false
   xy: 1, 1
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-shirt-plain-frontback
+shirt-plain-left
   rotate: false
   xy: 103, 103
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-shirt-plain-left
+shirt-plain-right
   rotate: false
   xy: 205, 205
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-shirt-plain-right
+skin-1-back
   rotate: false
   xy: 307, 307
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-1-back
+skin-1-front
   rotate: false
   xy: 409, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-1-front
+skin-1-left
   rotate: false
   xy: 103, 1
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-1-left
+skin-1-right
   rotate: false
   xy: 205, 103
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-1-right
+skin-2-back
   rotate: false
   xy: 307, 205
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-2-back
+skin-2-front
   rotate: false
   xy: 409, 307
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-2-front
+skin-2-left
   rotate: false
   xy: 511, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-2-left
+skin-2-right
   rotate: false
   xy: 205, 1
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-2-right
+skin-3-back
   rotate: false
   xy: 307, 103
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-3-back
+skin-3-front
   rotate: false
   xy: 409, 205
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-3-front
+skin-3-left
   rotate: false
   xy: 511, 307
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-3-left
+skin-3-right
   rotate: false
   xy: 613, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-3-right
+skin-4-back
   rotate: false
   xy: 307, 1
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-4-back
+skin-4-front
   rotate: false
   xy: 409, 103
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-4-front
+skin-4-left
   rotate: false
   xy: 511, 205
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-4-left
+skin-4-right
   rotate: false
   xy: 613, 307
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-4-right
+skin-5-back
   rotate: false
   xy: 715, 409
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-5-back
+skin-5-front
   rotate: false
   xy: 409, 1
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-5-front
+skin-5-left
   rotate: false
   xy: 511, 103
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-skin-5-left
-  rotate: false
-  xy: 613, 205
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
 skin-5-right
   rotate: false
-  xy: 715, 307
+  xy: 613, 205
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
