@@ -11,7 +11,6 @@ public class BasicTractorItem extends IInventoryItem {
     public BasicTractorItem(int amount) {
         setAmount(amount);
         setDisplayName("Basic Tractor");
-        setInventoryItemType("II");
     }
 
     public BasicTractorItem() {

@@ -1,4 +1,9 @@
-8,8,2020-11-18T02:50:02.901807131,200000
-0,1,plant,corn,f,0,0,1.0,f
-1,0,plant,corn,f,0,0,1.0,f
-1,1,plant,corn,f,0,0,1.0,f
+8,8,2020-11-27T03:23:53.323893694,100004000
+0,0,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.26521844,f
+0,1,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.26137447,f
+0,2,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.17680454,f
+1,0,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.07815742,f
+1,2,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.17347702,f
+2,0,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.16231826,f
+2,1,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.16634104,f
+2,2,plant,com.kacstudios.game.grid.plants.CornPlant,t,0,0,0.16997899,f

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
@@ -35,7 +36,7 @@ import java.time.LocalDateTime;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
-    private List<PlayableActor> addedActors;
+    private List<Actor> addedActors;
     private Grid grid;
     private HUD hud;
     private Market market;
@@ -85,30 +86,18 @@ public class LevelScreen extends BaseScreen {
                 new BasicTractorItem(40),
                 new PesticideItem(5),
                 new BlueberriesPlantItem(100),
-                new WaterBucketItem(1)
+                new WaterBucketItem(10),
+                new EmptyBucketItem(10)
         };
         if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
         else TimeEngine.Init();
         Economy.Init();
         Economy.addMoney(100000000); // for testing
 
+        grid = new Grid(gridHeight, gridWidth, this);
 
-//        Testing Fire/Water
-//        CornPlant test = new CornPlant();
-//        test.setDisaster(new FireDisaster((test)));
-//
-//        grid.addGridSquare(5, 6, new CornPlant());
-//        grid.addGridSquare(6, 6, new CornPlant());
-//        grid.addGridSquare(5, 4, new CornPlant());
-//        grid.addGridSquare(6, 5, new CornPlant());
-//        grid.addGridSquare(4, 5, new CornPlant());
-//        grid.addGridSquare(5, 5, test);
-//
-//        grid.addGridSquare(3,3,new WaterSource());
-
-         grid = new Grid(gridHeight, gridWidth, this);
-//         CornPlant test = new CornPlant();
-//         test.setDisaster(new InsectDisaster(test));
+        WaterSource source = new WaterSource();
+        grid.addGridSquare(1,1, source);
 
         if (loadingFromSave) {
             for (Plant currentPlant : savedPlants) {
@@ -184,7 +173,7 @@ public class LevelScreen extends BaseScreen {
         }; //needs farmer to exist
         getUIStage().addActor(characterMenu);
 
-        addedActors = new ArrayList<PlayableActor>();
+        addedActors = new ArrayList<>();
         new GridExpandPrompt(this);
     }
 
@@ -230,9 +219,9 @@ public class LevelScreen extends BaseScreen {
         return farmer;
     }
 
-    public List<PlayableActor> getAddedActors() { return addedActors; }
+    public List<Actor> getAddedActors() { return addedActors; }
 
-    public void addSecondaryActor(PlayableActor actor) { addedActors.add(actor); }
+    public void addSecondaryActor(Actor actor) { addedActors.add(actor); }
 
     public Stage getMainStage(){
         return mainStage;

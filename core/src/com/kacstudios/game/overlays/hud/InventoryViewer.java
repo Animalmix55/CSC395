@@ -43,7 +43,7 @@ public class InventoryViewer extends Group {
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
                 if(x == columns - 1 && y == 0) continue; // skip for more button
-                ItemButton temp = new ItemButton(true);
+                ItemButton temp = new ItemButton(true, this);
                 temp.setX(8 + x * temp.getWidth());
                 temp.setY(y * temp.getHeight());
                 temp.setVisible(false);
@@ -56,7 +56,7 @@ public class InventoryViewer extends Group {
         setWidth(background.getWidth());
 
         // init ViewInventoryButton
-        ViewInventoryButton moreButton = new ViewInventoryButton(){
+        ViewInventoryButton moreButton = new ViewInventoryButton(this){
             @Override
             public void onClick(InputEvent event, float x, float y) {
                 toggleViewer();
@@ -282,12 +282,12 @@ public class InventoryViewer extends Group {
      * @return a boolean noting if the item was successfully added to the inventory. This can fail if the inventory is full
      */
     public boolean addItem(IInventoryItem item) {
-        ItemButton lastEmpty = null;
-        for (int x = 0; x < columns; x++) {
-            for (int y = 0; y < rows; y++) {
+        ItemButton firstEmpty = null;
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
                 ItemButton currentButton = itemButtons[x][y];
                 if(currentButton.getItem() == null) {
-                    lastEmpty = currentButton;
+                    if (firstEmpty == null) firstEmpty = currentButton;
                     continue;
                 }
                 IInventoryItem currentItem = itemButtons[x][y].getItem();
@@ -301,9 +301,9 @@ public class InventoryViewer extends Group {
             }
         }
 
-        if(lastEmpty == null) return false;
+        if(firstEmpty == null) return false;
 
-        lastEmpty.setItem(item);
+        firstEmpty.setItem(item);
         informSubscribers();
         return true;
     }

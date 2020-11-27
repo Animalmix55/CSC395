@@ -60,4 +60,6 @@ public abstract class Disaster extends BaseActor {
             plant.setDisaster(null);
         }
     }
+
+    public abstract Disaster createInstance(Plant target);
 }

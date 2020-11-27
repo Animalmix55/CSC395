@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.BufferUtils;
 import com.kacstudios.game.actors.BaseActor;
 
 import com.kacstudios.game.disasters.FireDisaster;
+import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
@@ -36,6 +37,8 @@ public class Grid extends Group {
     private Texture gridSquareBgLight;
     private Texture gridSquareBgDark;
 
+    private DisasterSpawner spawner;
+
     private ArrayList<ArrayList<Image>> gridSquareImages;
 
     private GridSquare[][] gridSquares;
@@ -45,8 +48,6 @@ public class Grid extends Group {
     private int width;
     private static final Texture backgroundTexture = new Texture("grass-outofbounds_1080x1080.png");
     private int height;
-    private LocalDateTime timeSinceDisaster;
-    private boolean isDisasterTime = false;
     private boolean isTopLeftDark = true;
 
     public Grid(int height, int width, LevelScreen levelScreen){
@@ -58,15 +59,18 @@ public class Grid extends Group {
 
         buildGrid(height, width, isTopLeftDark);
 
-        timeSinceDisaster = TimeEngine.getDateTime();
-
         this.addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                createGridEvent(x, y);
+                if(TimeEngine.getDilation() != 0) createGridEvent(x, y); // can't be paused
             }
         });
         levelScreen.getUIStage().addActor(this);
+
+        // register disasters with the spawner
+        spawner = new DisasterSpawner(this);
+        spawner.registerDisaster(FireDisaster::new, 500);
+        spawner.registerDisaster(InsectDisaster::new, 150);
     }
 
     private void createGridEvent(float x, float y){
@@ -81,12 +85,7 @@ public class Grid extends Group {
     @Override
     public void act(float dt){
         super.act(dt);
-
-        // Every 5 minutes, spawn a fire.
-        if(TimeEngine.getMinutesSince(timeSinceDisaster) == 5.0 && !isDisasterTime){
-            timeSinceDisaster = TimeEngine.getDateTime();
-            isDisasterTime = true;
-        }
+        spawner.act();
 
         for(int x = 0; x < gridSquares.length; x++) {
             for (int y = 0; y < gridSquares[x].length; y++) {
@@ -94,18 +93,6 @@ public class Grid extends Group {
 
                 if (gridSquares[x][y].getCollisionSetting()) {
                     screen.getFarmer().preventOverlap(gridSquares[x][y]);
-                }
-
-                // Check if it is time, and then spawn a fire.
-                if(isDisasterTime){
-                    if(Plant.class.isAssignableFrom(gridSquares[x][y].getClass()))
-                    {
-                        Plant target = (Plant) gridSquares[x][y];
-                        if(target.getDisaster() == null){
-                            target.setDisaster(new FireDisaster(target));
-                            isDisasterTime = false;
-                        }
-                    }
                 }
             }
         }
@@ -429,8 +416,8 @@ public class Grid extends Group {
 
         // move any non-squares on map
         if(xOffset != 0 || yOffset != 0) {
-            List<PlayableActor> addedActors = screen.getAddedActors();
-            for (PlayableActor addedActor : addedActors) {
+            List<Actor> addedActors = screen.getAddedActors();
+            for (Actor addedActor : addedActors) {
                 addedActor.setPosition(addedActor.getX() + squareSideLength * xOffset,
                         addedActor.getY() + squareSideLength * yOffset);
             }

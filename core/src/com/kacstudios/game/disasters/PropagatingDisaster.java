@@ -7,7 +7,7 @@ import com.kacstudios.game.grid.plants.Plant;
 
 import java.util.ArrayList;
 
-public class PropagatingDisaster extends Disaster {
+public abstract class PropagatingDisaster extends Disaster {
     /**
      * Number of times it spreads per second
      */

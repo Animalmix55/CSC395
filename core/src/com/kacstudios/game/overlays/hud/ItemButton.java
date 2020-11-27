@@ -104,14 +104,17 @@ public class ItemButton extends SelectableButton {
 
     private static Texture selectedTexture;
     private static Texture unselectedTexture;
+    private InventoryViewer viewer;
 
     /**
      * Builds selectable button with default rectangular shape
      * @param x x coord
      * @param y y coord
      */
-    public ItemButton(float x, float y){
+    public ItemButton(float x, float y, InventoryViewer viewer){
         super(x, y, getSelectedTexture(), getUnselectedTexture());
+
+        this.viewer = viewer;
 
         Label.LabelStyle amountStyle = new Label.LabelStyle();
         amountStyle.font = FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 10);
@@ -144,17 +147,17 @@ public class ItemButton extends SelectableButton {
         percentBar.draw(batch, parentAlpha);
     }
 
-    public ItemButton(float x, float y, boolean isHotItem){
-        this(x, y);
+    public ItemButton(float x, float y, boolean isHotItem, InventoryViewer viewer){
+        this(x, y, viewer);
         this.isHotItem = isHotItem;
     }
 
-    public ItemButton(boolean isHotItem){
-        this(0, 0, isHotItem);
+    public ItemButton(boolean isHotItem, InventoryViewer viewer){
+        this(0, 0, isHotItem, viewer);
     }
 
-    public ItemButton(){
-        this(0, 0);
+    public ItemButton(InventoryViewer viewer){
+        this(0, 0, viewer);
     }
 
     public void setItem(IInventoryItem item){
@@ -225,5 +228,9 @@ public class ItemButton extends SelectableButton {
         }
         if(IDepleteableItem.class.isAssignableFrom(item.getClass())) // update percent label
             percentBar.setPercent(1 - ((IDepleteableItem)item).getDepletionPercentage());
+    }
+
+    public InventoryViewer getViewer() {
+        return viewer;
     }
 }
