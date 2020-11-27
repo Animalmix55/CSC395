@@ -240,9 +240,10 @@ public class Plant extends GridSquare {
     /**
      * Returns a new instance of the harvested item with the given amount.
      * @param amount an integer representing the amount of the item.
-     * @return a new instance of an inventory item
+     * @return a new instance of an inventory item or null if one is not set.
      */
     public IInventoryItem getHarvestItem(int amount) {
-        return harvestItemConstructor.createInstance(amount);
+        if(harvestItemConstructor != null) return harvestItemConstructor.createInstance(amount);
+        return null;
     }
 }
