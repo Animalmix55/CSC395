@@ -32,6 +32,11 @@ public class InsectDisaster extends PropagatingDisaster {
         super.act(dt);
     }
 
+    @Override
+    public Disaster createInstance(Plant target) {
+        return new InsectDisaster(target);
+    }
+
     public int getInsecticideAmount() {
         return insecticideAmount;
     }

@@ -50,9 +50,6 @@ public class Plant extends GridSquare {
         addActor(wetSoil);
         addActor(deadImage);
         setGrowthTextures(growthTexturePaths);
-
-        // Controls chance of an InsectDisaster
-        insectDisasterChance = generateRandom(1,50);
     }
 
     public void setDisaster(Disaster disaster) {
@@ -116,11 +113,6 @@ public class Plant extends GridSquare {
 
         if(!fullyGrown && !isDead)
         {
-            if(insectDisasterChance == 1 && growthPercentage >= .5 && this.getDisaster() == null)
-            {
-                this.setDisaster(new InsectDisaster(this));
-            }
-
             float tempGrowthPercentage = getPercentPerSecond() * dt * (getWatered()? 1 : dryGrowthRateModifier)
                     + growthPercentage; // update growth percentage
 

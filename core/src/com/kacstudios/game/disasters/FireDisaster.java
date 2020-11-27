@@ -22,4 +22,8 @@ public class FireDisaster extends PropagatingDisaster{
         super.act(dt);
     }
 
+    @Override
+    public Disaster createInstance(Plant target) {
+        return new FireDisaster(target);
+    }
 }
