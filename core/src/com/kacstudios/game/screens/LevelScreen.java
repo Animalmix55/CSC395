@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
@@ -35,7 +36,7 @@ import java.time.LocalDateTime;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
-    private List<PlayableActor> addedActors;
+    private List<Actor> addedActors;
     private Grid grid;
     private HUD hud;
     private Market market;
@@ -184,7 +185,7 @@ public class LevelScreen extends BaseScreen {
         }; //needs farmer to exist
         getUIStage().addActor(characterMenu);
 
-        addedActors = new ArrayList<PlayableActor>();
+        addedActors = new ArrayList<>();
         new GridExpandPrompt(this);
     }
 
@@ -230,9 +231,9 @@ public class LevelScreen extends BaseScreen {
         return farmer;
     }
 
-    public List<PlayableActor> getAddedActors() { return addedActors; }
+    public List<Actor> getAddedActors() { return addedActors; }
 
-    public void addSecondaryActor(PlayableActor actor) { addedActors.add(actor); }
+    public void addSecondaryActor(Actor actor) { addedActors.add(actor); }
 
     public Stage getMainStage(){
         return mainStage;

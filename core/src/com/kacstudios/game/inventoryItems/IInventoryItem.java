@@ -71,17 +71,5 @@ public abstract class IInventoryItem {
         this.amount = amount;
     }
 
-    /**
-     * Sets inventory item type, used in saving functionality
-     * @param type (MUST BE "II" (non-depleteable) or "ID" (depleteable))
-     */
-    public void setInventoryItemType(String type) { inventoryItemType = type; }
-
-    /**
-     * Returns inventory item type (depletable or standard)
-     * @return String either containing "II" or "ID"
-     */
-    public String getInventoryItemType() { return inventoryItemType; }
-
     public abstract IInventoryItem createNewInstance(int amount);
 }

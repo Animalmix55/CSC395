@@ -207,8 +207,4 @@ public class Plant extends GridSquare {
     public int getSavedX() { return savedX; }
 
     public int getSavedY() { return savedY; }
-
-    public void setPlantName(String plantName) { plantType = plantName; }
-
-    public String getPlantName() { return plantType; }
 }

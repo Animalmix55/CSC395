@@ -15,7 +15,6 @@ public class CornPlantItem extends IInventoryItem {
     public CornPlantItem(int amount){
         setAmount(amount);
         setDisplayName("Corn Seed");
-        setInventoryItemType("II");
     }
 
     @Override

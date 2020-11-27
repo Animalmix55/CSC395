@@ -429,8 +429,8 @@ public class Grid extends Group {
 
         // move any non-squares on map
         if(xOffset != 0 || yOffset != 0) {
-            List<PlayableActor> addedActors = screen.getAddedActors();
-            for (PlayableActor addedActor : addedActors) {
+            List<Actor> addedActors = screen.getAddedActors();
+            for (Actor addedActor : addedActors) {
                 addedActor.setPosition(addedActor.getX() + squareSideLength * xOffset,
                         addedActor.getY() + squareSideLength * yOffset);
             }

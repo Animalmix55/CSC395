@@ -3,6 +3,7 @@ package com.kacstudios.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -24,6 +25,7 @@ import com.kacstudios.game.utilities.TimeEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -113,7 +115,6 @@ public class LoadMenu extends BaseScreen {
         Plant tempPlant;
         List<Plant> plants = new ArrayList<Plant>();
         IInventoryItem tempItem;
-        IDepleteableItem tempDepleteableItem;
         List<IInventoryItem> items = new ArrayList<IInventoryItem>();
         String time;
         Farmer.FarmerTextureData customization = new Farmer.FarmerTextureData();
@@ -148,25 +149,22 @@ public class LoadMenu extends BaseScreen {
                 switch (splitFileLine[2]) {
                     case "plant":
                         // check what type of Plant the current line is, and create specific plant type
-                        switch (splitFileLine[3]) {
-                            case "corn":
-                                tempPlant = new CornPlant();
-                                break;
-                            case "blueberries":
-                                tempPlant = new BlueberriesPlant();
-                                break;
-                            default:
-                                tempPlant = null;
-                                break;
-                        }
+                        String className = splitFileLine[3];
+                        try {
+                            Class<? extends Plant> plantClass = (Class<? extends Plant>) Class.forName(className);
+                            tempPlant = plantClass.getDeclaredConstructor().newInstance();
 
-                        // FOR ALL PLANTS
-                        if (splitFileLine[4].equals("t")) tempPlant.setWatered(true); // set plant to be watered if saved as watered
-                        tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
-                        tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
-                        tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
-                        if (splitFileLine[8].equals("t")) tempPlant.setDead(true);
-                        plants.add(tempPlant);
+                            // FOR ALL PLANTS
+                            if (splitFileLine[4].equals("t"))
+                                tempPlant.setWatered(true); // set plant to be watered if saved as watered
+                            tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
+                            tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
+                            tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+                            if (splitFileLine[8].equals("t")) tempPlant.setDead(true);
+                            plants.add(tempPlant);
+                        } catch (Exception e) {
+                            // if the class is bad and the reflection fails, just bail
+                        }
                         break;
                 }
             }
@@ -182,44 +180,23 @@ public class LoadMenu extends BaseScreen {
                 splitFileLine = fileLine.split(",");
 
                 // check what type of item is being loaded
-                switch (splitFileLine[0]) {
-                    // INVENTORY ITEMS
-                    case "II":
-                        // specify which item is being created
-                        switch(splitFileLine[1]) {
-                            case "Basic Tractor":
-                                tempItem = new BasicTractorItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            case "Corn Seed":
-                                tempItem = new CornPlantItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            case "Blueberry Seed":
-                                tempItem = new BlueberriesPlantItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            default:
-                                tempItem = null;
-                        }
-                        items.add(tempItem);
-                        break;
+                boolean isDepletable = splitFileLine[0] == "ID";
 
-                    // DEPLETABLE ITEMS
-                    case "ID":
-                        switch(splitFileLine[1]) {
-                            case "Pesticide":
-                                tempDepleteableItem = new PesticideItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            case "Watering Can":
-                                tempDepleteableItem = new WateringCanItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            default:
-                                tempDepleteableItem = null;
-                        }
-                        tempDepleteableItem.setDepletionPercentage(Float.parseFloat(splitFileLine[3]));
-                        items.add(tempDepleteableItem);
-                        break;
+                // specify which item is being created
+                String className = splitFileLine[1];
+                int amount = Integer.parseInt(splitFileLine[2]);
+
+                try {
+                    Class<? extends IInventoryItem> itemClass = (Class<? extends IInventoryItem>) Class.forName(className);
+                    tempItem = itemClass.getDeclaredConstructor(int.class).newInstance(amount);
+
+                    items.add(tempItem);
+
+                    if (isDepletable)
+                        ((IDepleteableItem) tempItem).setDepletionPercentage(Float.parseFloat(splitFileLine[3]));
+                } catch (Exception e) {
+                    // pass, this happens if the class is invalid or a constructor doesn't exist
                 }
-
-
             }
             // switch over to actors file
             temporarySaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
@@ -247,10 +224,14 @@ public class LoadMenu extends BaseScreen {
             while (fileScanner.hasNextLine()) {
                 fileLine = fileScanner.nextLine();
                 splitFileLine = fileLine.split(",");
-                switch (splitFileLine[0]) {
-                    case "BasicTractor":
-                        level.addSecondaryActor( new Tractor( Float.parseFloat(splitFileLine[1]), Float.parseFloat(splitFileLine[2]), level ) );
-                        break;
+                String className = splitFileLine[0];
+                try {
+                    Class<? extends Actor> secondaryActorClass = (Class<? extends Actor>) Class.forName(className);
+                    Constructor<? extends Actor> constructor = secondaryActorClass.getConstructor(float.class, float.class, LevelScreen.class);
+
+                    level.addSecondaryActor(constructor.newInstance(Float.parseFloat(splitFileLine[1]), Float.parseFloat(splitFileLine[2]), level));
+                } catch (Exception e) {
+                    // pass, only occurs when the casting/reflection fails.
                 }
             }
 
@@ -288,13 +269,13 @@ public class LoadMenu extends BaseScreen {
             for (int row=0;row<loadedSquares[column].length;row++) {
                 if (loadedSquares[column][row] != null) {
                     // do this for every grid square:
-                    if ( loadedSquares[column][row].getClass().getName().startsWith("com.kacstudios.game.grid.plants") ) {
+                    if ( Plant.class.isAssignableFrom(loadedSquares[column][row].getClass()) ) {
                         tempLine = new String[9];
                         tempLine[0] = String.valueOf(column);
                         tempLine[1] = String.valueOf(row);
                         tempLine[2] = "plant";
                         tempPlant = (Plant) loadedSquares[column][row];
-                        tempLine[3] = tempPlant.getPlantName();
+                        tempLine[3] = tempPlant.getClass().getName();
                         if (tempPlant.getWatered()) tempLine[4] = "t";
                         else tempLine[4] = "f";
                         // insert disaster save code here
@@ -334,10 +315,10 @@ public class LoadMenu extends BaseScreen {
 
         // save actors
         ArrayList<String> actorsLinesToWrite = new ArrayList<String>();
-        String tempActorsLine;
-        actorsLinesToWrite.add( String.format("Farmer,%f,%f",screen.getFarmer().getX(),screen.getFarmer().getY()) );
+        actorsLinesToWrite.add( String.format("%s,%f,%f", Farmer.class.getCanonicalName(), screen.getFarmer().getX(),screen.getFarmer().getY()) );
         for (int i=0;i<screen.getAddedActors().size();i++) {
-            actorsLinesToWrite.add( String.format("%s,%f,%f", screen.getAddedActors().get(i).getActorName(), screen.getAddedActors().get(i).getX(), screen.getAddedActors().get(i).getY() ) );
+            actorsLinesToWrite.add( String.format("%s,%f,%f", screen.getAddedActors().get(i).getClass().getCanonicalName(),
+                    screen.getAddedActors().get(i).getX(), screen.getAddedActors().get(i).getY() ) );
         }
 
         // save farmer customization
@@ -385,22 +366,16 @@ public class LoadMenu extends BaseScreen {
      */
     private static String getInventorySaveLine(ItemButton itemButton) {
         IInventoryItem item = itemButton.getItem();
-        String itemName = item.getDisplayName();
-        String itemType = item.getInventoryItemType();
+        String itemName = item.getClass().getCanonicalName();
         IDepleteableItem tempDepletion;
         String retString;
-        switch(itemType) {
-            case "II":
-                retString = String.format("%s,%s,%s","II",itemName,item.getAmount());
-                break;
-            case "ID":
-                tempDepletion = (IDepleteableItem) item;
-                retString = String.format("%s,%s,%s,%s","ID",itemName,item.getAmount(),tempDepletion.getDepletionPercentage());
-                break;
-            default:
-                retString = "";
-                break;
+        if(IDepleteableItem.class.isAssignableFrom(item.getClass())) {
+            tempDepletion = (IDepleteableItem) item;
+            retString = String.format("%s,%s,%s,%s","ID",itemName,item.getAmount(),tempDepletion.getDepletionPercentage());
+        } else {
+            retString = String.format("%s,%s,%s","II",itemName,item.getAmount());
         }
+
         return retString;
     }
 
