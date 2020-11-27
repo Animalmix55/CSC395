@@ -8,9 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.actors.ScrollableGroup;
-import com.kacstudios.game.inventoryItems.BasicTractorItem;
-import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
-import com.kacstudios.game.inventoryItems.CornPlantItem;
+import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
@@ -86,9 +84,9 @@ public class MarketPage extends Group {
         Label.LabelStyle descriptionStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
         Label descriptionLabel = new Label(pageMeta.getDescription(), descriptionStyle);
         descriptionLabel.setWrap(true);
-        descriptionLabel.setWidth(container.getWidth() - circle.getWidth() - 2 * padding);
+        descriptionLabel.setWidth(container.getWidth() - circle.getWidth() - 3 * padding);
         descriptionLabel.pack();
-        descriptionLabel.setWidth(container.getWidth() - circle.getWidth() - 2 * padding);
+        descriptionLabel.setWidth(container.getWidth() - circle.getWidth() - 3 * padding);
 
         titleDescGroup.setHeight(descriptionLabel.getHeight() + padding + titleLabel.getHeight());
         titleDescGroup.setWidth(container.getWidth());
@@ -122,17 +120,18 @@ public class MarketPage extends Group {
     }
 
     private static class Pages {
-        private static final MarketPage.Data CORN = new MarketPage.Data(0, "Corn", "Ut justo sapien, dapibus vel suscipit et, tristique at velit. Aenean rhoncus sem neque, nec consequat ipsum gravida sed. Maecenas nunc neque, pretium vitae libero id, sollicitudin dapibus orci.", new ShopItem[]{
-                new ShopItem(new CornPlantItem(), ShopItem.ItemAccessibility.Both, 100, 10),
-                new ShopItem(new CornPlantItem(), ShopItem.ItemAccessibility.CanSell, 100, 10)
+        private static final MarketPage.Data CORN = new MarketPage.Data(1, "Corn", "A cereal grain first domesticated by indigenous peoples in southern Mexico about 10,000 years ago. The leafy stalk of the plant produces pollen inflorescences and separate ovuliferous inflorescences called ears that yield kernels or seeds, which are fruits.", new ShopItem[] {
+                new ShopItem(new CornSeedItem(), ShopItem.ItemAccessibility.Both, 2, 1),
+                new ShopItem(new CornPlantItem(), ShopItem.ItemAccessibility.CanSell, 0, 10)
         });
 
-        private static final MarketPage.Data BLUEBERRY = new MarketPage.Data(0, "Blueberry", "test", new ShopItem[]{
-                new ShopItem(new BlueberriesPlantItem(), ShopItem.ItemAccessibility.Both, 300, 30)
+        private static final MarketPage.Data BLUEBERRY = new MarketPage.Data(1, "Blueberry", "Flowering plants with blue or purple berries. They are classified in the section Cyanococcus within the genus Vaccinium. Vaccinium also includes cranberries, bilberries, huckleberries and Madeira blueberries. Commercial blueberries, both wild and cultivated, are all native to North America.", new ShopItem[]{
+                new ShopItem(new BlueberriesSeedItem(), ShopItem.ItemAccessibility.Both, 4, 2),
+                new ShopItem(new BlueberriesPlantItem(), ShopItem.ItemAccessibility.CanSell, 0, 30)
         });
 
-        private static final MarketPage.Data TRACTOR = new MarketPage.Data(0, "Tractor", "test", new ShopItem[]{
-                new ShopItem(new BasicTractorItem(), ShopItem.ItemAccessibility.Both, 1000, 300)
+        private static final MarketPage.Data TRACTOR = new MarketPage.Data(0, "Tractor", "An engineering vehicle specifically designed to deliver a high tractive effort at slow speeds, for the purposes of hauling a trailer or machinery such as that used in agriculture.", new ShopItem[]{
+                new ShopItem(new BasicTractorItem(), ShopItem.ItemAccessibility.Both, 40000, 15000)
         });
 
         private static final MarketPage.Data[] PAGES = new MarketPage.Data[] {
