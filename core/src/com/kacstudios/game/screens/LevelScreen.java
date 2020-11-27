@@ -10,9 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+
+import com.kacstudios.game.actors.gridexpansion.GridExpandPrompt;
 import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.disasters.InsectDisaster;
+import com.kacstudios.game.disasters.FireDisaster;
 import com.kacstudios.game.grid.Grid;
+import com.kacstudios.game.grid.WaterSource;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
@@ -80,15 +84,31 @@ public class LevelScreen extends BaseScreen {
                 new WateringCanItem(3),
                 new BasicTractorItem(40),
                 new PesticideItem(5),
-                new BlueberriesPlantItem(100)
+                new BlueberriesPlantItem(100),
+                new WaterBucketItem(1)
         };
         if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
         else TimeEngine.Init();
         Economy.Init();
+        Economy.addMoney(100000000); // for testing
 
-        grid = new Grid(gridHeight, gridWidth, this);
-        CornPlant test = new CornPlant();
-        test.setDisaster(new InsectDisaster(test));
+
+//        Testing Fire/Water
+//        CornPlant test = new CornPlant();
+//        test.setDisaster(new FireDisaster((test)));
+//
+//        grid.addGridSquare(5, 6, new CornPlant());
+//        grid.addGridSquare(6, 6, new CornPlant());
+//        grid.addGridSquare(5, 4, new CornPlant());
+//        grid.addGridSquare(6, 5, new CornPlant());
+//        grid.addGridSquare(4, 5, new CornPlant());
+//        grid.addGridSquare(5, 5, test);
+//
+//        grid.addGridSquare(3,3,new WaterSource());
+
+         grid = new Grid(gridHeight, gridWidth, this);
+//         CornPlant test = new CornPlant();
+//         test.setDisaster(new InsectDisaster(test));
 
         if (loadingFromSave) {
             for (Plant currentPlant : savedPlants) {
@@ -165,6 +185,7 @@ public class LevelScreen extends BaseScreen {
         getUIStage().addActor(characterMenu);
 
         addedActors = new ArrayList<PlayableActor>();
+        new GridExpandPrompt(this);
     }
 
     public void update(float dt) {

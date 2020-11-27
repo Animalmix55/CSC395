@@ -3,13 +3,16 @@ package com.kacstudios.game.grid.plants;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.disasters.Disaster;
-import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.disasters.InsectDisaster;
+import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.utilities.TimeEngine;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
+
+import static com.kacstudios.game.disasters.Disaster.generateRandom;
 
 public class Plant extends GridSquare {
 
@@ -30,6 +33,8 @@ public class Plant extends GridSquare {
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
+    private int insectDisasterChance;
+    private int disasterType;
 
     private String plantType; // used when saving game to define what type of plant is being saved
 
@@ -45,6 +50,10 @@ public class Plant extends GridSquare {
         addActor(wetSoil);
         addActor(deadImage);
         setGrowthTextures(growthTexturePaths);
+
+        // Controls chance of an InsectDisaster
+        insectDisasterChance = generateRandom(1,50);
+
     }
 
     public void setDisaster(Disaster disaster) {
@@ -102,6 +111,11 @@ public class Plant extends GridSquare {
         super.act(dt);
         if(!fullyGrown && !isDead)
         {
+            if(insectDisasterChance == 1 && growthPercentage >= .5 && this.getDisaster() == null)
+            {
+                this.setDisaster(new InsectDisaster(this));
+            }
+
             float tempGrowthPercentage = getPercentPerSecond() * dt + growthPercentage; // update growth percentage
             if(tempGrowthPercentage >= 1) {
                 fullyGrown = true;
@@ -157,9 +171,7 @@ public class Plant extends GridSquare {
         this.growthRateModifier = 1;
     }
 
-    public Disaster getDisaster() {
-        return disaster;
-    }
+    public Disaster getDisaster() { return disaster; }
 
     /**
      * Kills the plant
