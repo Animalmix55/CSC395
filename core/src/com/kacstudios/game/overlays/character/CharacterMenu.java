@@ -54,7 +54,7 @@ public class CharacterMenu extends Group {
         background.setY(360 - (charMenuHeight/2));
         addActor(background);
 
-        char_preview_background = new Image( new Texture("customization_preview_background.png") );
+        char_preview_background = new Image( new Texture("menu-textures/customization_preview_background.png") );
         char_preview_background.setX(charMenuX);
         char_preview_background.setY(410);
         addActor(char_preview_background);

@@ -46,13 +46,13 @@ public class Grid extends Group {
     private final Integer squareSideLength = 135;
     private ArrayList<Image> outOfBoundsArea;
     private int width;
-    private static final Texture backgroundTexture = new Texture("grass-outofbounds_1080x1080.png");
+    private static final Texture backgroundTexture = new Texture("grid-textures/grass-outofbounds_1080x1080.png");
     private int height;
     private boolean isTopLeftDark = true;
 
     public Grid(int height, int width, LevelScreen levelScreen){
-        gridSquareBgDark = new Texture("grid-grass-dark.png");
-        gridSquareBgLight = new Texture("grid-grass-light.png");
+        gridSquareBgDark = new Texture("grid-textures/grid-grass-dark.png");
+        gridSquareBgLight = new Texture("grid-textures/grid-grass-light.png");
 
         this.screen = levelScreen;
         setStage(levelScreen.getMainStage());

@@ -19,7 +19,8 @@ public class InsectDisaster extends PropagatingDisaster {
     public InsectDisaster(Plant impl) {
         super(impl,
                 loadAnimationUnsetFromFiles(
-                        new String[]{"pest-1.png", "pest-2.png", "pest-3.png", "pest-4.png"}, 0.1f,true),
+                        new String[]{"disaster-textures/pest-1.png", "disaster-textures/pest-2.png",
+                                "disaster-textures/pest-3.png", "disaster-textures/pest-4.png"}, 0.1f,true),
                 30,
                 .5f,
                 .25f

@@ -118,7 +118,7 @@ public class LevelScreen extends BaseScreen {
 
         Button.ButtonStyle buttonStyle = new Button.ButtonStyle();
 
-        Texture buttonTex = new Texture(Gdx.files.internal("button_pause_48x48.png"));
+        Texture buttonTex = new Texture(Gdx.files.internal("menu-textures/button_pause_48x48.png"));
         TextureRegion buttonRegion = new TextureRegion(buttonTex);
         buttonStyle.up = new TextureRegionDrawable(buttonRegion);
 

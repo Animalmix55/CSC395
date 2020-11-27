@@ -40,8 +40,8 @@ public class Plant extends GridSquare {
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
-        drySoil = new Image(new Texture("soil.png"));
-        wetSoil = new Image(new Texture("soil-wet.png"));
+        drySoil = new Image(new Texture("plant-textures/soil.png"));
+        wetSoil = new Image(new Texture("plant-textures/soil-wet.png"));
         deadImage = new Image(new Texture(deadTexturePath));
         deadImage.setVisible(false);
         wetSoil.setVisible(false);
