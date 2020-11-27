@@ -11,6 +11,7 @@ public class BasicTractorItem extends IInventoryItem {
     public BasicTractorItem(int amount) {
         setAmount(amount);
         setDisplayName("Basic Tractor");
+        setInventoryItemType("II");
     }
 
     public BasicTractorItem() {
@@ -27,6 +28,7 @@ public class BasicTractorItem extends IInventoryItem {
             Tractor tractor = new Tractor(clickLoc.x, clickLoc.y, event.getScreen());
             tractor.setX(clickLoc.x - tractor.getWidth()/2);
             tractor.setY(clickLoc.y - tractor.getHeight()/2);
+            event.getScreen().getAddedActors().add(tractor);
             if (getAmount() == 0) parent.setItem(null); // remove from inventory if none left
             parent.checkItem();
         }

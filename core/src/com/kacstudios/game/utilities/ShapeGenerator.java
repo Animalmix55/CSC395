@@ -8,10 +8,17 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.kacstudios.game.actors.PlayableActor;
 
 import java.nio.ByteBuffer;
 
 public class ShapeGenerator {
+    public enum Direction {
+        up,
+        down,
+        left,
+        right,
+    }
     public static Pixmap createRoundedRectangle(int width, int height, int cornerRadius, Color color) {
         Pixmap shape = new Pixmap(width, height, Pixmap.Format.RGBA4444);
 
@@ -85,9 +92,17 @@ public class ShapeGenerator {
         return pixmap;
     }
 
-    public static Pixmap createEquilateralTriangle(int sideLength, Color fillColor, boolean pointUp) {
-        FrameBuffer frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, sideLength,
-                (int)Math.ceil(Math.sqrt(3) * (sideLength/2)),false);
+    public static Pixmap createEquilateralTriangle(int sideLength, Color fillColor, Direction direction) {
+        FrameBuffer frameBuffer;
+        double shortSide = Math.ceil(Math.sqrt(3) * (sideLength / 2));
+        if(direction == Direction.down || direction == Direction.up) {
+            frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, sideLength,
+                    (int) shortSide, false);
+        } else {
+            frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888,
+                    (int) shortSide, sideLength, false);
+        }
+
         ShapeRenderer shapeRenderer = new ShapeRenderer();
         frameBuffer.begin();
 
@@ -101,18 +116,35 @@ public class ShapeGenerator {
         shapeRenderer.setColor(fillColor);
         shapeRenderer.setProjectionMatrix(m);
 
-        if(pointUp) {
-            shapeRenderer.triangle(
-                    0, frameBuffer.getHeight(),
-                    frameBuffer.getWidth() / 2, 0,
-                    frameBuffer.getWidth(), frameBuffer.getHeight()
-            );
-        } else {
-            shapeRenderer.triangle(
-                    0, 0,
-                    frameBuffer.getWidth() / 2, frameBuffer.getHeight(),
-                    frameBuffer.getWidth(), 0
-            );
+        switch (direction) {
+            case up:
+                shapeRenderer.triangle(
+                        0, frameBuffer.getHeight(),
+                        frameBuffer.getWidth() / 2, 0,
+                        frameBuffer.getWidth(), frameBuffer.getHeight()
+                );
+                break;
+            case down:
+                shapeRenderer.triangle(
+                        0, 0,
+                        frameBuffer.getWidth() / 2, frameBuffer.getHeight(),
+                        frameBuffer.getWidth(), 0
+                );
+                break;
+            case right:
+                shapeRenderer.triangle(
+                        0, 0,
+                        frameBuffer.getWidth(), frameBuffer.getHeight() / 2,
+                        0, frameBuffer.getHeight()
+                );
+                break;
+            case left:
+                shapeRenderer.triangle(
+                        frameBuffer.getWidth(), 0,
+                        0, frameBuffer.getHeight() / 2,
+                        frameBuffer.getWidth(), frameBuffer.getHeight()
+                );
+                break;
         }
         shapeRenderer.end();
 

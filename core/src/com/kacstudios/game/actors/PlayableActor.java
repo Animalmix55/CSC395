@@ -39,6 +39,8 @@ public class PlayableActor extends BaseActor {
     private int prevKey = Input.Keys.D;
     private MoveToAction action;
 
+    private String actorName;
+
     public PlayableActor(float x, float y, Stage s, boolean focused) {
         super(x, y, s);
         this.isFocused = focused;
@@ -254,5 +256,9 @@ public class PlayableActor extends BaseActor {
 
         return vector;
     }
+
+    public void setActorName(String name) { actorName = name; }
+
+    public String getActorName() { return actorName; }
 
 }

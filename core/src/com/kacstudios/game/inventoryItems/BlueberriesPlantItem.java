@@ -14,6 +14,7 @@ public class BlueberriesPlantItem extends IInventoryItem {
     public BlueberriesPlantItem(int amount){
         setAmount(amount);
         setDisplayName("Blueberry Seed");
+        setInventoryItemType("II");
     }
 
     @Override

@@ -10,8 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.kacstudios.game.disasters.FireDisaster;
+
+import com.kacstudios.game.actors.gridexpansion.GridExpandPrompt;
+import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.disasters.InsectDisaster;
+import com.kacstudios.game.disasters.FireDisaster;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.WaterSource;
 import com.kacstudios.game.grid.plants.CornPlant;
@@ -23,16 +26,19 @@ import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
-import com.kacstudios.game.windows.PauseWindow;
+import com.kacstudios.game.windows.PauseMenu;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
+    private List<PlayableActor> addedActors;
     private Grid grid;
-    PauseWindow pauseWindow;
     private HUD hud;
     private Market market;
+    private PauseMenu pauseMenu;
 
     private boolean loadingFromSave;
     private int gridWidth;
@@ -40,6 +46,8 @@ public class LevelScreen extends BaseScreen {
     private List<Plant> savedPlants;
     private Object[] objectItems;
     private IInventoryItem[] savedInventoryItems;
+    private String savedTime;
+    private int saveFileNum = -1;
 
 
     // new level
@@ -52,7 +60,7 @@ public class LevelScreen extends BaseScreen {
     }
 
     // loading level from save
-    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport) {
+    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport, String timeImport) {
         super(false);
         loadingFromSave = true;
         gridWidth = width;
@@ -63,6 +71,7 @@ public class LevelScreen extends BaseScreen {
         for (int i=0;i<objectItems.length;i++) {
             savedInventoryItems[i] = (IInventoryItem) objectItems[i];
         }
+        savedTime = timeImport;
         initialize();
     }
 
@@ -76,10 +85,11 @@ public class LevelScreen extends BaseScreen {
                 new BlueberriesPlantItem(100),
                 new WaterBucketItem(1)
         };
-        TimeEngine.Init();
+        if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
+        else TimeEngine.Init();
         Economy.Init();
-        pauseWindow = new PauseWindow(this);
-        grid = new Grid(10, 10, this); // create grid
+        Economy.addMoney(100000000); // for testing
+
 
 //        Testing Fire/Water
 //        CornPlant test = new CornPlant();
@@ -94,7 +104,23 @@ public class LevelScreen extends BaseScreen {
 //
 //        grid.addGridSquare(3,3,new WaterSource());
 
-        hud = new HUD(this, initialItems); // add HUD
+         grid = new Grid(gridHeight, gridWidth, this);
+//         CornPlant test = new CornPlant();
+//         test.setDisaster(new InsectDisaster(test));
+
+        if (loadingFromSave) {
+            for (Plant currentPlant : savedPlants) {
+                grid.addGridSquare(currentPlant.getSavedX(), currentPlant.getSavedY(), currentPlant);
+            }
+            hud = new HUD(this, savedInventoryItems);
+        }
+        else {
+            hud = new HUD(this, initialItems);
+        }
+
+
+//        market = new Market(this); // add market overlay
+        pauseMenu = new PauseMenu(this);
 
         //pause button
 
@@ -132,7 +158,8 @@ public class LevelScreen extends BaseScreen {
 
                     setPaused(true);
                     TimeEngine.pause();
-                    pauseWindow.setVisible();
+                    pauseMenu.setVisible(true);
+                    pauseMenu.setMenu_pause();
 
                     return false;
                 }
@@ -141,6 +168,8 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //      add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
+        addedActors = new ArrayList<PlayableActor>();
+        new GridExpandPrompt(this);
     }
 
     public void update(float dt) {
@@ -155,15 +184,39 @@ public class LevelScreen extends BaseScreen {
     }
 
     public boolean keyDown(int keyCode) {
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
-            pauseWindow.setVisible();
-
+        // escape key used for pause/going back in pause menu
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            if (pauseMenu.getCurrentMenu() != null) {
+                if (pauseMenu.getCurrentMenu() == "pause") {
+                    setPaused(false);
+                    TimeEngine.resume();
+                    pauseMenu.setMenu_resume();
+                    pauseMenu.setVisible(false);
+                }
+                else {
+                    pauseMenu.setMenu_pause();
+                }
+            }
+            else {
+                setPaused(true);
+                TimeEngine.pause();
+                pauseMenu.setMenu_pause();
+                pauseMenu.setVisible(true);
+            }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.B)) {
+            System.out.println(TimeEngine.getDateTime());
+        }
         return true;
     }
 
     public Farmer getFarmer(){
         return farmer;
     }
+
+    public List<PlayableActor> getAddedActors() { return addedActors; }
+
+    public void addSecondaryActor(PlayableActor actor) { addedActors.add(actor); }
 
     public Stage getMainStage(){
         return mainStage;
@@ -193,6 +246,7 @@ public class LevelScreen extends BaseScreen {
         return hud;
     }
 
+    public PauseMenu getPauseMenu() { return pauseMenu; }
     public void openMarket(boolean isOpen) {
         market.setVisible(isOpen);
     }

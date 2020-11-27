@@ -14,6 +14,7 @@ public class Tractor extends PlayableActor {
 
     public Tractor (float x, float y, LevelScreen s) {
         super(x,y,s.getMainStage(), false);
+        setActorName("BasicTractor");
         screen = s;
         farmer = s.getFarmer();
 
