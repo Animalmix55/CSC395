@@ -181,7 +181,7 @@ public class InventoryViewer extends Group {
     }
 
     public void onUseItem(GridClickEvent event){
-        for(int i = 0; i < columns - 2; i++){
+        for(int i = 0; i < columns - 1; i++){
             if(itemButtons[i][0].getSelected()){
                 itemButtons[i][0].onUseItem(event);
             }

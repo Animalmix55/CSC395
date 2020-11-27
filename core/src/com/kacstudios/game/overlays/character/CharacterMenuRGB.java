@@ -64,9 +64,9 @@ public class CharacterMenuRGB extends Group {
             addActor(labels[i]);
         }
 
-        slider_r = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("uiskin.json")));
-        slider_g = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("uiskin.json")));
-        slider_b = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("uiskin.json")));
+        slider_r = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("misc/uiskin.json")));
+        slider_g = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("misc/uiskin.json")));
+        slider_b = new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("misc/uiskin.json")));
         sliders = new Slider[3];
         sliders[0] = slider_b;
         sliders[1] = slider_g;

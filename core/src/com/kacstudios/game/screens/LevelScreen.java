@@ -82,10 +82,12 @@ public class LevelScreen extends BaseScreen {
         // placeholder initial inventory
         IInventoryItem[] initialItems = {
                 new CornPlantItem(100),
+                new CornSeedItem(40),
                 new WateringCanItem(3),
                 new BasicTractorItem(40),
                 new PesticideItem(5),
                 new BlueberriesPlantItem(100),
+                new BlueberriesSeedItem(40),
                 new WaterBucketItem(10),
                 new EmptyBucketItem(10)
         };
@@ -116,7 +118,7 @@ public class LevelScreen extends BaseScreen {
 
         Button.ButtonStyle buttonStyle = new Button.ButtonStyle();
 
-        Texture buttonTex = new Texture(Gdx.files.internal("button_pause_48x48.png"));
+        Texture buttonTex = new Texture(Gdx.files.internal("menu-textures/button_pause_48x48.png"));
         TextureRegion buttonRegion = new TextureRegion(buttonTex);
         buttonStyle.up = new TextureRegionDrawable(buttonRegion);
 

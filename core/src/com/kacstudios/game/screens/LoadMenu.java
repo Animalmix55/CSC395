@@ -52,7 +52,7 @@ public class LoadMenu extends BaseScreen {
     public void initialize() {
         // set background/map limits
         BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
-        farmBaseActor.loadTexture("background_3.png");
+        farmBaseActor.loadTexture("menu-textures/background_3.png");
         farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
 

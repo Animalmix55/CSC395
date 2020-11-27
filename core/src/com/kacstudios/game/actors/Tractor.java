@@ -18,10 +18,10 @@ public class Tractor extends PlayableActor {
         screen = s;
         farmer = s.getFarmer();
 
-        String[] leftMovementFiles = {"tractor-left-1.png"};
-        String[] rightMovementFiles = {"tractor-right-1.png"};
-        String[] upMovementFiles = {"tractor-up-1.png"};
-        String[] downMovementFiles = {"tractor-down-1.png"};
+        String[] leftMovementFiles = {"tractor-textures/tractor-left-1.png"};
+        String[] rightMovementFiles = {"tractor-textures/tractor-right-1.png"};
+        String[] upMovementFiles = {"tractor-textures/tractor-up-1.png"};
+        String[] downMovementFiles = {"tractor-textures/tractor-down-1.png"};
 
         Animation<TextureRegion> leftAnimation = loadAnimationUnsetFromFiles(leftMovementFiles, 0.1f, true);
         Animation<TextureRegion> rightAnimation = loadAnimationFromFiles(rightMovementFiles,0.1f,true);

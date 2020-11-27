@@ -175,7 +175,7 @@ public class ItemButton extends SelectableButton {
             if(IDepleteableItem.class.isAssignableFrom(item.getClass())) { //if the item is depletable
                 percentBar.setVisible(true);
                 percentBar.setPercent(1 - ((IDepleteableItem) item).getDepletionPercentage());
-            }
+            } else percentBar.setVisible(false);
         }
         else {
             amountLabel.setVisible(false);

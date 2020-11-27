@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.disasters.Disaster;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.GridSquare;
+import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.TimeEngine;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,12 @@ import java.util.Random;
 import static com.kacstudios.game.disasters.Disaster.generateRandom;
 
 public class Plant extends GridSquare {
+
+    public interface HarvestItemConstructor {
+        IInventoryItem createInstance(int amount);
+    }
+
+    private HarvestItemConstructor harvestItemConstructor;
 
     private Image drySoil;
     private Image wetSoil;
@@ -36,12 +43,11 @@ public class Plant extends GridSquare {
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
-    private int insectDisasterChance;
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
-        drySoil = new Image(new Texture("soil.png"));
-        wetSoil = new Image(new Texture("soil-wet.png"));
+        drySoil = new Image(new Texture("plant-textures/soil.png"));
+        wetSoil = new Image(new Texture("plant-textures/soil-wet.png"));
         deadImage = new Image(new Texture(deadTexturePath));
         deadImage.setVisible(false);
         wetSoil.setVisible(false);
@@ -225,5 +231,19 @@ public class Plant extends GridSquare {
      */
     public void setSecondsToDry(float secondsToDry) {
         this.secondsToDry = secondsToDry;
+    }
+
+    public void setHarvestItemConstructor(HarvestItemConstructor harvestItemConstructor) {
+        this.harvestItemConstructor = harvestItemConstructor;
+    }
+
+    /**
+     * Returns a new instance of the harvested item with the given amount.
+     * @param amount an integer representing the amount of the item.
+     * @return a new instance of an inventory item or null if one is not set.
+     */
+    public IInventoryItem getHarvestItem(int amount) {
+        if(harvestItemConstructor != null) return harvestItemConstructor.createInstance(amount);
+        return null;
     }
 }

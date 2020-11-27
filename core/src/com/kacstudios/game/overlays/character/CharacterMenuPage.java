@@ -67,7 +67,7 @@ public class CharacterMenuPage extends Group {
                         selectedOption = option;
                     } else selectedOption = null;
 
-                    onChange(color, selectedOption != null? selectedOption.name : null);
+                    onChange(CharacterMenuPage.this.color, selectedOption != null? selectedOption.name : null);
                 }
             };
 

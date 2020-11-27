@@ -14,25 +14,12 @@ public class CornPlantItem extends IInventoryItem {
 
     public CornPlantItem(int amount){
         setAmount(amount);
-        setDisplayName("Corn Seed");
+        setDisplayName("Corn");
     }
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
-
-        if(!event.farmerWithinRadius(300)) return; // must be within 300 pixels
-        if(event.getGridSquare() == null) {
-            event.setSquare(new CornPlant());
-            int amount = getAmount();
-            amount--;
-            setAmount(amount >= 0 ? amount : 0);
-
-            if(amount == 0){ // amount of -1 signifies unlimited
-                parent.setItem(null); // remove from button
-            }
-
-            parent.checkItem(); // update button display amount
-        }
+        // does nothing, only for selling
     }
 
     @Override

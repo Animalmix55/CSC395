@@ -154,7 +154,7 @@ public class PauseMenu extends Group {
         // no background is added here since the options menu will be the same size as the default menu size
         PauseMenuButton options_gameVolumeSlider = new PauseMenuButton(
                 "Game Volume",
-                new Slider(0,100,1,false, new Skin(Gdx.files.internal("uiskin.json"))),
+                new Slider(0,100,1,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
                 pauseMenuButtonX,
                 (447 - (pauseMenuButtonHeight/2))
         );
@@ -170,7 +170,7 @@ public class PauseMenu extends Group {
 
         PauseMenuButton options_musicVolumeSlider = new PauseMenuButton(
                 "Music Volume",
-                new Slider(0,100,1,false, new Skin(Gdx.files.internal("uiskin.json"))),
+                new Slider(0,100,1,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
                 pauseMenuButtonX,
                 (389 - (pauseMenuButtonHeight/2))
         );
