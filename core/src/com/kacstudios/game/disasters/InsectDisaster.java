@@ -20,11 +20,11 @@ public class InsectDisaster extends PropagatingDisaster {
         super(impl,
                 loadAnimationUnsetFromFiles(
                         new String[]{"pest-1.png", "pest-2.png", "pest-3.png", "pest-4.png"}, 0.1f,true),
-                40,
-                .25f,
-                .3f
+                30,
+                .5f,
+                .25f
         );
-        insecticideAmount = generateRandom(0, 5);
+        insecticideAmount = generateRandom(1, 5);
     }
 
     @Override

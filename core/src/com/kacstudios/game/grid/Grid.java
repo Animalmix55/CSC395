@@ -15,12 +15,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.kacstudios.game.actors.BaseActor;
-import com.kacstudios.game.actors.PlayableActor;
+
+import com.kacstudios.game.disasters.FireDisaster;
+import com.kacstudios.game.grid.plants.BlueberriesPlant;
+import com.kacstudios.game.grid.plants.CornPlant;
+import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
+import com.kacstudios.game.utilities.TimeEngine;
+import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
 import java.nio.IntBuffer;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +45,8 @@ public class Grid extends Group {
     private int width;
     private static final Texture backgroundTexture = new Texture("grass-outofbounds_1080x1080.png");
     private int height;
+    private LocalDateTime timeSinceDisaster;
+    private boolean isDisasterTime = false;
     private boolean isTopLeftDark = true;
 
     public Grid(int height, int width, LevelScreen levelScreen){
@@ -48,6 +57,8 @@ public class Grid extends Group {
         setStage(levelScreen.getMainStage());
 
         buildGrid(height, width, isTopLeftDark);
+
+        timeSinceDisaster = TimeEngine.getDateTime();
 
         this.addCaptureListener(new ClickListener(){
             @Override
@@ -70,12 +81,31 @@ public class Grid extends Group {
     @Override
     public void act(float dt){
         super.act(dt);
+
+        // Every 5 minutes, spawn a fire.
+        if(TimeEngine.getMinutesSince(timeSinceDisaster) == 5.0 && !isDisasterTime){
+            timeSinceDisaster = TimeEngine.getDateTime();
+            isDisasterTime = true;
+        }
+
         for(int x = 0; x < gridSquares.length; x++) {
             for (int y = 0; y < gridSquares[x].length; y++) {
                 if(gridSquares[x][y] == null) continue;
 
                 if (gridSquares[x][y].getCollisionSetting()) {
                     screen.getFarmer().preventOverlap(gridSquares[x][y]);
+                }
+
+                // Check if it is time, and then spawn a fire.
+                if(isDisasterTime){
+                    if(Plant.class.isAssignableFrom(gridSquares[x][y].getClass()))
+                    {
+                        Plant target = (Plant) gridSquares[x][y];
+                        if(target.getDisaster() == null){
+                            target.setDisaster(new FireDisaster(target));
+                            isDisasterTime = false;
+                        }
+                    }
                 }
             }
         }

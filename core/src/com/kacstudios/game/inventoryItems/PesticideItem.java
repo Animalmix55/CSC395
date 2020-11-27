@@ -1,6 +1,7 @@
 package com.kacstudios.game.inventoryItems;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.kacstudios.game.disasters.FireDisaster;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
@@ -27,23 +28,24 @@ public class PesticideItem extends IDepleteableItem{
         if(Plant.class.isAssignableFrom(event.getGridSquare().getClass())){
             //ACTION LOGIC
             Plant target = (Plant) event.getGridSquare();
-            InsectDisaster disaster = (InsectDisaster) target.getDisaster();
+            if (target.getDisaster() != null && target.getDisaster().getClass() == InsectDisaster.class) {
+                InsectDisaster disaster = (InsectDisaster) target.getDisaster();
+                if(disaster == null) return;
+                if(disaster.getInsecticideAmount() == 1){ target.setDisaster(null); }
+                else{ disaster.setInsecticideAmount(disaster.getInsecticideAmount() - 1); }
 
-            if(disaster == null) return;
 
-            if(disaster.getInsecticideAmount() == 1){ target.setDisaster(null); }
-            else{ disaster.setInsecticideAmount(disaster.getInsecticideAmount() - 1); }
 
             //CHANGE QUANTITIES LOGIC
-            float newPercent = getDepletionPercentage() + 0.10f;
-            setDepletionPercentage(newPercent <= 1? newPercent : 1);
+                float newPercent = getDepletionPercentage() + 0.05f;
+                setDepletionPercentage(newPercent <= 1 ? newPercent : 1);
 
-            if(getDepletionPercentage() >= 1){
-                if(getAmount() > 1) {
-                    setDepletionPercentage(0);
-                    setAmount(getAmount() - 1);
+                if (getDepletionPercentage() >= 1) {
+                    if (getAmount() > 1) {
+                        setDepletionPercentage(0);
+                        setAmount(getAmount() - 1);
+                    } else parent.setItem(null);
                 }
-                else parent.setItem(null);
             }
         }
         parent.checkItem();
