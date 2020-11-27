@@ -48,8 +48,6 @@ public class Grid extends Group {
     private int width;
     private static final Texture backgroundTexture = new Texture("grass-outofbounds_1080x1080.png");
     private int height;
-    private LocalDateTime timeSinceDisaster;
-    private boolean isDisasterTime = false;
     private boolean isTopLeftDark = true;
 
     public Grid(int height, int width, LevelScreen levelScreen){
@@ -60,8 +58,6 @@ public class Grid extends Group {
         setStage(levelScreen.getMainStage());
 
         buildGrid(height, width, isTopLeftDark);
-
-        timeSinceDisaster = TimeEngine.getDateTime();
 
         this.addCaptureListener(new ClickListener(){
             @Override

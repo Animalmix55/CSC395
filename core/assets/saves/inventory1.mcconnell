@@ -1,6 +1,7 @@
-II,com.kacstudios.game.inventoryItems.CornPlantItem,100
+II,com.kacstudios.game.inventoryItems.CornPlantItem,92
 ID,com.kacstudios.game.inventoryItems.WateringCanItem,3,0.0
-II,com.kacstudios.game.inventoryItems.BasicTractorItem,38
+II,com.kacstudios.game.inventoryItems.BasicTractorItem,40
 ID,com.kacstudios.game.inventoryItems.PesticideItem,5,0.0
 II,com.kacstudios.game.inventoryItems.BlueberriesPlantItem,100
-ID,com.kacstudios.game.inventoryItems.WaterBucketItem,1,0.0
+ID,com.kacstudios.game.inventoryItems.WaterBucketItem,10,0.0
+II,com.kacstudios.game.inventoryItems.EmptyBucketItem,10
