@@ -21,12 +21,13 @@ import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
+import com.kacstudios.game.overlays.character.CharacterMenu;
 import com.kacstudios.game.overlays.hud.HUD;
 import com.kacstudios.game.overlays.market.Market;
 import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.TimeEngine;
-import com.kacstudios.game.windows.PauseMenu;
+import com.kacstudios.game.overlays.pause.PauseMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class LevelScreen extends BaseScreen {
     private HUD hud;
     private Market market;
     private PauseMenu pauseMenu;
+    private CharacterMenu characterMenu;
 
     private boolean loadingFromSave;
     private int gridWidth;
@@ -118,9 +120,8 @@ public class LevelScreen extends BaseScreen {
             hud = new HUD(this, initialItems);
         }
 
-
-//        market = new Market(this); // add market overlay
         pauseMenu = new PauseMenu(this);
+
 
         //pause button
 
@@ -168,6 +169,21 @@ public class LevelScreen extends BaseScreen {
         mainStage.addActor(grid); // add grid to stage
 //      add in farmer actor
         farmer = new Farmer(20, 20, mainStage);
+
+        characterMenu = new CharacterMenu(farmer) {
+            @Override
+            public void onClose() {
+                getHud().toggleCustomizationButton(false);
+            }
+
+            @Override
+            public void onOpen() {
+                super.onOpen();
+                getHud().toggleCustomizationButton(true);
+            }
+        }; //needs farmer to exist
+        getUIStage().addActor(characterMenu);
+
         addedActors = new ArrayList<PlayableActor>();
         new GridExpandPrompt(this);
     }
@@ -205,7 +221,7 @@ public class LevelScreen extends BaseScreen {
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.B)) {
-            System.out.println(TimeEngine.getDateTime());
+            // insert debug statements here
         }
         return true;
     }
@@ -249,5 +265,9 @@ public class LevelScreen extends BaseScreen {
     public PauseMenu getPauseMenu() { return pauseMenu; }
     public void openMarket(boolean isOpen) {
         market.setVisible(isOpen);
+    }
+    public void openCustomization(boolean isOpen) {
+        if (isOpen) characterMenu.setMenu_default();
+        else characterMenu.closeMenu();
     }
 }

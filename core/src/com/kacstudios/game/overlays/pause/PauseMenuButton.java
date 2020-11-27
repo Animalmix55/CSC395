@@ -1,4 +1,4 @@
-package com.kacstudios.game.windows;
+package com.kacstudios.game.overlays.pause;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
