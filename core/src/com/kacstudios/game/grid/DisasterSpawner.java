@@ -82,9 +82,10 @@ public class DisasterSpawner {
     public void act() {
         if(TimeEngine.getSecondsSince(lastRun) <= updatePeriod) return; // only run every so many seconds
 
+        lastRun = TimeEngine.getDateTime();
         DisasterWrapper readyDisaster = null;
 
-        // figure out what disaster to install, prefer disasters with greater periods
+        // figure out what disaster to install, prefer disasters with greater periodsz
         for (DisasterWrapper disaster: registeredDisasters) {
             if(disaster.readyToSpawn() && (readyDisaster == null || readyDisaster.getPeriod() < disaster.getPeriod())) {
                 readyDisaster = disaster;
