@@ -95,10 +95,6 @@ public class LevelScreen extends BaseScreen {
         Economy.addMoney(100000000); // for testing
 
         grid = new Grid(gridHeight, gridWidth, this);
-        // Testing Fire/Water
-        CornPlant test = new CornPlant();
-        test.setDisaster(new FireDisaster((test)));
-        grid.addGridSquare(0, 0, test);
 
         WaterSource source = new WaterSource();
         grid.addGridSquare(1,1, source);

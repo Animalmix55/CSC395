@@ -66,7 +66,7 @@ public class Grid extends Group {
         this.addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                createGridEvent(x, y);
+                if(TimeEngine.getDilation() != 0) createGridEvent(x, y); // can't be paused
             }
         });
         levelScreen.getUIStage().addActor(this);
