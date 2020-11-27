@@ -151,17 +151,19 @@ public class LoadMenu extends BaseScreen {
                         // check what type of Plant the current line is, and create specific plant type
                         String className = splitFileLine[3];
                         try {
-                            Class<? extends Plant> plantClass = (Class<? extends Plant>) Class.forName(className);
-                            tempPlant = plantClass.getDeclaredConstructor().newInstance();
+                            Class<?> plantClass = Class.forName(className);
+                            if(Plant.class.isAssignableFrom(plantClass)) {
+                                tempPlant = (Plant) plantClass.getDeclaredConstructor().newInstance();
 
-                            // FOR ALL PLANTS
-                            if (splitFileLine[4].equals("t"))
-                                tempPlant.setWatered(true); // set plant to be watered if saved as watered
-                            tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
-                            tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
-                            tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
-                            if (splitFileLine[8].equals("t")) tempPlant.setDead(true);
-                            plants.add(tempPlant);
+                                // FOR ALL PLANTS
+                                if (splitFileLine[4].equals("t"))
+                                    tempPlant.setWatered(true); // set plant to be watered if saved as watered
+                                tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
+                                tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
+                                tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+                                if (splitFileLine[8].equals("t")) tempPlant.setDead(true);
+                                plants.add(tempPlant);
+                            }
                         } catch (Exception e) {
                             // if the class is bad and the reflection fails, just bail
                         }
@@ -187,13 +189,15 @@ public class LoadMenu extends BaseScreen {
                 int amount = Integer.parseInt(splitFileLine[2]);
 
                 try {
-                    Class<? extends IInventoryItem> itemClass = (Class<? extends IInventoryItem>) Class.forName(className);
-                    tempItem = itemClass.getDeclaredConstructor(int.class).newInstance(amount);
+                    Class<?> itemClass = Class.forName(className);
+                    if(IInventoryItem.class.isAssignableFrom(itemClass)) {
+                        tempItem = (IInventoryItem) itemClass.getDeclaredConstructor(int.class).newInstance(amount);
 
-                    items.add(tempItem);
+                        items.add(tempItem);
 
-                    if (isDepletable)
-                        ((IDepleteableItem) tempItem).setDepletionPercentage(Float.parseFloat(splitFileLine[3]));
+                        if (isDepletable)
+                            ((IDepleteableItem) tempItem).setDepletionPercentage(Float.parseFloat(splitFileLine[3]));
+                    }
                 } catch (Exception e) {
                     // pass, this happens if the class is invalid or a constructor doesn't exist
                 }
@@ -226,10 +230,12 @@ public class LoadMenu extends BaseScreen {
                 splitFileLine = fileLine.split(",");
                 String className = splitFileLine[0];
                 try {
-                    Class<? extends Actor> secondaryActorClass = (Class<? extends Actor>) Class.forName(className);
-                    Constructor<? extends Actor> constructor = secondaryActorClass.getConstructor(float.class, float.class, LevelScreen.class);
+                    Class<?> secondaryActorClass = Class.forName(className);
+                    if(Actor.class.isAssignableFrom(secondaryActorClass)) {
+                        Constructor<?> constructor = secondaryActorClass.getConstructor(float.class, float.class, LevelScreen.class);
 
-                    level.addSecondaryActor(constructor.newInstance(Float.parseFloat(splitFileLine[1]), Float.parseFloat(splitFileLine[2]), level));
+                        level.addSecondaryActor( (Actor) constructor.newInstance(Float.parseFloat(splitFileLine[1]), Float.parseFloat(splitFileLine[2]), level));
+                    }
                 } catch (Exception e) {
                     // pass, only occurs when the casting/reflection fails.
                 }

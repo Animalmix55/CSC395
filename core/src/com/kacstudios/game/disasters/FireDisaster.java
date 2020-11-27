@@ -11,8 +11,10 @@ public class FireDisaster extends PropagatingDisaster{
                 10,
                 .25f,
                 .4f
-
         );
+
+        // removes itself occasionally if the host is watered.
+        if(impl.getWatered() && generateRandom(0, 5) < 5) impl.setDisaster(null);
     }
 
     @Override

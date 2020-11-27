@@ -5,5 +5,7 @@ public class BlueberriesPlant extends Plant {
         super(new String[]{"grid_blank.png","blueberries-1.png", "blueberries-2.png", "blueberries-3.png"},
                 "blueberries-dead.png");
         setGrowthTime(20l);
+        setDryGrowthRateModifier(.2f); // grows at 20% speed when dry
+        setSecondsToDry(20);
     }
 }

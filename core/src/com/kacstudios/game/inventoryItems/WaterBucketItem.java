@@ -14,7 +14,6 @@ import com.kacstudios.game.inventoryItems.EmptyBucketItem;
 
 public class WaterBucketItem extends IDepleteableItem{
 
-    private static Texture texture1 = new Texture("items/EmptyBucket.png");
     private static Texture texture2 = new Texture("items/WaterBucket.png");
     private boolean isEmpty = false;
 
@@ -47,20 +46,12 @@ public class WaterBucketItem extends IDepleteableItem{
                         setAmount(getAmount() - 1);
                     }
                     else {
-                        parent.setContents(new Image(texture1));
-                        isEmpty = true;
+                        parent.setItem(null); // self destruct
                     }
 
+                    parent.getViewer().addItem(new EmptyBucketItem());
                 }
             }
-        }
-
-        if(!event.farmerWithinRadius(300)) return;
-        if(event.getGridSquare() == null) return;
-        if(WaterSource.class.isAssignableFrom(event.getGridSquare().getClass())) {
-            setDepletionPercentage(0);
-            isEmpty = false;
-            parent.setContents(new Image(texture2));
         }
         parent.checkItem();
     }

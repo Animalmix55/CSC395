@@ -19,6 +19,10 @@ public class Plant extends GridSquare {
     private Image drySoil;
     private Image wetSoil;
 
+    private float dryGrowthRateModifier = 0;
+    private float secondsToDry = -1;
+    private LocalDateTime lastWatered;
+
     private float growthPercentage = 0;
     private float growthRateModifier = 1;
 
@@ -29,14 +33,10 @@ public class Plant extends GridSquare {
     private Boolean isDead = false;
     private Boolean isProtected = false;
     private long growthTime = 60;
-    private LocalDateTime startTime = TimeEngine.getDateTime();
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
     private int insectDisasterChance;
-    private int disasterType;
-
-    private String plantType; // used when saving game to define what type of plant is being saved
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
@@ -53,7 +53,6 @@ public class Plant extends GridSquare {
 
         // Controls chance of an InsectDisaster
         insectDisasterChance = generateRandom(1,50);
-
     }
 
     public void setDisaster(Disaster disaster) {
@@ -109,6 +108,12 @@ public class Plant extends GridSquare {
     @Override
     public void act(float dt) {
         super.act(dt);
+        if(lastWatered != null && getWatered() && secondsToDry != -1 &&
+                TimeEngine.getSecondsSince(lastWatered) >= secondsToDry) {
+            setWatered(false);
+            lastWatered = null;
+        }
+
         if(!fullyGrown && !isDead)
         {
             if(insectDisasterChance == 1 && growthPercentage >= .5 && this.getDisaster() == null)
@@ -116,7 +121,9 @@ public class Plant extends GridSquare {
                 this.setDisaster(new InsectDisaster(this));
             }
 
-            float tempGrowthPercentage = getPercentPerSecond() * dt + growthPercentage; // update growth percentage
+            float tempGrowthPercentage = getPercentPerSecond() * dt * (getWatered()? 1 : dryGrowthRateModifier)
+                    + growthPercentage; // update growth percentage
+
             if(tempGrowthPercentage >= 1) {
                 fullyGrown = true;
                 growthPercentage = 1;
@@ -147,6 +154,7 @@ public class Plant extends GridSquare {
     public void setWatered(boolean isWatered){
         wetSoil.setVisible(isWatered);
         drySoil.setVisible(!isWatered);
+        if (isWatered) lastWatered = TimeEngine.getDateTime();
     }
 
     public boolean getWatered(){
@@ -207,4 +215,23 @@ public class Plant extends GridSquare {
     public int getSavedX() { return savedX; }
 
     public int getSavedY() { return savedY; }
+
+    /**
+     * Sets the modifier to the primary growth rate when the plant is not watered.
+     * A value of .4 means that the plant grows at 40% of the normal rate when dry.
+     *
+     * @param dryGrowthRateModifier A value between 0 and 1.
+     */
+    public void setDryGrowthRateModifier(float dryGrowthRateModifier) {
+        this.dryGrowthRateModifier = dryGrowthRateModifier;
+    }
+
+    /**
+     * Sets the number of seconds it takes for a watered plot to dry out.
+     * -1 means unlimited.
+     * @param secondsToDry
+     */
+    public void setSecondsToDry(float secondsToDry) {
+        this.secondsToDry = secondsToDry;
+    }
 }
