@@ -194,7 +194,7 @@ public class PlayableActor extends BaseActor {
             if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))
                 accelerateAtAngle(270);
 
-            if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
+            if(action != null) action.act(dt); // update action
 
             applyPhysics(dt);
             boundToWorld();

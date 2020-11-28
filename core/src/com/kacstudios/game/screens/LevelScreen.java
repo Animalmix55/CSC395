@@ -173,7 +173,7 @@ public class LevelScreen extends BaseScreen {
     public void render(float dt) {
         // Propagates time dilations to DeltaTime
         TimeEngine.act(dt);
-        super.render(dt * TimeEngine.getDilation());
+        super.render(dt);
     }
 
     public boolean keyDown(int keyCode) {
@@ -219,14 +219,6 @@ public class LevelScreen extends BaseScreen {
 
     public Grid getGrid() {
         return grid;
-    }
-
-    public boolean getPaused(){
-        return paused;
-    }
-
-    public void setPaused(boolean isPaused){
-        paused = isPaused;
     }
 
     public void handleGridClickEvent(GridClickEvent event){

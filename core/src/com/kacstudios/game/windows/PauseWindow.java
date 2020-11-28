@@ -39,7 +39,6 @@ public class PauseWindow {
                         return false;
 
                     TimeEngine.resume();
-                    screen.setPaused(false);
                     window.setVisible(false);
                     return true;
                 }
@@ -140,7 +139,6 @@ public class PauseWindow {
                         return false;
 
                     TimeEngine.resume();
-                    screen.setPaused(false);
                     FarmaniaGame.setActiveScreen(new MainMenu());
 
                     return true;
