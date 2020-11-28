@@ -121,6 +121,8 @@ public class CharacterMenu extends Group {
     }
 
     public void setMenu_default() {
+        tempTextureData = farmer.getTextureData();
+        updatePreview();
         setVisible(true);
         mainButtons.setVisible(true);
         onOpen();
