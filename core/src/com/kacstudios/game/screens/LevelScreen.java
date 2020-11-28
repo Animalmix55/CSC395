@@ -14,12 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import com.kacstudios.game.actors.gridexpansion.GridExpandPrompt;
-import com.kacstudios.game.actors.PlayableActor;
-import com.kacstudios.game.disasters.InsectDisaster;
-import com.kacstudios.game.disasters.FireDisaster;
 import com.kacstudios.game.grid.Grid;
-import com.kacstudios.game.grid.WaterSource;
-import com.kacstudios.game.grid.plants.CornPlant;
+import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
@@ -33,7 +29,6 @@ import com.kacstudios.game.overlays.pause.PauseMenu;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDateTime;
 
 public class LevelScreen extends BaseScreen {
     private Farmer farmer;
@@ -48,9 +43,9 @@ public class LevelScreen extends BaseScreen {
     private int gridWidth;
     private int gridHeight;
     private List<Plant> savedPlants;
+    private List<GridSquare> savedGridSquares;
     private Object[] objectItems;
     private IInventoryItem[] savedInventoryItems;
-    private String savedTime;
     private int saveFileNum = -1;
 
 
@@ -64,18 +59,18 @@ public class LevelScreen extends BaseScreen {
     }
 
     // loading level from save
-    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport, String timeImport) {
+    public LevelScreen(int width, int height, List<Plant> plantsToImport, List<IInventoryItem> itemsToImport, List<GridSquare> squaresToImport) {
         super(false);
         loadingFromSave = true;
         gridWidth = width;
         gridHeight = height;
         savedPlants = plantsToImport;
+        savedGridSquares = squaresToImport;
         objectItems = itemsToImport.toArray();
         savedInventoryItems = new IInventoryItem[objectItems.length];
         for (int i=0;i<objectItems.length;i++) {
             savedInventoryItems[i] = (IInventoryItem) objectItems[i];
         }
-        savedTime = timeImport;
         initialize();
     }
 
@@ -85,15 +80,17 @@ public class LevelScreen extends BaseScreen {
                 new HarvestingItem(1),
                 new DeleteItem(1),
         };
-        if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
-        else TimeEngine.Init();
         Economy.Init();
+        if (!loadingFromSave) TimeEngine.Init();
 
         grid = new Grid(gridHeight, gridWidth, this);
 
         if (loadingFromSave) {
             for (Plant currentPlant : savedPlants) {
                 grid.addGridSquare(currentPlant.getSavedX(), currentPlant.getSavedY(), currentPlant);
+            }
+            for (GridSquare square : savedGridSquares) {
+                grid.addGridSquare(square.getSavedX(), square.getSavedY(), square);
             }
             hud = new HUD(this, savedInventoryItems);
         }
