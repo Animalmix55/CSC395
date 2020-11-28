@@ -37,10 +37,7 @@ public class PlayableActor extends BaseActor {
     private Animation<TextureRegion> rightAnimation;
     private Animation<TextureRegion> upAnimation;
     private Animation<TextureRegion> downAnimation;
-    private int prevKey = Input.Keys.D;
     private MoveToAction action;
-
-    private String actorName;
     protected LevelScreen screen;
 
     public PlayableActor(float x, float y, LevelScreen screen, boolean focused) {
@@ -87,7 +84,7 @@ public class PlayableActor extends BaseActor {
                 }
 
                 //Check for transparency
-                if (pickedColor != null && pickedColor.a != 0) {
+                if (pickedColor.a != 0) {
                     onClick(e, x, y);
                 }
                 else {
@@ -165,28 +162,26 @@ public class PlayableActor extends BaseActor {
     @Override
     public void act(float dt) {
         super.act(dt);
-        if (isFocused) {
+
+        Direction prevDirection = getAnimationDirection();
+        if (isFocused && dt != 0) { // if dt is zero, the game is paused, don't change directions
             // configure sprite direction
             if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                if (prevKey != Input.Keys.W) setAnimation(upAnimation);
-                prevKey = Input.Keys.W;
-                if (prevKey != Input.Keys.UP) setAnimation(upAnimation);
-                prevKey = Input.Keys.UP;
+                if (prevDirection != Direction.up) {
+                    setAnimation(upAnimation);
+                }
             } else if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                if (prevKey != Input.Keys.D) setAnimation(rightAnimation);
-                prevKey = Input.Keys.D;
-                if (prevKey != Input.Keys.RIGHT) setAnimation(rightAnimation);
-                prevKey = Input.Keys.RIGHT;
+                if (prevDirection != Direction.right) {
+                    setAnimation(rightAnimation);
+                }
             } else if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                if (prevKey != Input.Keys.A) setAnimation(leftAnimation);
-                prevKey = Input.Keys.A;
-                if (prevKey != Input.Keys.LEFT) setAnimation(leftAnimation);
-                prevKey = Input.Keys.LEFT;
+                if (prevDirection != Direction.left) {
+                    setAnimation(leftAnimation);
+                }
             } else if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                if (prevKey != Input.Keys.S) setAnimation(downAnimation);
-                prevKey = Input.Keys.S;
-                if (prevKey != Input.Keys.DOWN) setAnimation(downAnimation);
-                prevKey = Input.Keys.DOWN;
+                if (prevDirection != Direction.down) {
+                    setAnimation(downAnimation);
+                }
             }
 
             // configure acceleration
@@ -199,7 +194,7 @@ public class PlayableActor extends BaseActor {
             if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))
                 accelerateAtAngle(270);
 
-            if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
+            if(action != null) action.act(dt); // update action
 
             applyPhysics(dt);
             boundToWorld();
@@ -231,10 +226,6 @@ public class PlayableActor extends BaseActor {
 
     public boolean getFocused() {
         return isFocused;
-    }
-
-    public int getPrevKey() {
-        return prevKey;
     }
 
     public void setAnimationDirection(Direction direction) {
@@ -275,9 +266,4 @@ public class PlayableActor extends BaseActor {
 
         return vector;
     }
-
-    public void setActorName(String name) { actorName = name; }
-
-    public String getActorName() { return actorName; }
-
 }

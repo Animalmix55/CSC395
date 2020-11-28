@@ -18,14 +18,12 @@ public class Tractor extends PlayableActor {
     private boolean justMounted = false;
 
     ContextMenu menu = new ContextMenu(0, 0, new ContextMenu.ContextMenuOption[] {
-            new ContextMenu.ContextMenuOption("Remove", () -> { if(getDistanceFromFarmer() < radius) removeTractor(); }),
+            new ContextMenu.ContextMenuOption("Store", () -> { if(getDistanceFromFarmer() < radius) removeTractor(); }),
             new ContextMenu.ContextMenuOption("Mount", () -> { if(getDistanceFromFarmer() < radius) addFarmer(); })
     });
 
     public Tractor (float x, float y, LevelScreen s) {
         super(x,y,s, false);
-
-        setActorName("BasicTractor");
         farmer = s.getFarmer();
 
         String[] leftMovementFiles = {"tractor-textures/tractor-left-1.png"};

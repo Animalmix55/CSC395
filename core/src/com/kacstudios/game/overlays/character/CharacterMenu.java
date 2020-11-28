@@ -2,16 +2,12 @@ package com.kacstudios.game.overlays.character;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.actors.Farmer.FarmerAnimationFactory;
-import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.ShapeGenerator;
 
 public class CharacterMenu extends Group {
@@ -29,6 +25,8 @@ public class CharacterMenu extends Group {
                 new Color(0,0,0,.5f)
         )
     );
+
+    private boolean isDirty = false;
 
     Group mainButtons = new Group();
 
@@ -114,26 +112,31 @@ public class CharacterMenu extends Group {
         if (pants != null) pants.remove();
         if (skin != null) skin.remove();
 
-        farmer.setTextureData(tempTextureData);
-        farmer.updateTextures();
+        if(isDirty) {
+            farmer.setTextureData(tempTextureData);
+            farmer.updateTextures();
+            isDirty = false;
+        }
 
         onClose();
     }
 
-    public void setMenu_default() {
+    public void openMenu() {
+        tempTextureData = farmer.getTextureData();
+        updatePreview();
         setVisible(true);
         mainButtons.setVisible(true);
         onOpen();
     }
 
-    public void setMenu_head() {
+    private void setMenu_head() {
         mainButtons.setVisible(false);
         head = new CharacterMenuPage(
                 tempTextureData.headColor, FarmerAnimationFactory.CustomizationPart.head, tempTextureData.headName, false) {
             @Override
             public void onClose() {
                 this.remove();
-                setMenu_default();
+                openMenu();
             }
 
             @Override
@@ -148,13 +151,13 @@ public class CharacterMenu extends Group {
         addActor(head);
     }
 
-    public void setMenu_shirt() {
+    private void setMenu_shirt() {
         mainButtons.setVisible(false);
         shirt = new CharacterMenuPage(tempTextureData.shirtColor, FarmerAnimationFactory.CustomizationPart.shirt, tempTextureData.shirtName) {
             @Override
             public void onClose() {
                 this.remove();
-                setMenu_default();
+                openMenu();
             }
             @Override
             public void onChange(Color color, String selection) {
@@ -168,13 +171,13 @@ public class CharacterMenu extends Group {
         addActor(shirt);
     }
 
-    public void setMenu_skin() {
+    private void setMenu_skin() {
         mainButtons.setVisible(false);
         skin = new CharacterMenuPage(tempTextureData.skinColor, null, null) {
             @Override
             public void onClose() {
                 this.remove();
-                setMenu_default();
+                openMenu();
             }
 
             @Override
@@ -188,13 +191,13 @@ public class CharacterMenu extends Group {
         addActor(skin);
     }
 
-    public void setMenu_pants() {
+    private void setMenu_pants() {
         mainButtons.setVisible(false);
         pants = new CharacterMenuPage(tempTextureData.pantsColor, FarmerAnimationFactory.CustomizationPart.pants, tempTextureData.pantsName) {
             @Override
             public void onClose() {
                 this.remove();
-                setMenu_default();
+                openMenu();
             }
 
             @Override
@@ -231,5 +234,6 @@ public class CharacterMenu extends Group {
         char_preview = new Image(FarmerAnimationFactory.generatePreviewFrame(tempTextureData));
         char_preview.setPosition(x, y);
         addActor(char_preview);
+        isDirty = true;
     }
 }

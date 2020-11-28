@@ -64,7 +64,6 @@ public class PauseMenu extends Group {
             public void clicked(InputEvent event, float x, float y) {
                 setMenu_resume();
                 TimeEngine.resume();
-                inputScreen.setPaused(false);
             }
         });
         pauseButtons.addActor(resumeButton);
@@ -226,7 +225,6 @@ public class PauseMenu extends Group {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 TimeEngine.resume();
-                screen.setPaused(false);
                 FarmaniaGame.setActiveScreen(new MainMenu());
             }
         });
