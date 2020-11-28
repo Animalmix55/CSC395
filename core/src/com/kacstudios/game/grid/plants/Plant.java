@@ -198,6 +198,8 @@ public class Plant extends GridSquare {
         return isDead;
     }
 
+    public Boolean getFullyGrown() {return fullyGrown;}
+
     public float getGrowthPercentage() {
         return growthPercentage;
     }
