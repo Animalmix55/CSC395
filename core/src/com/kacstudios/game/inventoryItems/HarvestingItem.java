@@ -13,6 +13,7 @@ public class HarvestingItem extends IInventoryItem {
     public HarvestingItem(int amount){
         setAmount(amount);
         setDisplayName("Scythe");
+        setDeletable(false);
     }
 
     @Override

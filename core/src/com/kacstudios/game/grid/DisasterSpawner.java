@@ -105,7 +105,9 @@ public class DisasterSpawner {
             }
         }
 
-        Plant target = linearizedPlantSquares.get(Disaster.generateRandom(0, linearizedPlantSquares.size() - 1));
-        readyDisaster.spawnDisaster(target);
+        if(linearizedPlantSquares.size() > 0) {
+            Plant target = linearizedPlantSquares.get(Disaster.generateRandom(0, linearizedPlantSquares.size() - 1));
+            readyDisaster.spawnDisaster(target);
+        }
     }
 }

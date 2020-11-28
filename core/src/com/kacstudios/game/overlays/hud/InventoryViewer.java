@@ -136,7 +136,8 @@ public class InventoryViewer extends Group {
                 }
                 else if (viewInventoryButton.getItem() != null){
                     viewInventoryButton.setItem(null);
-                    informSubscribers();
+                    if(!dragItem.isDeletable()) mouseTarget.setItem(dragItem);
+                    else informSubscribers();
                 }
 
                 dragItemImage.remove();
@@ -157,8 +158,11 @@ public class InventoryViewer extends Group {
                 mouseTarget.setItem(null); // remove item
                 dragItemImage = new Image(dragItem.getTexture());
                 mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
-                ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
-                viewInventoryButton.setDeleteMode(true);
+
+                if(dragItem != null && dragItem.isDeletable()) {
+                    ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns - 1][0];
+                    viewInventoryButton.setDeleteMode(true);
+                }
             }
 
             Vector3 globalCursorPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
