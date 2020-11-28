@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -33,32 +34,41 @@ public class ItemButton extends SelectableButton {
 
         public AmountLabel(CharSequence text, LabelStyle style, ItemButton parent) {
             super(text, style);
+            setHeight(radius * 2);
             this.setAlignment(Align.center);
-            setWidth(radius);
-            setHeight(radius);
             this.button = parent;
         }
 
         @Override
         public void draw(Batch batch, float parentAlpha) {
             if(!isVisible()) return; // dont bother
+            applyTransform(shapeRenderer, computeTransform());
             batch.end();
-            float shapeX = Math.abs(getWidth() - 2*radius)/2;
-            float shapeY = Math.abs(getHeight() - 2*radius)/2;
-
-            Actor parent = this;
-            do{
-                shapeX += parent.getX();
-                shapeY += parent.getY();
-            } while ((parent = parent.getParent()) != null);
-
             shapeRenderer.setColor(button.getSelected()? Color.GRAY : Color.WHITE);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.circle(shapeX + 1, shapeY, radius); // not sure why the +1, but it works
+            shapeRenderer.circle(getX() + 2, getY() + radius, radius);
+            shapeRenderer.rect(getX() + 2, getY(), getWidth() - 4, getHeight());
+            shapeRenderer.circle(getX() + getWidth() - 2, getY() + radius, radius);
             shapeRenderer.end();
             batch.begin();
-
             super.draw(batch, parentAlpha);
+        }
+
+        @Override
+        public boolean setText(int value) {
+            boolean returnVal = super.setText(value);
+            pack();
+            setHeight(radius * 2);
+            setX(10-getWidth()/2);
+            return returnVal;
+        }
+
+        @Override
+        public void setText(CharSequence newText) {
+            super.setText(newText);
+            pack();
+            setHeight(radius * 2);
+            setX(10-getWidth()/2);
         }
     }
     private class PercentBar extends Actor {
@@ -119,7 +129,7 @@ public class ItemButton extends SelectableButton {
         Label.LabelStyle amountStyle = new Label.LabelStyle();
         amountStyle.font = FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 10);
         amountLabel = new AmountLabel("", amountStyle, this);
-        amountLabel.setPosition(3, getHeight() - amountLabel.getHeight() - 7);
+        amountLabel.setPosition(0, getHeight() - amountLabel.getHeight());
         amountLabel.setVisible(false);
         this.addActor(amountLabel);
         amountLabel.setColor(Color.BLACK);
