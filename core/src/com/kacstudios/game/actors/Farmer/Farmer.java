@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.kacstudios.game.actors.PlayableActor;
+import com.kacstudios.game.screens.LevelScreen;
+
+import java.util.logging.Level;
 
 public class Farmer extends PlayableActor {
     Animation<TextureRegion> leftAnimation;
@@ -23,9 +26,9 @@ public class Farmer extends PlayableActor {
         public Color skinColor;
     }
 
-    public Farmer(float x, float y, Stage s)
+    public Farmer(float x, float y, LevelScreen screen)
     {
-        super(x,y,s, true);
+        super(x,y,screen, true);
 
         setDefaultAnimations();
         setAcceleration(1000);

@@ -43,7 +43,7 @@ public class InventoryViewer extends Group {
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
                 if(x == columns - 1 && y == 0) continue; // skip for more button
-                ItemButton temp = new ItemButton(true, this);
+                ItemButton temp = new ItemButton(y == 0, this);
                 temp.setX(8 + x * temp.getWidth());
                 temp.setY(y * temp.getHeight());
                 temp.setVisible(false);
@@ -53,6 +53,8 @@ public class InventoryViewer extends Group {
             }
         }
 
+
+        itemButtons[0][0].setSelected(true); // select default first slot
         setWidth(background.getWidth());
 
         // init ViewInventoryButton
@@ -77,7 +79,7 @@ public class InventoryViewer extends Group {
                 else if(event.getTarget().getParent() != null && event.getTarget().getParent().getClass() == ItemButton.class)
                     target = (ItemButton) event.getTarget().getParent();
 
-                if(target == null) return;
+                if(target == null || !target.getIsHotItem()) return;
 
                 for(int j = 0; j < columns - 1; j++){
                     if(itemButtons[j][0] == target) itemButtons[j][0].setSelected(true);
@@ -165,10 +167,9 @@ public class InventoryViewer extends Group {
                 }
             }
 
-            Vector3 globalCursorPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            Vector3 stageCursorPos = this.getStage().getCamera().unproject(globalCursorPos);
+            Vector2 globalCursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
 
-            Vector2 localCoordinates = this.stageToLocalCoordinates(new Vector2(stageCursorPos.x, stageCursorPos.y));
+            Vector2 localCoordinates = this.screenToLocalCoordinates(globalCursorPos);
             dragItemImage.setX(localCoordinates.x - dragItemImage.getWidth()/2);
             dragItemImage.setY(localCoordinates.y - dragItemImage.getHeight()/2);
         }

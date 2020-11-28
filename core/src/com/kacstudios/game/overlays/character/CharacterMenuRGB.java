@@ -98,6 +98,7 @@ public class CharacterMenuRGB extends Group {
             addActor(sliders[i]);
         }
 
+        setHeight(backgrounds[backgrounds.length - 1].getTop());
     }
 
     public float[] getSliderValues() {
