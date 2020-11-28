@@ -176,6 +176,8 @@ public class LevelScreen extends BaseScreen {
                 getHud().toggleCustomizationButton(true);
             }
         }; //needs farmer to exist
+        characterMenu.setX((getMainStage().getWidth() - characterMenu.getWidth())/2);
+        characterMenu.setY((getMainStage().getHeight() - characterMenu.getHeight())/2);
         getUIStage().addActor(characterMenu);
 
         addedActors = new ArrayList<>();

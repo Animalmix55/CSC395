@@ -28,7 +28,7 @@ public class CharacterMenuPage extends Group {
         if (part != null) options = FarmerAnimationFactory.retrievePartTextures(part, FarmerAnimationFactory.Direction.down);
         this.color = color;
 
-        CharacterMenuRGB rgbMenu = new CharacterMenuRGB(0, 180) {
+        CharacterMenuRGB rgbMenu = new CharacterMenuRGB(0, 15) {
             @Override
             public void onSliderChange(float r, float g, float b) {
                 colorChanged(r, g, b);
@@ -39,7 +39,7 @@ public class CharacterMenuPage extends Group {
 
         setWidth(rgbMenu.getWidth());
 
-        CharacterMenuButton backButton = new CharacterMenuButton("Back",0, 354, true, options.size() != 0);
+        CharacterMenuButton backButton = new CharacterMenuButton("Back",0, (int) rgbMenu.getTop() + 10, true, options.size() != 0);
         backButton.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

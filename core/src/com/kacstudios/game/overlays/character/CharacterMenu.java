@@ -21,7 +21,6 @@ public class CharacterMenu extends Group {
     private Image char_preview;
     private Farmer.FarmerTextureData tempTextureData;
     public static final int charMenuWidth = 356;
-    private static final int charMenuX = 640 - (charMenuWidth/2);
     public static final int charMenuHeight = 384;
     private static Texture backgroundTexture = new Texture(ShapeGenerator.createRoundedRectangle(
                 charMenuWidth,
@@ -30,12 +29,6 @@ public class CharacterMenu extends Group {
                 new Color(0,0,0,.5f)
         )
     );
-
-
-
-    private final int charMenuButtonWidth = 332;
-    private final int charMenuButtonX = 640 - (charMenuButtonWidth/2);
-    private final int charMenuButtonHeight = 48;
 
     Group mainButtons = new Group();
 
@@ -46,17 +39,15 @@ public class CharacterMenu extends Group {
 
     public CharacterMenu(Farmer farmer) {
         setWidth(charMenuWidth);
+        setHeight(charMenuHeight);
 
         tempTextureData = farmer.getTextureData();
         this.farmer = farmer;
         background = new Image(backgroundTexture);
-        background.setX(charMenuX);
-        background.setY(360 - (charMenuHeight/2));
         addActor(background);
 
         char_preview_background = new Image( new Texture("menu-textures/customization_preview_background.png") );
-        char_preview_background.setX(charMenuX);
-        char_preview_background.setY(410);
+        char_preview_background.setY(getHeight() - char_preview_background.getHeight());
         addActor(char_preview_background);
 
         updatePreview();
@@ -64,33 +55,8 @@ public class CharacterMenu extends Group {
                 (char_preview_background.getWidth() - char_preview.getWidth())/2,
                 char_preview_background.getY() + (char_preview_background.getHeight() - char_preview.getHeight())/2);
 
-
-
-
-
-
-        CharacterMenuButton main_headButton = new CharacterMenuButton("Head",charMenuButtonX,354);
-        main_headButton.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) { setMenu_head();
-            }
-        });
-        mainButtons.addActor(main_headButton);
-        CharacterMenuButton main_shirtButton = new CharacterMenuButton("Shirt",charMenuButtonX,296);
-        main_shirtButton.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) { setMenu_shirt();
-            }
-        });
-        mainButtons.addActor(main_shirtButton);
-        CharacterMenuButton main_pantsButton = new CharacterMenuButton("Pants",charMenuButtonX,238);
-        main_pantsButton.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) { setMenu_pants();
-            }
-        });
-        mainButtons.addActor(main_pantsButton);
-        CharacterMenuButton main_skinButton = new CharacterMenuButton("Skin",charMenuButtonX,180);
+        CharacterMenuButton main_skinButton = new CharacterMenuButton("Skin", 0,15);
+        main_skinButton.setX((getWidth() - main_skinButton.getWidth())/2);
         main_skinButton.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -100,19 +66,53 @@ public class CharacterMenu extends Group {
         mainButtons.addActor(main_skinButton);
         addActor(mainButtons);
 
+        CharacterMenuButton main_pantsButton = new CharacterMenuButton("Pants", 0,(int) main_skinButton.getTop() + 10);
+        main_pantsButton.setX((getWidth() - main_pantsButton.getWidth())/2);
+        main_pantsButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) { setMenu_pants();
+            }
+        });
+        mainButtons.addActor(main_pantsButton);
+
+        CharacterMenuButton main_shirtButton = new CharacterMenuButton("Shirt", 0,(int) main_pantsButton.getTop() + 10);
+        main_shirtButton.setX((getWidth() - main_shirtButton.getWidth())/2);
+        main_shirtButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) { setMenu_shirt();
+            }
+        });
+        mainButtons.addActor(main_shirtButton);
+
+        CharacterMenuButton main_headButton = new CharacterMenuButton("Head", 0,(int) main_shirtButton.getTop() + 10);
+        main_headButton.setX((getWidth() - main_headButton.getWidth())/2);
+        main_headButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) { setMenu_head();
+            }
+        });
+        mainButtons.addActor(main_headButton);
+
+        Image closeButton = new Image(new Texture(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE)));
+        closeButton.setPosition(getWidth() - closeButton.getWidth() / 2, getHeight() - closeButton.getHeight() / 2);
+        closeButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                closeMenu();
+            }
+        });
+
+        addActor(closeButton);
+
         closeMenu();
     }
 
     public void closeMenu() {
-        char_preview.setVisible(false);
-        char_preview_background.setVisible(false);
+        setVisible(false);
         if (head != null) head.remove();
         if (shirt != null) shirt.remove();
         if (pants != null) pants.remove();
         if (skin != null) skin.remove();
-        background.setVisible(false);
-        mainButtons.setVisible(false);
-        char_preview_background.setVisible(false);
 
         farmer.setTextureData(tempTextureData);
         farmer.updateTextures();
@@ -121,13 +121,8 @@ public class CharacterMenu extends Group {
     }
 
     public void setMenu_default() {
-        // set all other menu assets invisible here
-        char_preview.setVisible(true);
-        char_preview_background.setVisible(true);
-        // set original menu visible
-        background.setVisible(true);
+        setVisible(true);
         mainButtons.setVisible(true);
-
         onOpen();
     }
 
@@ -149,7 +144,7 @@ public class CharacterMenu extends Group {
                 updatePreview();
             }
         };
-        head.setX(charMenuX + (getWidth() - head.getWidth())/2);
+        head.setX((getWidth() - head.getWidth())/2);
         addActor(head);
     }
 
@@ -169,7 +164,7 @@ public class CharacterMenu extends Group {
                 updatePreview();
             }
         };
-        shirt.setX(charMenuX + (getWidth() - shirt.getWidth())/2);
+        shirt.setX((getWidth() - shirt.getWidth())/2);
         addActor(shirt);
     }
 
@@ -189,7 +184,7 @@ public class CharacterMenu extends Group {
                 updatePreview();
             }
         };
-        skin.setX(charMenuX + (getWidth() - skin.getWidth())/2);
+        skin.setX((getWidth() - skin.getWidth())/2);
         addActor(skin);
     }
 
@@ -210,7 +205,7 @@ public class CharacterMenu extends Group {
                 updatePreview();
             }
         };
-        pants.setX(charMenuX + (getWidth() - pants.getWidth())/2);
+        pants.setX((getWidth() - pants.getWidth())/2);
         addActor(pants);
     }
 
