@@ -17,6 +17,7 @@ public class WaterBucketItem extends IDepleteableItem{
     private static Texture texture2 = new Texture("items/WaterBucket.png");
     private boolean isEmpty = false;
 
+    public  WaterBucketItem() {this(1);}
     public WaterBucketItem(int amount){
         setAmount(amount);
         setDisplayName("Water Bucket");

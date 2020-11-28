@@ -134,8 +134,25 @@ public class MarketPage extends Group {
                 new ShopItem(new BasicTractorItem(), ShopItem.ItemAccessibility.Both, 40000, 15000)
         });
 
+        private static final MarketPage.Data WATERINGCAN = new MarketPage.Data(0, "Watering Can", "Waters a plant which increases its growth rate and adds a higher protection against fire.", new ShopItem[]{
+                new ShopItem(new WateringCanItem(), ShopItem.ItemAccessibility.Both, 20,10)
+        });
+
+        private static final MarketPage.Data WATERBUCKET = new MarketPage.Data(0, "Water Bucket", "A metal bucket used to hold water and put out fires.", new ShopItem[]{
+                new ShopItem(new WaterBucketItem(), ShopItem.ItemAccessibility.Both, 50, 20),
+                new ShopItem(new EmptyBucketItem(), ShopItem.ItemAccessibility.Both, 20, 10)
+        });
+
+        private static final MarketPage.Data WATERSOURCE = new MarketPage.Data(0, "Water Spigot", "An outdoor water source used to refill buckets.", new ShopItem[]{
+                new ShopItem(new WaterSourceItem(), ShopItem.ItemAccessibility.Both, 1000, 100)
+        });
+
+        private static final MarketPage.Data PESTICIDE = new MarketPage.Data(0, "Pesticide", "A substance used for destroying insects harmful to cultivated plants.", new ShopItem[]{
+                new ShopItem(new PesticideItem(), ShopItem.ItemAccessibility.Both, 100, 25)
+        });
+
         private static final MarketPage.Data[] PAGES = new MarketPage.Data[] {
-                CORN, BLUEBERRY, TRACTOR
+                CORN, BLUEBERRY, WATERINGCAN, WATERBUCKET, WATERSOURCE, PESTICIDE, TRACTOR
         };
 
         public static MarketPage.Data[] getPages() {

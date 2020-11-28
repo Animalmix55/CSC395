@@ -89,7 +89,8 @@ public class LevelScreen extends BaseScreen {
                 new BlueberriesPlantItem(100),
                 new BlueberriesSeedItem(40),
                 new WaterBucketItem(10),
-                new EmptyBucketItem(10)
+                new EmptyBucketItem(10),
+                new WaterSourceItem(5)
         };
         if (loadingFromSave) TimeEngine.Init( LocalDateTime.parse(savedTime) );
         else TimeEngine.Init();
