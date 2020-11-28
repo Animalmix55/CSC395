@@ -11,6 +11,7 @@ public class DeleteItem extends IInventoryItem{
     public DeleteItem(int amount){
         setAmount(amount);
         setDisplayName("Shovel");
+        setDeletable(false);
     }
 
     @Override
