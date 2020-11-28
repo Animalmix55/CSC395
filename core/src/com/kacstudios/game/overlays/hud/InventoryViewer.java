@@ -39,57 +39,7 @@ public class InventoryViewer extends Group {
         background.setVisible(false);
         this.addActor(background);
 
-        // init buttons
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < columns; x++) {
-                if(x == columns - 1 && y == 0) continue; // skip for more button
-                ItemButton temp = new ItemButton(y == 0, this);
-                temp.setX(8 + x * temp.getWidth());
-                temp.setY(y * temp.getHeight());
-                temp.setVisible(false);
-                itemButtons[x][y] = temp;
-                if (y == 0) itemButtons[x][y].setVisible(true); // always add hotbar
-                this.addActor(itemButtons[x][y]);
-            }
-        }
-
-
-        itemButtons[0][0].setSelected(true); // select default first slot
-        setWidth(background.getWidth());
-
-        // init ViewInventoryButton
-        ViewInventoryButton moreButton = new ViewInventoryButton(this){
-            @Override
-            public void onClick(InputEvent event, float x, float y) {
-                toggleViewer();
-            }
-        };
-
-        moreButton.setX(itemButtons[columns-2][0].getWidth() + itemButtons[columns-2][0].getX());
-        itemButtons[columns-1][0] = moreButton;
-        this.addActor(itemButtons[columns-1][0]);
-
-        // ADD HOTBAR LISTENER
-        this.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ItemButton target = null;
-                if(event.getTarget().getClass() == ItemButton.class)
-                    target = (ItemButton) event.getTarget();
-                else if(event.getTarget().getParent() != null && event.getTarget().getParent().getClass() == ItemButton.class)
-                    target = (ItemButton) event.getTarget().getParent();
-
-                if(target == null || !target.getIsHotItem()) return;
-
-                for(int j = 0; j < columns - 1; j++){
-                    if(itemButtons[j][0] == target) itemButtons[j][0].setSelected(true);
-                    else itemButtons[j][0].setSelected(false);
-                };
-            }
-        });
-
-        // ADD DRAG LISTENER
-        this.addListener(new ClickListener(){
+        ClickListener listener = new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if(!isExpanded) return true;
@@ -148,30 +98,77 @@ public class InventoryViewer extends Group {
 
                 mouseTarget = null;
             }
-        });
+        };
+
+        // init buttons
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                if(x == columns - 1 && y == 0) continue; // skip for more button
+                ItemButton temp = new ItemButton(y == 0, this);
+                temp.addCaptureListener(listener);
+                temp.addCaptureListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        ItemButton target = temp;
+
+                        if(!target.getIsHotItem()) return;
+
+                        for(int j = 0; j < columns - 1; j++){
+                            if(itemButtons[j][0] == target) itemButtons[j][0].setSelected(true);
+                            else itemButtons[j][0].setSelected(false);
+                        };
+                    }
+                });
+                temp.setX(8 + x * temp.getWidth());
+                temp.setY(y * temp.getHeight());
+                temp.setVisible(false);
+                itemButtons[x][y] = temp;
+                if (y == 0) itemButtons[x][y].setVisible(true); // always add hotbar
+                this.addActor(itemButtons[x][y]);
+            }
+        }
+
+
+        itemButtons[0][0].setSelected(true); // select default first slot
+        setWidth(background.getWidth());
+
+        // init ViewInventoryButton
+        ViewInventoryButton moreButton = new ViewInventoryButton(this){
+            @Override
+            public void onClick(InputEvent event, float x, float y) {
+                toggleViewer();
+            }
+        };
+
+        moreButton.setX(itemButtons[columns-2][0].getWidth() + itemButtons[columns-2][0].getX());
+        itemButtons[columns-1][0] = moreButton;
+        this.addActor(itemButtons[columns-1][0]);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        if(mouseDown && Duration.between(mouseDownTime, LocalDateTime.now()).getSeconds() > 0.5) { // hold down
+        if(mouseDown && !Duration.between(mouseDownTime, LocalDateTime.now()).minusMillis(100).isNegative()) { // hold down
             if(dragItem == null){ // remove item from button
                 dragItem = mouseTarget.getItem();
-                mouseTarget.setItem(null); // remove item
-                dragItemImage = new Image(dragItem.getTexture());
-                mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
-
-                if(dragItem != null && dragItem.isDeletable()) {
-                    ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns - 1][0];
-                    viewInventoryButton.setDeleteMode(true);
+                if(dragItem != null) {
+                    mouseTarget.setItem(null); // remove item
+                    dragItemImage = new Image(dragItem.getTexture());
+                    mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
+                    if(dragItem.isDeletable()) {
+                        ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns - 1][0];
+                        viewInventoryButton.setDeleteMode(true);
+                    }
                 }
             }
 
-            Vector2 globalCursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            if(dragItemImage != null) {
+                Vector2 globalCursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
 
-            Vector2 localCoordinates = this.screenToLocalCoordinates(globalCursorPos);
-            dragItemImage.setX(localCoordinates.x - dragItemImage.getWidth()/2);
-            dragItemImage.setY(localCoordinates.y - dragItemImage.getHeight()/2);
+                Vector2 localCoordinates = this.screenToLocalCoordinates(globalCursorPos);
+                dragItemImage.setX(localCoordinates.x - dragItemImage.getWidth() / 2);
+                dragItemImage.setY(localCoordinates.y - dragItemImage.getHeight() / 2);
+            }
         }
     }
 

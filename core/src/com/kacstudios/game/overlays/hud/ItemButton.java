@@ -11,14 +11,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kacstudios.game.inventoryItems.IDepleteableItem;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.SelectableButton;
+import com.kacstudios.game.utilities.ShapeGenerator;
 import org.w3c.dom.Text;
 
 public class ItemButton extends SelectableButton {
@@ -115,6 +118,11 @@ public class ItemButton extends SelectableButton {
     private static Texture selectedTexture;
     private static Texture unselectedTexture;
     private InventoryViewer viewer;
+    private static Label.LabelStyle labelStyle = new Label.LabelStyle(
+            FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 10), Color.WHITE);
+    private Label hoverLabel = new Label("", labelStyle);
+    private Image hoverLabelBg;
+    private Group hoverGroup = new Group();
 
     /**
      * Builds selectable button with default rectangular shape
@@ -140,6 +148,25 @@ public class ItemButton extends SelectableButton {
         percentBar.setY(getY() + 18);
         percentBar.setVisible(false);
         percentBar.setParent(this); // emulate setting parent for access to coordinates
+
+        hoverGroup.setY(3);
+        hoverGroup.setVisible(false);
+        hoverGroup.addActor(hoverLabel);
+        addActor(hoverGroup);
+
+        addCaptureListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.enter(event, x, y, pointer, fromActor);
+                if (pointer == -1 && getItem() != null) hoverGroup.setVisible(true);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                super.exit(event, x, y, pointer, toActor);
+                if (pointer == -1 && getItem() != null) hoverGroup.setVisible(false);
+            }
+        });
     }
 
     public static Texture getUnselectedTexture() {
@@ -174,6 +201,18 @@ public class ItemButton extends SelectableButton {
         this.item = item;
 
         if(item != null) {
+            hoverLabel.setText(item.getDisplayName());
+            hoverLabel.pack();
+
+            if(hoverLabelBg != null) hoverLabelBg.remove();
+            hoverLabelBg = new Image(new Texture(ShapeGenerator.createRoundedRectangle(
+                    (int) hoverLabel.getWidth() + 6, (int) hoverLabel.getHeight(), 3, new Color(0, 0, 0, .6f)
+            )));
+            hoverLabelBg.setX(-3);
+            hoverGroup.addActorBefore(hoverLabel, hoverLabelBg);
+
+            hoverGroup.setX(Math.abs(getWidth() - hoverLabel.getWidth())/2);
+
             Image contents = new Image(item.getTexture());
             setContents(contents);
             if(item.getAmount() > 1){
@@ -188,6 +227,7 @@ public class ItemButton extends SelectableButton {
             } else percentBar.setVisible(false);
         }
         else {
+            hoverGroup.setVisible(false);
             amountLabel.setVisible(false);
             percentBar.setVisible(false);
             setContents(null);
