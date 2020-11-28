@@ -1,37 +1,31 @@
 package com.kacstudios.game.overlays.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.GridClickEvent;
-import com.kacstudios.game.utilities.TimeEngine;
 
-import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.ArrayList;
 
 public class InventoryViewer extends Group {
-    private int rows = 3;
-    private int columns = 9;
-    private ItemButton[][] itemButtons = new ItemButton[columns][rows];
+    private static final int rows = 3;
+    private static final int columns = 9;
+    private final ItemButton[][] itemButtons = new ItemButton[columns][rows];
     private boolean isExpanded = false;
-    private Image background;
+    private final Image background;
     private boolean mouseDown = false;
     private LocalDateTime mouseDownTime;
     private ItemButton mouseTarget;
     private IInventoryItem dragItem;
     private Image dragItemImage;
-    private ArrayList<Runnable> updateListeners = new ArrayList<>();
+    private final ArrayList<Runnable> updateListeners = new ArrayList<>();
 
     public InventoryViewer(){
         background = new Image(new Texture("bottombar/background-inventory-extension.png"));
@@ -109,14 +103,11 @@ public class InventoryViewer extends Group {
                 temp.addCaptureListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        ItemButton target = temp;
-
-                        if(!target.getIsHotItem()) return;
+                        if(!temp.getIsHotItem()) return;
 
                         for(int j = 0; j < columns - 1; j++){
-                            if(itemButtons[j][0] == target) itemButtons[j][0].setSelected(true);
-                            else itemButtons[j][0].setSelected(false);
-                        };
+                            itemButtons[j][0].setSelected(itemButtons[j][0] == temp);
+                        }
                     }
                 });
                 temp.setX(8 + x * temp.getWidth());
@@ -202,7 +193,7 @@ public class InventoryViewer extends Group {
                     add = false;
                     break;
                 }
-            };
+            }
             if(add) newItems.add(item); // otherwise add it
         }
 
