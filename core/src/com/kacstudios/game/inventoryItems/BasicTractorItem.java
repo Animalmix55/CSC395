@@ -22,7 +22,7 @@ public class BasicTractorItem extends IInventoryItem {
         if(!event.farmerWithinRadius(300)) return;
         if(getAmount() > 0) {
             setAmount(getAmount() - 1);
-            Vector2 clickLoc = event.getEventCoords();
+            Vector2 clickLoc = event.getScreen().getMainStage().screenToStageCoordinates(event.getEventCoords());
 
             Tractor tractor = new Tractor(clickLoc.x, clickLoc.y, event.getScreen());
             tractor.setX(clickLoc.x - tractor.getWidth()/2);
