@@ -1,7 +1,10 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.kacstudios.game.grid.plants.Plant;
+import com.kacstudios.game.overlays.ContextMenu.ContextMenu;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
 
@@ -18,7 +21,28 @@ public class DeleteItem extends IInventoryItem{
     public void onDeployment(GridClickEvent event, ItemButton parent) {
         if (!event.farmerWithinRadius(300)) return;
         if (event.getGridSquare() != null) {
-            event.setSquare(null);
+            Vector2 coords = event.getGridSquare().getStage().screenToStageCoordinates(event.getEventCoords());
+
+            ContextMenu menu = new ContextMenu((int) coords.x, (int) coords.y, new ContextMenu.ContextMenuOption[] {
+                    new ContextMenu.ContextMenuOption("Delete",
+                            () -> { if(event.farmerWithinRadius(300)) event.setSquare(null); })
+            }) {
+                @Override
+                public void setOpen(boolean isOpen) {
+                    super.setOpen(isOpen);
+                    if(!isOpen) {
+                        if(event.getGridSquare() != null) event.getGridSquare().setColor(Color.WHITE);
+                        remove();
+                    }
+                }
+            };
+            event.getGridSquare().setColor(new Color(255, 255, 255, .4f));
+
+            menu.setPosition(coords.x - menu.getWidth()/2, coords.y - menu.getHeight()/2);
+
+            menu.setOpen(true);
+
+            event.getGridSquare().getStage().addActor(menu);
         }
 
         parent.checkItem();

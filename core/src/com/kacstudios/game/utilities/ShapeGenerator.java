@@ -36,6 +36,16 @@ public class ShapeGenerator {
         return shape;
     }
 
+    public static Pixmap createRectangle(int width, int height, Color color) {
+        Pixmap shape = new Pixmap(width, height, Pixmap.Format.RGBA4444);
+
+        shape.setBlending(Pixmap.Blending.None);
+        shape.setColor(color);
+        shape.fillRectangle(0, 0, width, height);
+
+        return shape;
+    }
+
     /**
      * Creates a circle texture of the give dimensions
      * @param radius circle's radius
