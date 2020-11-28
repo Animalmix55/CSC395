@@ -15,13 +15,68 @@ import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.ShapeGenerator;
 import com.kacstudios.game.utilities.TimeEngine;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class ContextMenu extends Group {
-    private static Texture optionBackground = new Texture(ShapeGenerator.createRoundedRectangle(200, 40, 10,
+    private static Texture optionBackground = new Texture(ShapeGenerator.createRoundedRectangle(150, 30, 10,
             new Color(255, 255, 255, .3f)));
-    Label.LabelStyle labelStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 30), Color.WHITE);
+
+    private static Texture optionBackgroundHovered = new Texture(ShapeGenerator.createRoundedRectangle(150, 30, 10,
+            new Color(255, 255, 255, .7f)));
+
+    Label.LabelStyle labelStyle = new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 15), Color.WHITE);
     LocalDateTime openTime;
+
+    private class ContextMenuOptionLine extends Group {
+        private Image hoverBg;
+        private Image bg;
+        private Label label;
+        private boolean wasHovered = false;
+
+        public ContextMenuOptionLine(ContextMenuOption option) {
+            this.setHeight(optionBackground.getHeight());
+            this.setWidth(optionBackground.getWidth());
+
+            bg = new Image(optionBackground);
+            hoverBg  = new Image(optionBackgroundHovered);
+            hoverBg.setVisible(false);
+
+            this.addActor(hoverBg);
+            this.addActor(bg);
+            this.addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    setOpen(false);
+                    option.onClick.run();
+                }
+            });
+
+            label = new Label(option.getDisplayText(), labelStyle);
+            label.setWidth(this.getWidth());
+            label.setHeight(this.getHeight());
+            label.setAlignment(Align.center);
+            this.addActor(label);
+        }
+
+        @Override
+        public void act(float delta) {
+            super.act(delta);
+
+            Vector2 globalCursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
+            Vector2 localCursorPos = screenToLocalCoordinates(globalCursorPos);
+
+            boolean isHovered = localCursorPos.x > 0 && localCursorPos.y > 0 && localCursorPos.x < getWidth() && localCursorPos.y < getHeight();
+            if(isHovered != wasHovered) {
+                bg.setVisible(!isHovered);
+                hoverBg.setVisible(isHovered);
+                if(isHovered) label.setColor(Color.BLACK);
+                else label.setColor(Color.WHITE);
+
+                wasHovered = isHovered;
+            }
+        }
+    }
 
     public static class ContextMenuOption {
         private String displayText;
@@ -53,28 +108,10 @@ public class ContextMenu extends Group {
         addCaptureListener(new ClickListener()); // catches events
 
         for (int i = 0; i < size; i++) {
-            Group optionGroup = new Group();
+            ContextMenuOptionLine optionGroup = new ContextMenuOptionLine(options[i]);
 
             optionGroup.setPosition(0, i * (optionBackground.getHeight() + 5) + 5);
-            optionGroup.setHeight(optionBackground.getHeight());
             optionGroup.setX(5);
-            optionGroup.setWidth(getWidth());
-
-            ContextMenuOption option = options[i];
-            optionGroup.addActor(new Image(optionBackground));
-            optionGroup.addCaptureListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    setOpen(false);
-                    option.onClick.run();
-                }
-            });
-
-            Label label = new Label(option.getDisplayText(), labelStyle);
-            label.setWidth(optionGroup.getWidth());
-            label.setHeight(optionGroup.getHeight());
-            label.setAlignment(Align.center);
-            optionGroup.addActor(label);
 
             addActor(optionGroup);
         }
@@ -86,7 +123,7 @@ public class ContextMenu extends Group {
         super.act(delta);
 
         if(isOpen()) {
-            if(TimeEngine.getSecondsSince(openTime) > 5) setOpen(false);
+            if(Duration.between(openTime, LocalDateTime.now()).getSeconds() > 5) setOpen(false);
             else if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT) || Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 Vector2 coords = screenToLocalCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
 
@@ -97,7 +134,7 @@ public class ContextMenu extends Group {
 
     public void setOpen(boolean isOpen) {
         setVisible(isOpen);
-        if(isOpen) openTime = TimeEngine.getDateTime();
+        if(isOpen) openTime = LocalDateTime.now();
         else openTime = null;
     }
 

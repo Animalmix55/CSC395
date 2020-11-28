@@ -12,13 +12,14 @@ import com.kacstudios.game.screens.LevelScreen;
 import java.awt.geom.Point2D;
 
 public class Tractor extends PlayableActor {
+    private static final int radius = 300;
     private Farmer farmer;
     private boolean hasResized = true;
     private boolean justMounted = false;
 
     ContextMenu menu = new ContextMenu(0, 0, new ContextMenu.ContextMenuOption[] {
-            new ContextMenu.ContextMenuOption("Remove", this::removeTractor),
-            new ContextMenu.ContextMenuOption("Mount", this::addFarmer)
+            new ContextMenu.ContextMenuOption("Remove", () -> { if(getDistanceFromFarmer() < radius) removeTractor(); }),
+            new ContextMenu.ContextMenuOption("Mount", () -> { if(getDistanceFromFarmer() < radius) addFarmer(); })
     });
 
     public Tractor (float x, float y, LevelScreen s) {
@@ -45,13 +46,13 @@ public class Tractor extends PlayableActor {
         setBoundaryPolyCustom(new float[]{0,0, getWidth(),0, getWidth(),getHeight(), 0,getHeight()});
 
         menu.setVisible(false);
-        menu.setPosition(Math.abs(menu.getHeight() - getHeight())/2, Math.abs(menu.getWidth() - getWidth())/2);
+        menu.setPosition(Math.abs(menu.getWidth() - getWidth())/2, Math.abs(menu.getHeight() - getHeight())/2);
         addActor(menu);
     }
 
     @Override
     public void onClick(InputEvent e, float x, float y) {
-        if(getDistanceFromFarmer() > 300) return;
+        if(getDistanceFromFarmer() > radius) return;
 
         if(!menu.isOpen() && !justMounted) {
             if(getFocused()) removeFarmer();
