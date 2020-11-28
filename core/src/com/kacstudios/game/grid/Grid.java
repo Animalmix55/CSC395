@@ -74,6 +74,7 @@ public class Grid extends Group {
     }
 
     private void createGridEvent(float x, float y){
+        if(x < 0 || y < 0 || x > getRight() || y > getTop()) return; // don't make an event if off grid
         GridClickEvent gridSquareItemEvent = new GridClickEvent(x, y, this.screen);
         screen.handleGridClickEvent(gridSquareItemEvent); // pass the event to the screen
     }

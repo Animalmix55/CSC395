@@ -42,8 +42,8 @@ public class ItemButton extends SelectableButton {
         @Override
         public void draw(Batch batch, float parentAlpha) {
             if(!isVisible()) return; // dont bother
-            applyTransform(shapeRenderer, computeTransform());
             batch.end();
+            shapeRenderer.setTransformMatrix(computeTransform());
             shapeRenderer.setColor(button.getSelected()? Color.GRAY : Color.WHITE);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.circle(getX() + 2, getY() + radius, radius);
