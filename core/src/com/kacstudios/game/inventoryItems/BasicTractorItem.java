@@ -10,8 +10,6 @@ import com.kacstudios.game.utilities.GridClickEvent;
 
 public class BasicTractorItem extends IInventoryItem {
     private static Texture texture = new Texture("items/tractor-1.png");
-    public static Music TractorSound;
-    public static float volume=0;
 
     public BasicTractorItem(int amount) {
         setAmount(amount);
@@ -24,11 +22,6 @@ public class BasicTractorItem extends IInventoryItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
-        TractorSound = Gdx.audio.newMusic(Gdx.files.internal("SoundEffects/tractor-engine.ogg"));
-        TractorSound.setLooping(true);
-        TractorSound.setVolume(volume);
-        TractorSound.play();
-
         if(!event.farmerWithinRadius(300)) return;
         if(getAmount() > 0) {
             setAmount(getAmount() - 1);

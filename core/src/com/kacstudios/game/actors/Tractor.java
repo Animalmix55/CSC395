@@ -20,6 +20,7 @@ public class Tractor extends PlayableActor {
     private Farmer farmer;
     private boolean hasResized = true;
     private boolean justMounted = false;
+    public static Music TractorSound = Gdx.audio.newMusic(Gdx.files.internal("SoundEffects/tractor-engine.ogg"));
 
     ContextMenu menu = new ContextMenu(0, 0, new ContextMenu.ContextMenuOption[] {
             new ContextMenu.ContextMenuOption("Store", () -> { if(getDistanceFromFarmer() < radius) removeTractor(); }),
@@ -29,6 +30,7 @@ public class Tractor extends PlayableActor {
     public Tractor (float x, float y, LevelScreen s) {
         super(x,y,s, false);
         farmer = s.getFarmer();
+        TractorSound.setLooping(true);
 
         String[] leftMovementFiles = {"tractor-textures/tractor-left-1.png"};
         String[] rightMovementFiles = {"tractor-textures/tractor-right-1.png"};
@@ -59,7 +61,7 @@ public class Tractor extends PlayableActor {
         if(!menu.isOpen() && !justMounted) {
             if(getFocused()) { 
                 removeFarmer();
-                BasicTractorItem.TractorSound.setVolume(0);
+                TractorSound.setVolume(0);
             }   
             else menu.setOpen(true);
         }
@@ -113,7 +115,7 @@ public class Tractor extends PlayableActor {
      */
     private void addFarmer() {
         justMounted = true;
-        BasicTractorItem.TractorSound.setVolume(Setting.GameVolume*0.01f);
+        TractorSound.setVolume(Setting.GameVolume*0.01f);
         this.setFocused(true);
         farmer.setFocused(false);
         farmer.setMaxSpeed(625);

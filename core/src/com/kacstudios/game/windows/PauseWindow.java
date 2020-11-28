@@ -9,10 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.games.FarmaniaGame;
-import com.kacstudios.game.inventoryItems.BasicTractorItem;
-import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
-import com.kacstudios.game.inventoryItems.CornPlantItem;
+import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
 import com.kacstudios.game.utilities.Setting;
@@ -177,9 +176,9 @@ public class PauseWindow {
                     //updating Gamenoise volume
                     FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
                     //updates game sound effects
-                    CornPlantItem.volume = Setting.GameVolume*0.01f;
-                    BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
-                    BasicTractorItem.TractorSound.setVolume(Setting.GameVolume*0.01f);
+                    CornSeedItem.volume = Setting.GameVolume*0.01f;
+                    BlueberriesSeedItem.volume = Setting.GameVolume*0.01f;
+                    Tractor.TractorSound.setVolume(Setting.GameVolume*0.01f);
 
 
                     return true;
