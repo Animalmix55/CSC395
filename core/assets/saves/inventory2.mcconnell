@@ -1,2 +1,8 @@
-II,com.kacstudios.game.inventoryItems.HarvestingItem,1
-II,com.kacstudios.game.inventoryItems.DeleteItem,1
+II,com.kacstudios.game.inventoryItems.HarvestingItem,100
+II,com.kacstudios.game.inventoryItems.DeleteItem,100
+II,com.kacstudios.game.inventoryItems.BasicTractorItem,100
+II,com.kacstudios.game.inventoryItems.CornSeedItem,100
+II,com.kacstudios.game.inventoryItems.BlueberriesSeedItem,100
+ID,com.kacstudios.game.inventoryItems.WateringCanItem,100,0.0
+ID,com.kacstudios.game.inventoryItems.WaterBucketItem,100,0.0
+ID,com.kacstudios.game.inventoryItems.PesticideItem,100,0.0

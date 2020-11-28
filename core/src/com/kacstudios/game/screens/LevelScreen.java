@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -231,7 +230,7 @@ public class LevelScreen extends BaseScreen {
         market.setVisible(isOpen);
     }
     public void openCustomization(boolean isOpen) {
-        if (isOpen) characterMenu.setMenu_default();
+        if (isOpen) characterMenu.openMenu();
         else characterMenu.closeMenu();
     }
 }

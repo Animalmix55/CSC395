@@ -287,6 +287,7 @@ public class InventoryViewer extends Group {
         ItemButton firstEmpty = null;
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
+                if(y == 0 && x == itemButtons.length - 1) continue; // don't add to the more button
                 ItemButton currentButton = itemButtons[x][y];
                 if(currentButton.getItem() == null) {
                     if (firstEmpty == null) firstEmpty = currentButton;
