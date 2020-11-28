@@ -17,6 +17,9 @@ public class GridSquare extends BaseActor {
     private GridVector gridCoords;
     private Grid grid;
 
+    private int savedX;
+    private int savedY;
+
     public GridSquare()
     {
         super();
@@ -94,6 +97,14 @@ public class GridSquare extends BaseActor {
     public void clickFunction(LocalDateTime dateTime) {
         System.out.println("I was clicked!");
     }
+
+    public void setSavedX(int x) { savedX = x; }
+
+    public void setSavedY(int y) { savedY = y; }
+
+    public int getSavedX() { return savedX; }
+
+    public int getSavedY() { return savedY; }
 
     @Override
     public void act(float dt) {
