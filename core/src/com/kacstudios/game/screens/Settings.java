@@ -33,7 +33,7 @@ public class Settings extends BaseScreen {
     private Slider Musicslider;
 
     public void initialize() {
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
 
         final Label Gamelabel = new Label("Game Volume: " + Setting.GameVolume, skin);
         Gamelabel.setColor(Color.WHITE);
@@ -91,7 +91,7 @@ public class Settings extends BaseScreen {
 //        set background/map limits
         BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
 //        farmBaseActor.loadTexture("MainMenu.jpg");
-        farmBaseActor.loadTexture("background_2.png");
+        farmBaseActor.loadTexture("menu-textures/background_2.png");
         farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
 

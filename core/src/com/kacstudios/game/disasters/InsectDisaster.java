@@ -19,17 +19,23 @@ public class InsectDisaster extends PropagatingDisaster {
     public InsectDisaster(Plant impl) {
         super(impl,
                 loadAnimationUnsetFromFiles(
-                        new String[]{"pest-1.png", "pest-2.png", "pest-3.png", "pest-4.png"}, 0.1f,true),
-                40,
-                .25f,
-                .3f
+                        new String[]{"disaster-textures/pest-1.png", "disaster-textures/pest-2.png",
+                                "disaster-textures/pest-3.png", "disaster-textures/pest-4.png"}, 0.1f,true),
+                30,
+                .5f,
+                .25f
         );
-        insecticideAmount = generateRandom(0, 5);
+        insecticideAmount = generateRandom(1, 5);
     }
 
     @Override
     public void act(float dt) {
         super.act(dt);
+    }
+
+    @Override
+    public Disaster createInstance(Plant target) {
+        return new InsectDisaster(target);
     }
 
     public int getInsecticideAmount() {

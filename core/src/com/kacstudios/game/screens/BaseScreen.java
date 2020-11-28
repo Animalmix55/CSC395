@@ -3,6 +3,7 @@ package com.kacstudios.game.screens;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.kacstudios.game.utilities.TimeEngine;
 
 /**
  * @author Lee Stemkoski
@@ -11,13 +12,11 @@ public abstract class BaseScreen implements Screen, InputProcessor
 {
     protected Stage mainStage;
     protected Stage uiStage;
-    protected boolean paused;
 
     public BaseScreen()
     {
         mainStage = new Stage();
         uiStage = new Stage();
-        paused = false;
 
         initialize();
     }
@@ -26,7 +25,6 @@ public abstract class BaseScreen implements Screen, InputProcessor
     {
         mainStage = new Stage();
         uiStage = new Stage();
-        paused = false;
 
         if (runInitialize) initialize();
     }
@@ -41,13 +39,12 @@ public abstract class BaseScreen implements Screen, InputProcessor
     // (3) render the graphics
     public void render(float dt)
     {
-        if (!paused) {
-            // act methods
-            uiStage.act(dt);
-            mainStage.act(dt);
+        uiStage.act(dt);
+        if (TimeEngine.getDilation() != 0) {
+            mainStage.act(dt * TimeEngine.getDilation());
 
             // defined by user
-            update(dt);
+            update(dt * TimeEngine.getDilation());
         }
 
 

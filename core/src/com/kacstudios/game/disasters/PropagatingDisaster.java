@@ -7,7 +7,7 @@ import com.kacstudios.game.grid.plants.Plant;
 
 import java.util.ArrayList;
 
-public class PropagatingDisaster extends Disaster {
+public abstract class PropagatingDisaster extends Disaster {
     /**
      * Number of times it spreads per second
      */
@@ -40,8 +40,13 @@ public class PropagatingDisaster extends Disaster {
                 GridSquare target = adjSquares.get(rnd);
                 if (Plant.class.isAssignableFrom(target.getClass())) {
                     Plant targetPlant = (Plant) target;
-                    if (targetPlant.getDisaster() == null && !targetPlant.getDead())
-                        targetPlant.setDisaster(new InsectDisaster(targetPlant));
+                    if (targetPlant.getDisaster() == null && !targetPlant.getDead()) {
+                        if (plant.getDisaster().getClass() == InsectDisaster.class){
+                            targetPlant.setDisaster(new InsectDisaster(targetPlant));}
+                        if (plant.getDisaster().getClass() == FireDisaster.class){
+                            targetPlant.setDisaster(new FireDisaster((targetPlant)));}
+                    }
+
                 }
             }
             secondsSinceLastSpread = 0;

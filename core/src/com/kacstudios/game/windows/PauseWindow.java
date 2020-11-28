@@ -26,7 +26,7 @@ public class PauseWindow {
 
     public PauseWindow(LevelScreen screen){
         super();
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
         window = new Window("Paused", skin);
         window.setVisible(false);
         window.setMovable(false);
@@ -42,7 +42,6 @@ public class PauseWindow {
                         return false;
 
                     TimeEngine.resume();
-                    screen.setPaused(false);
                     window.setVisible(false);
                     return true;
                 }
@@ -98,12 +97,12 @@ public class PauseWindow {
 
         //Exiting to main menu pop up
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
         windowexit = new Window("Paused", skin);
         windowexit.setVisible(false);
         windowexit.setMovable(false);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
 
         final Label Exitlabel = new Label("Are you sure you would like to exit?", skin);
         Exitlabel.setColor(Color.WHITE);
@@ -143,7 +142,6 @@ public class PauseWindow {
                         return false;
 
                     TimeEngine.resume();
-                    screen.setPaused(false);
                     FarmaniaGame.setActiveScreen(new MainMenu());
 
                     return true;
@@ -152,13 +150,13 @@ public class PauseWindow {
 
         //pause menu settings
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
         windowsetting = new Window("Paused", skin);
         windowsetting.setVisible(false);
         windowsetting.setMovable(false);
 
         ////////////sliders
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
 
         final Label Gamelabel = new Label("Game Volume: " + Setting.GameVolume, skin);
         Gamelabel.setColor(Color.WHITE);

@@ -17,6 +17,9 @@ public class GridSquare extends BaseActor {
     private GridVector gridCoords;
     private Grid grid;
 
+    private int savedX;
+    private int savedY;
+
     public GridSquare()
     {
         super();
@@ -46,11 +49,15 @@ public class GridSquare extends BaseActor {
         return gridCoords;
     }
 
+    /**
+     * Returns all adjacent NON-NULL squares
+     * @return
+     */
     public ArrayList<GridSquare> getAdjacentSquares() {
-        int minX = gridCoords.x - 1 < 0? 0 : gridCoords.x - 1;
-        int maxX = gridCoords.x + 1 > grid.getGridHeight() - 1? grid.getGridHeight() - 1 : gridCoords.x + 1;
-        int minY = gridCoords.y - 1 < 0? 0 : gridCoords.y - 1;
-        int maxY = gridCoords.y + 1 > grid.getGridWidth() - 1? grid.getGridWidth() - 1 : gridCoords.y + 1;
+        int minX = Math.max(gridCoords.x - 1, 0);
+        int maxX = Math.min(gridCoords.x + 1, grid.getGridHeight() - 1);
+        int minY = Math.max(gridCoords.y - 1, 0);
+        int maxY = Math.min(gridCoords.y + 1, grid.getGridWidth() - 1);
 
         ArrayList<GridSquare> squares = new ArrayList<>();
         for (int x = minX; x <= maxX; x++) {
@@ -90,6 +97,14 @@ public class GridSquare extends BaseActor {
     public void clickFunction(LocalDateTime dateTime) {
         System.out.println("I was clicked!");
     }
+
+    public void setSavedX(int x) { savedX = x; }
+
+    public void setSavedY(int y) { savedY = y; }
+
+    public int getSavedX() { return savedX; }
+
+    public int getSavedY() { return savedY; }
 
     @Override
     public void act(float dt) {

@@ -17,12 +17,12 @@ public class MainMenu extends BaseScreen {
 //        set background/map limits
         BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
 //        farmBaseActor.loadTexture("MainMenu.jpg");
-        farmBaseActor.loadTexture("background_2.png");
+        farmBaseActor.loadTexture("menu-textures/background_2.png");
         farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
 
         BaseActor logoBaseActor = new BaseActor(190,330,mainStage);
-        logoBaseActor.loadTexture("logo-main.png");
+        logoBaseActor.loadTexture("menu-textures/logo-main.png");
         uiStage.addActor(logoBaseActor);
 
 

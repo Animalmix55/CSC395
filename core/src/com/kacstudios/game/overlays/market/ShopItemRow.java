@@ -40,7 +40,7 @@ public class ShopItemRow extends Group {
             if (!(i == 0 && item.isPurchasable()) && !(i == 1 && item.isSellable())) continue;
             Group container = new Group();
 
-            Label itemNameLabel = new Label(String.format(i == 0? "Buy %ss:" : "Sell %ss:", item.getWrappedItem().getDisplayName()), itemNameStyle);
+            Label itemNameLabel = new Label(String.format(i == 0? "Buy %s:" : "Sell %s:", item.getWrappedItem().getDisplayName()), itemNameStyle);
             itemNameLabel.setPosition(padding,
                     (getHeight() - itemNameLabel.getHeight()) / 2);
             container.addActor(itemNameLabel);

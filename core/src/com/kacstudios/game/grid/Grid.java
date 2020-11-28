@@ -15,16 +15,29 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.kacstudios.game.actors.BaseActor;
+
+import com.kacstudios.game.disasters.FireDisaster;
+import com.kacstudios.game.disasters.InsectDisaster;
+import com.kacstudios.game.grid.plants.BlueberriesPlant;
+import com.kacstudios.game.grid.plants.CornPlant;
+import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
+import com.kacstudios.game.utilities.TimeEngine;
+import com.kacstudios.game.actors.PlayableActor;
+import com.kacstudios.game.utilities.ShapeGenerator;
 
 import java.nio.IntBuffer;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Grid extends Group {
 
     private Texture gridSquareBgLight;
     private Texture gridSquareBgDark;
+
+    private DisasterSpawner spawner;
 
     private ArrayList<ArrayList<Image>> gridSquareImages;
 
@@ -33,41 +46,35 @@ public class Grid extends Group {
     private final Integer squareSideLength = 135;
     private ArrayList<Image> outOfBoundsArea;
     private int width;
-    private static final Texture backgroundTexture = new Texture("grass-outofbounds_1080x1080.png");
+    private static final Texture backgroundTexture = new Texture("grid-textures/grass-outofbounds_1080x1080.png");
     private int height;
+    private boolean isTopLeftDark = true;
 
     public Grid(int height, int width, LevelScreen levelScreen){
-        gridSquareBgDark = new Texture("grid-grass-dark.png");
-        gridSquareBgLight = new Texture("grid-grass-light.png");
-
-        this.height = height;
-        this.width = width;
-
-        gridSquareBgLight.getTextureData().prepare();
-        gridSquareBgDark.getTextureData().prepare();
-
-        outOfBoundsArea = new ArrayList<>();
-        buildGridBackground(height, width);
-        this.setHeight(height * squareSideLength);
-        this.setWidth(width * squareSideLength);
-        BaseActor.setWorldBounds(this.getWidth(), this.getHeight());
+        gridSquareBgDark = new Texture("grid-textures/grid-grass-dark.png");
+        gridSquareBgLight = new Texture("grid-textures/grid-grass-light.png");
 
         this.screen = levelScreen;
         setStage(levelScreen.getMainStage());
 
-        levelScreen.getUIStage().addActor(this);
-        gridSquares = new GridSquare[width][height];
+        buildGrid(height, width, isTopLeftDark);
 
         this.addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                createGridEvent(x, y);
+                if(TimeEngine.getDilation() != 0) createGridEvent(x, y); // can't be paused
             }
         });
-        createOutOfBoundsArea();
+        levelScreen.getUIStage().addActor(this);
+
+        // register disasters with the spawner
+        spawner = new DisasterSpawner(this);
+        spawner.registerDisaster(FireDisaster::new, 500);
+        spawner.registerDisaster(InsectDisaster::new, 150);
     }
 
     private void createGridEvent(float x, float y){
+        if(x < 0 || y < 0 || x > getRight() || y > getTop()) return; // don't make an event if off grid
         GridClickEvent gridSquareItemEvent = new GridClickEvent(x, y, this.screen);
         screen.handleGridClickEvent(gridSquareItemEvent); // pass the event to the screen
     }
@@ -79,6 +86,8 @@ public class Grid extends Group {
     @Override
     public void act(float dt){
         super.act(dt);
+        spawner.act();
+
         for(int x = 0; x < gridSquares.length; x++) {
             for (int y = 0; y < gridSquares[x].length; y++) {
                 if(gridSquares[x][y] == null) continue;
@@ -151,12 +160,15 @@ public class Grid extends Group {
      * @param square the square to add.
      */
     public void addGridSquare(int x, int y, GridSquare square){
-        square.setX(squareSideLength * x);
-        square.setY(squareSideLength * y);
         if(gridSquares[x][y] != null) gridSquares[x][y].remove(); // remove old square
         gridSquares[x][y] = square;
-        this.addActor(square); // register gridSquare
-        square.setParent(this, new GridVector(x, y));
+
+        if(square != null) {
+            square.setX(squareSideLength * x);
+            square.setY(squareSideLength * y);
+            this.addActor(square); // register gridSquare
+            square.setParent(this, new GridVector(x, y));
+        }
     }
 
     /**
@@ -296,15 +308,17 @@ public class Grid extends Group {
 
         // end generate top/bottom texture
         for (Image image: outOfBoundsArea){
-            screen.getMainStage().addActor(image);
+            addActor(image);
         }
 
         backgroundImage.dispose();
     }
 
-    private void buildGridBackground(int height, int width){
+    private void buildGridBackground(int height, int width, boolean isTopLeftDark){
         gridSquareImages = new ArrayList<>();
 
+        gridSquareBgLight.getTextureData().prepare();
+        gridSquareBgDark.getTextureData().prepare();
         Pixmap dark = gridSquareBgDark.getTextureData().consumePixmap();
         Pixmap light = gridSquareBgLight.getTextureData().consumePixmap();
 
@@ -338,7 +352,7 @@ public class Grid extends Group {
                     for (int x = 0; x < imageWidth; x = x + squareSideLength) {
                         int yIndex = yIndexOffset;
                         for (int y = 0; y < imageHeight; y = y + squareSideLength) {
-                            if ((xIndexOffset + yIndex) % 2 == 0) container.drawPixmap(dark, x, y);
+                            if ((xIndexOffset + yIndex + (isTopLeftDark? 1 : 0)) % 2 == 0) container.drawPixmap(dark, x, y);
                             else container.drawPixmap(light, x, y);
                             yIndex++;
                         }
@@ -358,5 +372,72 @@ public class Grid extends Group {
 
         dark.dispose();
         light.dispose();
+    }
+
+    public void expandGrid(ShapeGenerator.Direction direction) {
+        int newHeight = getGridHeight();
+        int newWidth = getGridWidth();
+        GridSquare[][] oldGrid = gridSquares;
+
+        if(direction == ShapeGenerator.Direction.up || direction == ShapeGenerator.Direction.left)
+            isTopLeftDark = !isTopLeftDark; // keep weird motion effect from occuring
+
+        switch (direction) {
+            case up:
+            case down:
+                newHeight++;
+                break;
+            case right:
+            case left:
+                newWidth++;
+                break;
+        }
+        buildGrid(newHeight, newWidth, isTopLeftDark);
+
+        int xOffset = 0;
+        int yOffset = 0;
+        switch (direction) {
+            case down:
+                screen.getFarmer().setY(screen.getFarmer().getY() + squareSideLength); // shift farmer
+                yOffset++;
+                break;
+            case left:
+                screen.getFarmer().setX(screen.getFarmer().getX() + squareSideLength); // shift farmer
+                xOffset++;
+                break;
+        }
+
+        // rebuild array and reposition squares
+        for (int x = 0; x < oldGrid.length; x++) {
+            for (int y = 0; y < oldGrid[x].length; y++) {
+                GridSquare actor = oldGrid[x][y];
+                addGridSquare(x + xOffset, y + yOffset, actor);
+            }
+        }
+
+        // move any non-squares on map
+        if(xOffset != 0 || yOffset != 0) {
+            List<Actor> addedActors = screen.getAddedActors();
+            for (Actor addedActor : addedActors) {
+                addedActor.setPosition(addedActor.getX() + squareSideLength * xOffset,
+                        addedActor.getY() + squareSideLength * yOffset);
+            }
+        }
+    }
+
+    public void buildGrid(int height, int width, boolean isTopLeftDark) {
+        clearChildren();
+        outOfBoundsArea = new ArrayList<>();
+        gridSquares = new GridSquare[width][height]; // wipes the contents of grid
+        this.height = height;
+        this.width = width;
+
+        setHeight(height * squareSideLength);
+        setWidth(width * squareSideLength);
+
+        buildGridBackground(height, width, isTopLeftDark);
+        BaseActor.setWorldBounds(getWidth(), getHeight());
+
+        createOutOfBoundsArea();
     }
 }

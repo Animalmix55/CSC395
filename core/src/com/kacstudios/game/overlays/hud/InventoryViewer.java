@@ -1,37 +1,31 @@
 package com.kacstudios.game.overlays.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.GridClickEvent;
-import com.kacstudios.game.utilities.TimeEngine;
 
-import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.ArrayList;
 
 public class InventoryViewer extends Group {
-    private int rows = 3;
-    private int columns = 9;
-    private ItemButton[][] itemButtons = new ItemButton[columns][rows];
+    private static final int rows = 3;
+    private static final int columns = 9;
+    private final ItemButton[][] itemButtons = new ItemButton[columns][rows];
     private boolean isExpanded = false;
-    private Image background;
+    private final Image background;
     private boolean mouseDown = false;
     private LocalDateTime mouseDownTime;
     private ItemButton mouseTarget;
     private IInventoryItem dragItem;
     private Image dragItemImage;
-    private ArrayList<Runnable> updateListeners = new ArrayList<>();
+    private final ArrayList<Runnable> updateListeners = new ArrayList<>();
 
     public InventoryViewer(){
         background = new Image(new Texture("bottombar/background-inventory-extension.png"));
@@ -39,55 +33,7 @@ public class InventoryViewer extends Group {
         background.setVisible(false);
         this.addActor(background);
 
-        // init buttons
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < columns; x++) {
-                if(x == columns - 1 && y == 0) continue; // skip for more button
-                ItemButton temp = new ItemButton(true);
-                temp.setX(8 + x * temp.getWidth());
-                temp.setY(y * temp.getHeight());
-                temp.setVisible(false);
-                itemButtons[x][y] = temp;
-                if (y == 0) itemButtons[x][y].setVisible(true); // always add hotbar
-                this.addActor(itemButtons[x][y]);
-            }
-        }
-
-        setWidth(background.getWidth());
-
-        // init ViewInventoryButton
-        ViewInventoryButton moreButton = new ViewInventoryButton(){
-            @Override
-            public void onClick(InputEvent event, float x, float y) {
-                toggleViewer();
-            }
-        };
-
-        moreButton.setX(itemButtons[columns-2][0].getWidth() + itemButtons[columns-2][0].getX());
-        itemButtons[columns-1][0] = moreButton;
-        this.addActor(itemButtons[columns-1][0]);
-
-        // ADD HOTBAR LISTENER
-        this.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ItemButton target = null;
-                if(event.getTarget().getClass() == ItemButton.class)
-                    target = (ItemButton) event.getTarget();
-                else if(event.getTarget().getParent() != null && event.getTarget().getParent().getClass() == ItemButton.class)
-                    target = (ItemButton) event.getTarget().getParent();
-
-                if(target == null) return;
-
-                for(int j = 0; j < columns - 1; j++){
-                    if(itemButtons[j][0] == target) itemButtons[j][0].setSelected(true);
-                    else itemButtons[j][0].setSelected(false);
-                };
-            }
-        });
-
-        // ADD DRAG LISTENER
-        this.addListener(new ClickListener(){
+        ClickListener listener = new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if(!isExpanded) return true;
@@ -136,7 +82,8 @@ public class InventoryViewer extends Group {
                 }
                 else if (viewInventoryButton.getItem() != null){
                     viewInventoryButton.setItem(null);
-                    informSubscribers();
+                    if(!dragItem.isDeletable()) mouseTarget.setItem(dragItem);
+                    else informSubscribers();
                 }
 
                 dragItemImage.remove();
@@ -145,28 +92,74 @@ public class InventoryViewer extends Group {
 
                 mouseTarget = null;
             }
-        });
+        };
+
+        // init buttons
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                if(x == columns - 1 && y == 0) continue; // skip for more button
+                ItemButton temp = new ItemButton(y == 0, this);
+                temp.addCaptureListener(listener);
+                temp.addCaptureListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        if(!temp.getIsHotItem()) return;
+
+                        for(int j = 0; j < columns - 1; j++){
+                            itemButtons[j][0].setSelected(itemButtons[j][0] == temp);
+                        }
+                    }
+                });
+                temp.setX(8 + x * temp.getWidth());
+                temp.setY(y * temp.getHeight());
+                temp.setVisible(false);
+                itemButtons[x][y] = temp;
+                if (y == 0) itemButtons[x][y].setVisible(true); // always add hotbar
+                this.addActor(itemButtons[x][y]);
+            }
+        }
+
+
+        itemButtons[0][0].setSelected(true); // select default first slot
+        setWidth(background.getWidth());
+
+        // init ViewInventoryButton
+        ViewInventoryButton moreButton = new ViewInventoryButton(this){
+            @Override
+            public void onClick(InputEvent event, float x, float y) {
+                toggleViewer();
+            }
+        };
+
+        moreButton.setX(itemButtons[columns-2][0].getWidth() + itemButtons[columns-2][0].getX());
+        itemButtons[columns-1][0] = moreButton;
+        this.addActor(itemButtons[columns-1][0]);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        if(mouseDown && Duration.between(mouseDownTime, LocalDateTime.now()).getSeconds() > 0.5) { // hold down
+        if(mouseDown && !Duration.between(mouseDownTime, LocalDateTime.now()).minusMillis(200).isNegative()) { // hold down
             if(dragItem == null){ // remove item from button
                 dragItem = mouseTarget.getItem();
-                mouseTarget.setItem(null); // remove item
-                dragItemImage = new Image(dragItem.getTexture());
-                mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
-                ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
-                viewInventoryButton.setDeleteMode(true);
+                if(dragItem != null) {
+                    mouseTarget.setItem(null); // remove item
+                    dragItemImage = new Image(dragItem.getTexture());
+                    mouseTarget.getParent().addActor(dragItemImage); // add drag item to stage
+                    if(dragItem.isDeletable()) {
+                        ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns - 1][0];
+                        viewInventoryButton.setDeleteMode(true);
+                    }
+                }
             }
 
-            Vector3 globalCursorPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            Vector3 stageCursorPos = this.getStage().getCamera().unproject(globalCursorPos);
+            if(dragItemImage != null) {
+                Vector2 globalCursorPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
 
-            Vector2 localCoordinates = this.stageToLocalCoordinates(new Vector2(stageCursorPos.x, stageCursorPos.y));
-            dragItemImage.setX(localCoordinates.x - dragItemImage.getWidth()/2);
-            dragItemImage.setY(localCoordinates.y - dragItemImage.getHeight()/2);
+                Vector2 localCoordinates = this.screenToLocalCoordinates(globalCursorPos);
+                dragItemImage.setX(localCoordinates.x - dragItemImage.getWidth() / 2);
+                dragItemImage.setY(localCoordinates.y - dragItemImage.getHeight() / 2);
+            }
         }
     }
 
@@ -181,7 +174,7 @@ public class InventoryViewer extends Group {
     }
 
     public void onUseItem(GridClickEvent event){
-        for(int i = 0; i < columns - 2; i++){
+        for(int i = 0; i < columns - 1; i++){
             if(itemButtons[i][0].getSelected()){
                 itemButtons[i][0].onUseItem(event);
             }
@@ -200,7 +193,7 @@ public class InventoryViewer extends Group {
                     add = false;
                     break;
                 }
-            };
+            }
             if(add) newItems.add(item); // otherwise add it
         }
 
@@ -282,12 +275,13 @@ public class InventoryViewer extends Group {
      * @return a boolean noting if the item was successfully added to the inventory. This can fail if the inventory is full
      */
     public boolean addItem(IInventoryItem item) {
-        ItemButton lastEmpty = null;
-        for (int x = 0; x < columns; x++) {
-            for (int y = 0; y < rows; y++) {
+        ItemButton firstEmpty = null;
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                if(y == 0 && x == itemButtons.length - 1) continue; // don't add to the more button
                 ItemButton currentButton = itemButtons[x][y];
                 if(currentButton.getItem() == null) {
-                    lastEmpty = currentButton;
+                    if (firstEmpty == null) firstEmpty = currentButton;
                     continue;
                 }
                 IInventoryItem currentItem = itemButtons[x][y].getItem();
@@ -301,9 +295,9 @@ public class InventoryViewer extends Group {
             }
         }
 
-        if(lastEmpty == null) return false;
+        if(firstEmpty == null) return false;
 
-        lastEmpty.setItem(item);
+        firstEmpty.setItem(item);
         informSubscribers();
         return true;
     }
