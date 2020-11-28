@@ -30,6 +30,8 @@ public class CharacterMenu extends Group {
         )
     );
 
+    private boolean isDirty = false;
+
     Group mainButtons = new Group();
 
     CharacterMenuPage head;
@@ -114,8 +116,11 @@ public class CharacterMenu extends Group {
         if (pants != null) pants.remove();
         if (skin != null) skin.remove();
 
-        farmer.setTextureData(tempTextureData);
-        farmer.updateTextures();
+        if(isDirty) {
+            farmer.setTextureData(tempTextureData);
+            farmer.updateTextures();
+            isDirty = false;
+        }
 
         onClose();
     }
@@ -233,5 +238,6 @@ public class CharacterMenu extends Group {
         char_preview = new Image(FarmerAnimationFactory.generatePreviewFrame(tempTextureData));
         char_preview.setPosition(x, y);
         addActor(char_preview);
+        isDirty = true;
     }
 }
