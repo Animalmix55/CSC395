@@ -162,7 +162,7 @@ public class LevelScreen extends BaseScreen {
 
         mainStage.addActor(grid); // add grid to stage
 //      add in farmer actor
-        farmer = new Farmer(20, 20, mainStage);
+        farmer = new Farmer(20, 20, this);
 
         characterMenu = new CharacterMenu(farmer) {
             @Override

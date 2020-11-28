@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.TimeEngine;
 
 import java.util.ArrayList;
@@ -40,9 +41,12 @@ public class PlayableActor extends BaseActor {
     private MoveToAction action;
 
     private String actorName;
+    protected LevelScreen screen;
 
-    public PlayableActor(float x, float y, Stage s, boolean focused) {
-        super(x, y, s);
+    public PlayableActor(float x, float y, LevelScreen screen, boolean focused) {
+        super(x, y, screen.getMainStage());
+        this.screen = screen;
+        Stage s = screen.getMainStage();
         this.isFocused = focused;
 
         PlayableActor actor = this;
@@ -63,7 +67,12 @@ public class PlayableActor extends BaseActor {
         this.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent e, float x, float y) {
-                Color pickedColor = null;
+                if(!getFocused()) { // only do fancy click logic if the object is focused
+                    onClick(e, x, y);
+                    return;
+                }
+
+                Color pickedColor;
 
                 Texture texture = getAnimation().getKeyFrame(0).getTexture();
                 Pixmap pixmap;
@@ -72,14 +81,14 @@ public class PlayableActor extends BaseActor {
                         texture.getTextureData().prepare();
                     }
                     pixmap = texture.getTextureData().consumePixmap();
-                    pickedColor = new Color(pixmap.getPixel((int)x, (int)y));
+                    pickedColor = new Color(pixmap.getPixel((int) x, (int) (getHeight() - y)));
                 } catch (Exception ex) {
                     pickedColor = new Color(0, 0, 0, 0); // if there is no pixmap, just allow clickthrough
                 }
 
                 //Check for transparency
                 if (pickedColor != null && pickedColor.a != 0) {
-                    onClick();
+                    onClick(e, x, y);
                 }
                 else {
                     Vector2 screenCoords = localToScreenCoordinates(new Vector2(x, y));
@@ -93,7 +102,7 @@ public class PlayableActor extends BaseActor {
         });
     }
 
-    public void onClick() {
+    public void onClick(InputEvent e, float x, float y) {
         // implement
     }
 
@@ -210,6 +219,12 @@ public class PlayableActor extends BaseActor {
         prevPos.y = getY();
     }
 
+    public void preventOverlapWithAddedActors() {
+        screen.getAddedActors().forEach(a -> {
+            if (a != this && BaseActor.class.isAssignableFrom(a.getClass())) preventOverlap((BaseActor) a);
+        });
+    }
+
     public void setFocused(boolean focused) {
         isFocused = focused;
     }
@@ -250,6 +265,8 @@ public class PlayableActor extends BaseActor {
 
     @Override
     public Vector2 preventOverlap(BaseActor other) {
+        if(!getFocused()) return null;
+
         Vector2 vector = super.preventOverlap(other);
         if(vector != null && action != null) {
             removeAction(action);
