@@ -148,7 +148,7 @@ public class InventoryViewer extends Group {
     @Override
     public void act(float delta) {
         super.act(delta);
-        if(mouseDown && !Duration.between(mouseDownTime, LocalDateTime.now()).minusMillis(100).isNegative()) { // hold down
+        if(mouseDown && !Duration.between(mouseDownTime, LocalDateTime.now()).minusMillis(200).isNegative()) { // hold down
             if(dragItem == null){ // remove item from button
                 dragItem = mouseTarget.getItem();
                 if(dragItem != null) {
