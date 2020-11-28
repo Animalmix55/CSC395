@@ -91,6 +91,7 @@ public class LevelScreen extends BaseScreen {
         };
         Economy.Init();
         Economy.addMoney(100000000); // for testing
+        if (!loadingFromSave) TimeEngine.Init();
 
         grid = new Grid(gridHeight, gridWidth, this);
 
