@@ -15,7 +15,7 @@ public class WaterSource extends GridSquare{
     private LocalDateTime lastCheck = TimeEngine.getDateTime();
 
     public WaterSource() {
-        setTexture("grid-textures/grid_blue.png");
+        setTexture("grid-textures/water.png");
     }
 
     @Override

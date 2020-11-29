@@ -7,8 +7,7 @@ public class FireDisaster extends PropagatingDisaster{
     public FireDisaster(Plant impl) {
         super(impl,
                 loadAnimationUnsetFromFiles(
-                        new String[]{"grid-textures/grid_red.png", "grid-textures/grid_orange.png",
-                                "grid-textures/grid_red.png", "grid-textures/grid_orange.png"}, 0.1f,true),
+                        new String[]{"disaster-textures/fire-1.png", "disaster-textures/fire-2.png"}, 0.1f,true),
                 10,
                 .25f,
                 .4f
