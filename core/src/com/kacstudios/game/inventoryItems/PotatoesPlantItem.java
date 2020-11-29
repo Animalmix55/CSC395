@@ -1,36 +1,35 @@
 package com.kacstudios.game.inventoryItems;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.kacstudios.game.grid.WaterSource;
+import com.kacstudios.game.grid.plants.PotatoesPlant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
 
-public class WaterSourceItem extends IInventoryItem{
-    private static Texture texture = new Texture("items/water.png");
-    public WaterSourceItem(){
+public class PotatoesPlantItem extends IInventoryItem {
+    private static Texture texture = new Texture("items/potatoes.png");
+    public PotatoesPlantItem(){
         this(1);
     }
 
-    public WaterSourceItem(int amount){
+    public PotatoesPlantItem(int amount){
         setAmount(amount);
-        setDisplayName("Pond");
+        setDisplayName("Potato");
     }
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
-        if(!event.farmerWithinRadius(300)) return;
+        if(!event.farmerWithinRadius(300)) return; // must be within 300 pixels
         if(event.getGridSquare() == null) {
-            event.setSquare(new WaterSource());
+            event.setSquare(new PotatoesPlant());
             int amount = getAmount();
             amount--;
             setAmount(amount >= 0 ? amount : 0);
 
-            if(amount == 0){
-                parent.setItem(null);
+            if (amount == 0) { // amount of -1 signifies unlimited
+                parent.setItem(null); // remove from button
             }
 
-            parent.checkItem();
-
+            parent.checkItem(); // update button display amount
         }
     }
 
@@ -41,6 +40,6 @@ public class WaterSourceItem extends IInventoryItem{
 
     @Override
     public IInventoryItem createNewInstance(int amount) {
-        return new WaterSourceItem(amount);
+        return new PotatoesPlantItem(amount);
     }
 }

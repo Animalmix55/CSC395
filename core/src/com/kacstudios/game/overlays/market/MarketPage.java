@@ -130,6 +130,10 @@ public class MarketPage extends Group {
                 new ShopItem(new BlueberriesPlantItem(), ShopItem.ItemAccessibility.CanSell, 0, 30)
         });
 
+        private static final MarketPage.Data POTATO = new MarketPage.Data(0, "Potato", "The potato is a root vegetable native to the Americas, a starchy tuber of the plant Solanum tuberosum, and the plant itself is a perennial in the nightshade family, Solanaceae.", new ShopItem[]{
+                new ShopItem(new PotatoesPlantItem(), ShopItem.ItemAccessibility.Both, 4, 2),
+        });
+
         private static final MarketPage.Data TRACTOR = new MarketPage.Data(0, "Tractor", "An engineering vehicle specifically designed to deliver a high tractive effort at slow speeds, for the purposes of hauling a trailer or machinery such as that used in agriculture.", new ShopItem[]{
                 new ShopItem(new BasicTractorItem(), ShopItem.ItemAccessibility.Both, 40000, 15000)
         });
@@ -143,7 +147,7 @@ public class MarketPage extends Group {
                 new ShopItem(new EmptyBucketItem(), ShopItem.ItemAccessibility.Both, 20, 10)
         });
 
-        private static final MarketPage.Data WATERSOURCE = new MarketPage.Data(0, "Water Spigot", "An outdoor water source used to refill buckets.", new ShopItem[]{
+        private static final MarketPage.Data WATERSOURCE = new MarketPage.Data(0, "Pond", "An outdoor water source used to refill buckets.", new ShopItem[]{
                 new ShopItem(new WaterSourceItem(), ShopItem.ItemAccessibility.Both, 1000, 100)
         });
 
@@ -152,7 +156,7 @@ public class MarketPage extends Group {
         });
 
         private static final MarketPage.Data[] PAGES = new MarketPage.Data[] {
-                CORN, BLUEBERRY, WATERINGCAN, WATERBUCKET, WATERSOURCE, PESTICIDE, TRACTOR
+                CORN, BLUEBERRY, POTATO, WATERINGCAN, WATERBUCKET, WATERSOURCE, PESTICIDE, TRACTOR
         };
 
         public static MarketPage.Data[] getPages() {
