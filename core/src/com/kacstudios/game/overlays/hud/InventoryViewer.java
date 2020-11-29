@@ -102,7 +102,17 @@ public class InventoryViewer extends Group {
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
                 if(x == columns - 1 && y == 0) continue; // skip for more button
-                ItemButton temp = new ItemButton(y == 0, this);
+                ItemButton temp = new ItemButton(y == 0, this) {
+                    @Override
+                    public void setItem(IInventoryItem item) {
+                        if(getSelected()) {
+                            if(getItem() != null) getItem().onEquippedChange(false, hud.getScreen().getGrid());
+                            if(item != null) item.onEquippedChange(true, hud.getScreen().getGrid());
+                        }
+                        super.setItem(item);
+
+                    }
+                };
                 temp.addCaptureListener(listener);
                 temp.addCaptureListener(new ClickListener() {
                     @Override
@@ -165,7 +175,7 @@ public class InventoryViewer extends Group {
         }
 
         if(selectedButton != null && selectedButton.getItem() != null){
-            selectedButton.getItem().whileEquipped(hud.getScreen().getGrid(), hud.getScreen().getFarmer());
+            selectedButton.getItem().whileEquipped(hud.getScreen());
         }
     }
 

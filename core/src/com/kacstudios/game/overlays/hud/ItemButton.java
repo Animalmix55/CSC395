@@ -252,7 +252,7 @@ public class ItemButton extends SelectableButton {
      */
     public void onUseItem(GridClickEvent event){
         if(item != null){
-            item.onDeployment(event, this);
+            item.deploy(event, this);
         };
     }
 

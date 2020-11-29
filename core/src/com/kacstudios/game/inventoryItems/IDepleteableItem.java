@@ -3,10 +3,22 @@ package com.kacstudios.game.inventoryItems;
 public abstract class IDepleteableItem extends IInventoryItem {
     private float depletionPercentage = 0.00f;
 
-    /**
-     * Gets how depleted the item is to display its depletion. 100% is completely depleted
-     * @return the depletion percentage (0.00-1.00)
-     */
+    public IDepleteableItem(int radius, boolean showHover, int squareWidth, int squareHeight) {
+        super(radius, showHover, squareWidth, squareHeight);
+    }
+
+    public IDepleteableItem(int radius, boolean showHover) {
+        super(radius, showHover);
+    }
+
+    public IDepleteableItem() {
+        super();
+    }
+
+        /**
+         * Gets how depleted the item is to display its depletion. 100% is completely depleted
+         * @return the depletion percentage (0.00-1.00)
+         */
     public float getDepletionPercentage(){
         return depletionPercentage;
     }

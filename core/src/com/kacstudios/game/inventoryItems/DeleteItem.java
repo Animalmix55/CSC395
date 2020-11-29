@@ -13,6 +13,8 @@ public class DeleteItem extends IInventoryItem{
     private static Texture texture = new Texture("items/shovel.png");
 
     public DeleteItem(int amount){
+        super(300, true);
+
         setAmount(amount);
         setDisplayName("Shovel");
         setDeletable(false);
@@ -20,36 +22,29 @@ public class DeleteItem extends IInventoryItem{
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
-        if (!event.farmerWithinRadius(300)) return;
-        if (event.getGridSquare() != null) {
-            Vector2 coords = event.getGridSquare().getStage().screenToStageCoordinates(event.getEventCoords());
+        Vector2 coords = event.getGridSquare().getStage().screenToStageCoordinates(event.getEventCoords());
+        GridSquare square = event.getGridSquare();
 
-            GridSquare square = event.getGridSquare();
-
-            // not so fast, you can't get rid of a disaster with a shovel!
-            if(Plant.class.isAssignableFrom(square.getClass()) && ((Plant) square).getDisaster() != null) return;
-
-            ContextMenu menu = new ContextMenu((int) coords.x, (int) coords.y, new ContextMenu.ContextMenuOption[] {
-                    new ContextMenu.ContextMenuOption("Delete",
-                            () -> { if(event.farmerWithinRadius(300)) event.setSquare(null); })
-            }) {
-                @Override
-                public void setOpen(boolean isOpen) {
-                    super.setOpen(isOpen);
-                    if(!isOpen) {
-                        if(event.getGridSquare() != null) event.getGridSquare().setColor(Color.WHITE);
-                        remove();
-                    }
+        ContextMenu menu = new ContextMenu((int) coords.x, (int) coords.y, new ContextMenu.ContextMenuOption[] {
+                new ContextMenu.ContextMenuOption("Delete",
+                        () -> { if(event.farmerWithinRadius(300)) event.setSquare(null); })
+        }) {
+            @Override
+            public void setOpen(boolean isOpen) {
+                super.setOpen(isOpen);
+                if(!isOpen) {
+                    if(event.getGridSquare() != null) event.getGridSquare().setColor(Color.WHITE);
+                    remove();
                 }
-            };
-            square.setColor(new Color(255, 255, 255, .4f));
+            }
+        };
+        square.setColor(new Color(255, 255, 255, .4f));
 
-            menu.setPosition(coords.x - menu.getWidth()/2, coords.y - menu.getHeight()/2);
+        menu.setPosition(coords.x - menu.getWidth()/2, coords.y - menu.getHeight()/2);
 
-            menu.setOpen(true);
+        menu.setOpen(true);
 
-            square.getStage().addActor(menu);
-        }
+        square.getStage().addActor(menu);
 
         parent.checkItem();
     }
@@ -62,5 +57,10 @@ public class DeleteItem extends IInventoryItem{
     @Override
     public IInventoryItem createNewInstance(int amount) {
         return new DeleteItem(amount);
+    }
+
+    protected boolean isBlocked(GridClickEvent event) {
+        GridSquare target = event.getGridSquare();
+        return target == null || (Plant.class.isAssignableFrom(target.getClass()) && ((Plant) target).getDisaster() != null);
     }
 }

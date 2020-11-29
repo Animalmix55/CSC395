@@ -50,6 +50,8 @@ public class Grid extends Group {
     private int height;
     private boolean isTopLeftDark = true;
 
+    private Group contents = new Group();
+
     public Grid(int height, int width, LevelScreen levelScreen){
         gridSquareBgDark = new Texture("grid-textures/grid-grass-dark.png");
         gridSquareBgLight = new Texture("grid-textures/grid-grass-light.png");
@@ -65,6 +67,8 @@ public class Grid extends Group {
                 if(TimeEngine.getDilation() != 0) createGridEvent(x, y); // can't be paused
             }
         });
+
+        addActor(contents);
         levelScreen.getUIStage().addActor(this);
 
         // register disasters with the spawner
@@ -180,7 +184,7 @@ public class Grid extends Group {
             }
             square.setX(squareSideLength * x);
             square.setY(squareSideLength * y);
-            this.addActor(square); // register gridSquare
+            contents.addActor(square); // register gridSquare
             square.setParent(this, new GridVector(x, y));
         } else removeGridSquare(x, y);
     }
@@ -336,7 +340,7 @@ public class Grid extends Group {
 
         // end generate top/bottom texture
         for (Image image: outOfBoundsArea){
-            addActor(image);
+            contents.addActor(image);
         }
 
         backgroundImage.dispose();
@@ -465,7 +469,7 @@ public class Grid extends Group {
     }
 
     public void buildGrid(int height, int width, boolean isTopLeftDark) {
-        clearChildren();
+        contents.clearChildren();
         outOfBoundsArea = new ArrayList<>();
         gridSquares = new GridSquare[width][height]; // wipes the contents of grid
         this.height = height;
@@ -473,6 +477,9 @@ public class Grid extends Group {
 
         setHeight(height * squareSideLength);
         setWidth(width * squareSideLength);
+
+        contents.setWidth(getWidth());
+        contents.setHeight(getHeight());
 
         buildGridBackground(height, width, isTopLeftDark);
         BaseActor.setWorldBounds(getWidth(), getHeight());
