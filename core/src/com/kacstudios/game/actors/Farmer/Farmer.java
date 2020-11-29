@@ -41,7 +41,7 @@ public class Farmer extends PlayableActor {
         Color defaultPantColor = new Color(.173f, .384f, .667f, 1);
         Color defaultShirtColor = new Color(	.749f, .129f, .129f, 1);
 //        Color defaultSkinColor = Color.WHITE;
-        Color defaultSkinColor = new Color(	.553f, .333f, .141f, 1);
+        Color defaultSkinColor = new Color(	1f, .811f, .666f, 1);
         Color defaultHeadColor = Color.BLACK;
         DirectionalTextures textures = FarmerAnimationFactory.getTextures();
 
