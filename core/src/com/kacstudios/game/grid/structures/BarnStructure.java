@@ -1,18 +1,25 @@
 package com.kacstudios.game.grid.structures;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.grid.OversizeGridSquare;
-import com.kacstudios.game.utilities.ShapeGenerator;
 
 public class BarnStructure extends OversizeGridSquare {
-    private static Texture barnTexture;
+    private static Texture barnTexture = new Texture("buildings/farm.png");
 
     public BarnStructure() {
-        super(2, 2);
-        if(barnTexture == null) barnTexture =
-                new Texture(ShapeGenerator.createRectangle((int) getWidth(), (int) getHeight(), Color.WHITE));
+        super(3, 3);
+        setBoundaryPolyCustom(new float[] {
+            33, 33,
+            33, 242,
+            112, 349,
+            202, 371,
+            287, 349,
+            368, 242,
+            368, 33
+        });
+        setCollideWithPlayer(true);
 
         addActor(new Image(barnTexture));
     }

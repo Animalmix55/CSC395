@@ -23,6 +23,11 @@ import java.util.ArrayList;
  * An actor which has 4 directional animations and can take control of the camera
  */
 public class PlayableActor extends BaseActor {
+    /**
+     * The currently focused actor, could (but shouldn't) be null
+     */
+    public static PlayableActor focusedActor;
+
     public enum Direction {
         left,
         right,
@@ -45,6 +50,7 @@ public class PlayableActor extends BaseActor {
         this.screen = screen;
         Stage s = screen.getMainStage();
         this.isFocused = focused;
+        if(focused) focusedActor = this;
 
         PlayableActor actor = this;
 
@@ -221,6 +227,12 @@ public class PlayableActor extends BaseActor {
     }
 
     public void setFocused(boolean focused) {
+        if(focused) {
+            if (focusedActor != null) focusedActor.setFocused(false);
+            focusedActor = this;
+        } else if (getFocused()) {
+            focusedActor = null;
+        }
         isFocused = focused;
     }
 

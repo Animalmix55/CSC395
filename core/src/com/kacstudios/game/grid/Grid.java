@@ -93,7 +93,7 @@ public class Grid extends Group {
                 if(gridSquares[x][y] == null) continue;
 
                 if (gridSquares[x][y].getCollisionSetting()) {
-                    screen.getFarmer().preventOverlap(gridSquares[x][y]);
+                    if(PlayableActor.focusedActor != null) PlayableActor.focusedActor.preventOverlap(gridSquares[x][y]);
                 }
             }
         }
