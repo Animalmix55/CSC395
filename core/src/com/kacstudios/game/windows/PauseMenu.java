@@ -9,7 +9,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.games.FarmaniaGame;
+import com.kacstudios.game.inventoryItems.BasicTractorItem;
+import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
+import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
 import com.kacstudios.game.utilities.Setting;
@@ -158,11 +163,42 @@ public class PauseMenu extends Group {
                 pauseMenuButtonX,
                 (447 - (pauseMenuButtonHeight/2))
         );
-        options_gameVolumeSlider.getPrivateButtonSlider().setValue(Setting.GameVolume);
-        options_gameVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
+        /*
+        Gameslider.addCaptureListener(new DragListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
+                Setting.GameVolume = Math.round(Gameslider.getValue());
+
+                //update game sounds
+                FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
+                CornPlantItem.volume = Setting.GameVolume*0.01f;
+                BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
+                Tractor.tractorvolume = Setting.GameVolume*0.01f;
+
+            }
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
+                Setting.saveGlobalSettingsToFile();
+            }
+        });
+
+         */
+        options_gameVolumeSlider.getPrivateButtonSlider().setValue(Setting.GameVolume);
+        options_gameVolumeSlider.getPrivateButtonSlider().addCaptureListener(new DragListener(){
+            @Override
+            public void drag(InputEvent event, float x, float y, int pointer) {
                 Setting.GameVolume = Math.round(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
+
+                //update game sounds
+                FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
+                CornPlantItem.volume = Setting.GameVolume*0.01f;
+                BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
+                Tractor.tractorvolume = Setting.GameVolume*0.01f;
+
+            }
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
                 Setting.saveGlobalSettingsToFile();
             }
         });
@@ -174,11 +210,19 @@ public class PauseMenu extends Group {
                 pauseMenuButtonX,
                 (389 - (pauseMenuButtonHeight/2))
         );
+
+
         options_musicVolumeSlider.getPrivateButtonSlider().setValue(Setting.MusicVolume);
-        options_musicVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
+        options_musicVolumeSlider.getPrivateButtonSlider().addCaptureListener(new DragListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void drag(InputEvent event, float x, float y, int pointer) {
                 Setting.MusicVolume = Math.round(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
+                //updating music volume
+                FarmaniaGame.music.setVolume(FarmaniaGame.musicid,Setting.MusicVolume*0.01f);
+
+            }
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
                 Setting.saveGlobalSettingsToFile();
             }
         });
@@ -189,7 +233,17 @@ public class PauseMenu extends Group {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Setting.GameVolume = 50;
-                Setting.MusicVolume = 50;
+                Setting.MusicVolume = 20;
+
+                //update game sounds
+                FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
+                CornPlantItem.volume = Setting.GameVolume*0.01f;
+                BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
+                Tractor.tractorvolume = Setting.GameVolume*0.01f;
+
+                //updating music volume
+                FarmaniaGame.music.setVolume(FarmaniaGame.musicid,Setting.MusicVolume*0.01f);
+
                 options_gameVolumeSlider.getPrivateButtonSlider().setValue(Setting.GameVolume);
                 options_musicVolumeSlider.getPrivateButtonSlider().setValue(Setting.MusicVolume);
                 Setting.saveGlobalSettingsToFile();
@@ -227,6 +281,7 @@ public class PauseMenu extends Group {
             public void clicked(InputEvent event, float x, float y) {
                 TimeEngine.resume();
                 screen.setPaused(false);
+                BasicTractorItem.TractorSound.setVolume(0);
                 FarmaniaGame.setActiveScreen(new MainMenu());
             }
         });

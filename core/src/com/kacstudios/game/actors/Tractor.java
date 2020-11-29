@@ -15,6 +15,9 @@ public class Tractor extends PlayableActor {
     private Farmer farmer;
     private boolean hasResized = true;
     private LevelScreen screen;
+    public static boolean onTractor = false;
+
+    public static float tractorvolume=Setting.GameVolume*0.01f;
 
     public Tractor (float x, float y, LevelScreen s) {
         super(x,y,s.getMainStage(), false);
@@ -49,7 +52,7 @@ public class Tractor extends PlayableActor {
         else {
             if (getDistanceFromFarmer() < 200){
                 addFarmer();
-                BasicTractorItem.TractorSound.setVolume(Setting.GameVolume*0.01f);
+                BasicTractorItem.TractorSound.setVolume(tractorvolume);
             }
         };
     }
@@ -99,6 +102,7 @@ public class Tractor extends PlayableActor {
         this.setFocused(true);
         farmer.setFocused(false);
         farmer.setMaxSpeed(625);
+        onTractor = true;
     }
 
     /**
@@ -111,6 +115,7 @@ public class Tractor extends PlayableActor {
         farmer.setMaxSpeed(200);
         this.setSpeed(0);
         this.setFocused(false);
+        onTractor = false;
     }
 
     /**

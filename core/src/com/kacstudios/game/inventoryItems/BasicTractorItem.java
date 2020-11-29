@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
+import com.kacstudios.game.utilities.Setting;
 
 public class BasicTractorItem extends IInventoryItem {
     private static Texture texture = new Texture("items/tractor-1.png");

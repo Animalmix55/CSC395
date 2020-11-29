@@ -186,20 +186,24 @@ public class PlayableActor extends BaseActor {
             // configure acceleration
             if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)){
                 accelerateAtAngle(180);
-                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
-                FarmaniaGame.walkingSound.play();}
+                if(!Tractor.onTractor){
+                    FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                    FarmaniaGame.walkingSound.play();}}
             if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
                 accelerateAtAngle(0);
-                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
-                FarmaniaGame.walkingSound.play();}
+                if(!Tractor.onTractor){
+                    FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                    FarmaniaGame.walkingSound.play();}}
             if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)){
                 accelerateAtAngle(90);
-                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
-                FarmaniaGame.walkingSound.play();}
+                if(!Tractor.onTractor){
+                    FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                    FarmaniaGame.walkingSound.play();}}
             if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)){
                 accelerateAtAngle(270);
-                FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
-                FarmaniaGame.walkingSound.play();}
+                if(!Tractor.onTractor){
+                    FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
+                    FarmaniaGame.walkingSound.play();}}
 
             if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
 

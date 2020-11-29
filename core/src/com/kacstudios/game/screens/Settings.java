@@ -13,15 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.kacstudios.game.actors.BaseActor;
+import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
-import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
 import com.kacstudios.game.inventoryItems.CornPlantItem;
 import com.kacstudios.game.utilities.Setting;
-
-import java.util.Set;
 
 
 //public class Settings extends ApplicationAdapter{
@@ -48,10 +46,17 @@ public class Settings extends BaseScreen {
             @Override
             public void drag(InputEvent event, float x, float y, int pointer) {
                 Gamelabel.setText("Game Volume: " + Math.round(Gameslider.getValue()));
+                Setting.GameVolume = Math.round(Gameslider.getValue());
+
+                //update game sounds
+                FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
+                CornPlantItem.volume = Setting.GameVolume*0.01f;
+                BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
+                Tractor.tractorvolume = Setting.GameVolume*0.01f;
+
             }
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer) {
-                Setting.GameVolume = Math.round(Gameslider.getValue());
                 Setting.saveGlobalSettingsToFile();
             }
         });
@@ -68,11 +73,14 @@ public class Settings extends BaseScreen {
         Musicslider.addCaptureListener(new DragListener() {
             @Override
             public void drag(InputEvent event, float x, float y, int pointer) {
+                Setting.MusicVolume = Math.round(Musicslider.getValue());
                 Musiclabel.setText("Music Volume: " + Math.round(Musicslider.getValue()));
+                //updating music volume
+                FarmaniaGame.music.setVolume(FarmaniaGame.musicid,Setting.MusicVolume*0.01f);
+
             }
             @Override
             public void dragStop(InputEvent event, float x, float y, int pointer) {
-                Setting.MusicVolume = Math.round(Musicslider.getValue());
                 Setting.saveGlobalSettingsToFile();
             }
         });
@@ -101,8 +109,18 @@ public class Settings extends BaseScreen {
         RestoreButton.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Setting.MusicVolume = 50;
+                Setting.MusicVolume = 20;
                 Setting.GameVolume = 50;
+
+                //update game sounds
+                FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
+                CornPlantItem.volume = Setting.GameVolume*0.01f;
+                BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
+                Tractor.tractorvolume = Setting.GameVolume*0.01f;
+
+                //updating music volume
+                FarmaniaGame.music.setVolume(FarmaniaGame.musicid,Setting.MusicVolume*0.01f);
+
                 Musicslider.setValue(Setting.MusicVolume);
                 Musiclabel.setText("Music Volume: " + Setting.MusicVolume);
                 Gameslider.setValue(Setting.GameVolume);

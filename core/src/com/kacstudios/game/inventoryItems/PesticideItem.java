@@ -1,15 +1,23 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.kacstudios.game.disasters.InsectDisaster;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
+import com.kacstudios.game.utilities.Setting;
 
 
 public class PesticideItem extends IDepleteableItem{
 
     private static Texture texture = new Texture("items/insecticide.png");
+
+    public static Music WateringSound;
+    public static float volume= Setting.GameVolume*0.01f;
+
+
     public PesticideItem(int amount){
         setAmount(amount);
         setDisplayName("Pesticide");
@@ -37,6 +45,10 @@ public class PesticideItem extends IDepleteableItem{
             //CHANGE QUANTITIES LOGIC
             float newPercent = getDepletionPercentage() + 0.10f;
             setDepletionPercentage(newPercent <= 1? newPercent : 1);
+
+            WateringSound = Gdx.audio.newMusic(Gdx.files.internal("SoundEffects/watering_effect.ogg"));
+            WateringSound.setVolume(volume);
+            WateringSound.play();
 
             if(getDepletionPercentage() >= 1){
                 if(getAmount() > 1) {

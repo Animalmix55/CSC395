@@ -16,9 +16,9 @@ public class DesktopLauncher {
 
 		config.resizable = false;
 
-		config.addIcon("core/assets/icon-256.png", Files.FileType.Internal);
-		config.addIcon("core/assets/icon-64.png", Files.FileType.Internal);
-		config.addIcon("core/assets/icon-32.png", Files.FileType.Internal);
+		config.addIcon("icon-256.png", Files.FileType.Internal);
+		config.addIcon("icon-64.png", Files.FileType.Internal);
+		config.addIcon("icon-32.png", Files.FileType.Internal);
 		config.title = "Farmania";
 		//config.fullscreen = true;
 

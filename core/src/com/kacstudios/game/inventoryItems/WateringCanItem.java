@@ -1,5 +1,7 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,9 +10,15 @@ import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
+import com.kacstudios.game.utilities.Setting;
 
 public class WateringCanItem extends IDepleteableItem {
     private static Texture texture = new Texture("items/watering_can.png");
+
+    public static Music WateringSound;
+    public static float volume= Setting.GameVolume*0.01f;
+
+
     public WateringCanItem(int amount){
         setAmount(amount);
         setDisplayName("Watering Can");
@@ -32,6 +40,10 @@ public class WateringCanItem extends IDepleteableItem {
             if(target.getWatered()) return; // the square must not already be watered
 
             target.setWatered(true);
+
+            WateringSound = Gdx.audio.newMusic(Gdx.files.internal("SoundEffects/watering_effect.ogg"));
+            WateringSound.setVolume(volume);
+            WateringSound.play();
 
             //CHANGE QUANTITIES LOGIC
             float newPercent = getDepletionPercentage() + 0.10f;
