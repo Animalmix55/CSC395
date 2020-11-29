@@ -43,7 +43,7 @@ public class Grid extends Group {
 
     private GridSquare[][] gridSquares;
     private LevelScreen screen;
-    private final Integer squareSideLength = 135;
+    public static final Integer squareSideLength = 135;
     private ArrayList<Image> outOfBoundsArea;
     private int width;
     private static final Texture backgroundTexture = new Texture("grid-textures/grass-outofbounds_1080x1080.png");
@@ -160,15 +160,29 @@ public class Grid extends Group {
      * @param square the square to add.
      */
     public void addGridSquare(int x, int y, GridSquare square){
-        if(gridSquares[x][y] != null) gridSquares[x][y].remove(); // remove old square
-        gridSquares[x][y] = square;
-
         if(square != null) {
+            if(!OversizeGridSquare.class.isAssignableFrom(square.getClass())) {
+                removeGridSquare(x, y);
+                gridSquares[x][y] = square;
+            }
+            else {
+                OversizeGridSquare osSquare = (OversizeGridSquare) square;
+
+                int trueX = x;
+                int trueY = y;
+
+                for (int xPos = trueX; xPos < trueX + osSquare.getGridSquareWidth(); xPos++) {
+                    for (int yPos = trueY; yPos < trueY + osSquare.getGridSquareHeight(); yPos++) {
+                        removeGridSquare(xPos, yPos);
+                        gridSquares[xPos][yPos] = osSquare;
+                    }
+                }
+            }
             square.setX(squareSideLength * x);
             square.setY(squareSideLength * y);
             this.addActor(square); // register gridSquare
             square.setParent(this, new GridVector(x, y));
-        }
+        } else removeGridSquare(x, y);
     }
 
     /**
@@ -192,9 +206,23 @@ public class Grid extends Group {
      * @param y the y coordinate of the grid square
      */
     public void removeGridSquare(int x, int y){
-        if(gridSquares[x][y] != null){
-            gridSquares[x][y].remove(); // remove old square
-            gridSquares[x][y] = null;
+        if(gridSquares[x][y] != null) {
+            if(OversizeGridSquare.class.isAssignableFrom(gridSquares[x][y].getClass())) {
+                OversizeGridSquare square = (OversizeGridSquare) gridSquares[x][y];
+                int trueX = square.getGridCoords().x;
+                int trueY = square.getGridCoords().y;
+
+                for (x = trueX; x < trueX + square.getGridSquareWidth(); x++) {
+                    for (y = trueY; y < trueY + square.getGridSquareHeight(); y++) {
+                        gridSquares[x][y].remove(); // remove old square
+                        gridSquares[x][y] = null;
+                    }
+                }
+            }
+            else {
+                gridSquares[x][y].remove(); // remove old square
+                gridSquares[x][y] = null;
+            }
         }
     }
 

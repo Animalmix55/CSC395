@@ -17,6 +17,7 @@ import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.plants.Plant;
+import com.kacstudios.game.grid.structures.BarnStructure;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.character.CharacterMenu;
 import com.kacstudios.game.overlays.hud.HUD;
@@ -45,7 +46,6 @@ public class LevelScreen extends BaseScreen {
     private List<GridSquare> savedGridSquares;
     private Object[] objectItems;
     private IInventoryItem[] savedInventoryItems;
-    private int saveFileNum = -1;
 
 
     // new level
@@ -86,10 +86,10 @@ public class LevelScreen extends BaseScreen {
 
         if (loadingFromSave) {
             for (Plant currentPlant : savedPlants) {
-                grid.addGridSquare(currentPlant.getSavedX(), currentPlant.getSavedY(), currentPlant);
+                grid.addGridSquare(currentPlant.getGridCoords().x, currentPlant.getGridCoords().y, currentPlant);
             }
             for (GridSquare square : savedGridSquares) {
-                grid.addGridSquare(square.getSavedX(), square.getSavedY(), square);
+                grid.addGridSquare(square.getGridCoords().x, square.getGridCoords().y, square);
             }
             hud = new HUD(this, savedInventoryItems);
         }
@@ -159,6 +159,8 @@ public class LevelScreen extends BaseScreen {
         new GridExpandPrompt(this);
 
         pauseMenu = new PauseMenu(this);
+
+        grid.addGridSquare(3, 3, new BarnStructure());
     }
 
     public void update(float dt) {

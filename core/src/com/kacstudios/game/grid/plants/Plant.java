@@ -33,9 +33,6 @@ public class Plant extends GridSquare {
     private float growthPercentage = 0;
     private float growthRateModifier = 1;
 
-    private int savedX;
-    private int savedY;
-
     private Boolean fullyGrown = false;
     private Boolean isDead = false;
     private Boolean isProtected = false;
@@ -73,15 +70,6 @@ public class Plant extends GridSquare {
             growthImages.add(temp);
             addActor(temp);
         }); // add all textures
-    }
-
-    /**
-     *  Overrides the clickFunction of GridSquare.
-     */
-    @Override
-    public void clickFunction(LocalDateTime time)
-    {
-        //pass
     }
 
     /**
@@ -207,14 +195,6 @@ public class Plant extends GridSquare {
     public void setGrowthPercentage(float newPercentage) {
         growthPercentage = newPercentage;
     }
-
-    public void setSavedX(int x) { savedX = x; }
-
-    public void setSavedY(int y) { savedY = y; }
-
-    public int getSavedX() { return savedX; }
-
-    public int getSavedY() { return savedY; }
 
     /**
      * Sets the modifier to the primary growth rate when the plant is not watered.

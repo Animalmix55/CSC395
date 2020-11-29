@@ -41,10 +41,4 @@ public class WaterSource extends GridSquare{
             }
         }
     }
-
-    @Override
-    public void clickFunction(LocalDateTime time)
-    {
-        //pass
-    }
 }
