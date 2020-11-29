@@ -12,6 +12,7 @@ public abstract class IInventoryItem {
     private String displayName = null;
     private String description = null;
     private String inventoryItemType = null;
+    private boolean isDeletable = true;
 
     /**
      * A function to be called when a given inventory item is deployed onto the map, not necessarily in a  (when the object is
@@ -71,17 +72,13 @@ public abstract class IInventoryItem {
         this.amount = amount;
     }
 
-    /**
-     * Sets inventory item type, used in saving functionality
-     * @param type (MUST BE "II" (non-depleteable) or "ID" (depleteable))
-     */
-    public void setInventoryItemType(String type) { inventoryItemType = type; }
-
-    /**
-     * Returns inventory item type (depletable or standard)
-     * @return String either containing "II" or "ID"
-     */
-    public String getInventoryItemType() { return inventoryItemType; }
-
     public abstract IInventoryItem createNewInstance(int amount);
+
+    protected void setDeletable(boolean deletable) {
+        isDeletable = deletable;
+    }
+
+    public boolean isDeletable() {
+        return isDeletable;
+    }
 }

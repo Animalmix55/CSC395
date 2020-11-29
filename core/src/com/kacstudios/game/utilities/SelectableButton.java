@@ -63,6 +63,6 @@ public class SelectableButton extends Group {
     public void setContents(Actor actor){
         if(contents != null) contents.remove();
         contents = actor;
-        if(actor != null) this.addActor(contents);
+        if(actor != null) this.addActorAfter(unselectedImage, contents);
     }
 }

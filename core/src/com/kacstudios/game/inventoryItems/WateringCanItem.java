@@ -22,7 +22,6 @@ public class WateringCanItem extends IDepleteableItem {
     public WateringCanItem(int amount){
         setAmount(amount);
         setDisplayName("Watering Can");
-        setInventoryItemType("ID");
     }
 
     public WateringCanItem() {

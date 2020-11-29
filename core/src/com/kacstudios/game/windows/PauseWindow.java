@@ -9,10 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.actors.Tractor;
 import com.kacstudios.game.games.FarmaniaGame;
-import com.kacstudios.game.inventoryItems.BasicTractorItem;
-import com.kacstudios.game.inventoryItems.BlueberriesPlantItem;
-import com.kacstudios.game.inventoryItems.CornPlantItem;
+import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
 import com.kacstudios.game.utilities.Setting;
@@ -26,7 +25,7 @@ public class PauseWindow {
 
     public PauseWindow(LevelScreen screen){
         super();
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
         window = new Window("Paused", skin);
         window.setVisible(false);
         window.setMovable(false);
@@ -42,7 +41,6 @@ public class PauseWindow {
                         return false;
 
                     TimeEngine.resume();
-                    screen.setPaused(false);
                     window.setVisible(false);
                     return true;
                 }
@@ -98,12 +96,12 @@ public class PauseWindow {
 
         //Exiting to main menu pop up
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
         windowexit = new Window("Paused", skin);
         windowexit.setVisible(false);
         windowexit.setMovable(false);
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
 
         final Label Exitlabel = new Label("Are you sure you would like to exit?", skin);
         Exitlabel.setColor(Color.WHITE);
@@ -143,7 +141,6 @@ public class PauseWindow {
                         return false;
 
                     TimeEngine.resume();
-                    screen.setPaused(false);
                     FarmaniaGame.setActiveScreen(new MainMenu());
 
                     return true;
@@ -152,13 +149,13 @@ public class PauseWindow {
 
         //pause menu settings
 
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
         windowsetting = new Window("Paused", skin);
         windowsetting.setVisible(false);
         windowsetting.setMovable(false);
 
         ////////////sliders
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
 
         final Label Gamelabel = new Label("Game Volume: " + Setting.GameVolume, skin);
         Gamelabel.setColor(Color.WHITE);
@@ -179,9 +176,9 @@ public class PauseWindow {
                     //updating Gamenoise volume
                     FarmaniaGame.Gamenoise.setVolume(Setting.GameVolume*0.01f);
                     //updates game sound effects
-                    CornPlantItem.volume = Setting.GameVolume*0.01f;
-                    BlueberriesPlantItem.volume = Setting.GameVolume*0.01f;
-                    BasicTractorItem.TractorSound.setVolume(Setting.GameVolume*0.01f);
+                    CornSeedItem.volume = Setting.GameVolume*0.01f;
+                    BlueberriesSeedItem.volume = Setting.GameVolume*0.01f;
+                    Tractor.TractorSound.setVolume(Setting.GameVolume*0.01f);
 
 
                     return true;

@@ -6,18 +6,22 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.kacstudios.game.inventoryItems.IDepleteableItem;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.FarmaniaFonts;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.SelectableButton;
+import com.kacstudios.game.utilities.ShapeGenerator;
 import org.w3c.dom.Text;
 
 public class ItemButton extends SelectableButton {
@@ -33,9 +37,8 @@ public class ItemButton extends SelectableButton {
 
         public AmountLabel(CharSequence text, LabelStyle style, ItemButton parent) {
             super(text, style);
+            setHeight(radius * 2);
             this.setAlignment(Align.center);
-            setWidth(radius);
-            setHeight(radius);
             this.button = parent;
         }
 
@@ -43,22 +46,32 @@ public class ItemButton extends SelectableButton {
         public void draw(Batch batch, float parentAlpha) {
             if(!isVisible()) return; // dont bother
             batch.end();
-            float shapeX = Math.abs(getWidth() - 2*radius)/2;
-            float shapeY = Math.abs(getHeight() - 2*radius)/2;
-
-            Actor parent = this;
-            do{
-                shapeX += parent.getX();
-                shapeY += parent.getY();
-            } while ((parent = parent.getParent()) != null);
-
+            shapeRenderer.setTransformMatrix(computeTransform());
             shapeRenderer.setColor(button.getSelected()? Color.GRAY : Color.WHITE);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.circle(shapeX + 1, shapeY, radius); // not sure why the +1, but it works
+            shapeRenderer.circle(getX() + 2, getY() + radius, radius);
+            shapeRenderer.rect(getX() + 2, getY(), getWidth() - 4, getHeight());
+            shapeRenderer.circle(getX() + getWidth() - 2, getY() + radius, radius);
             shapeRenderer.end();
             batch.begin();
-
             super.draw(batch, parentAlpha);
+        }
+
+        @Override
+        public boolean setText(int value) {
+            boolean returnVal = super.setText(value);
+            pack();
+            setHeight(radius * 2);
+            setX(10-getWidth()/2);
+            return returnVal;
+        }
+
+        @Override
+        public void setText(CharSequence newText) {
+            super.setText(newText);
+            pack();
+            setHeight(radius * 2);
+            setX(10-getWidth()/2);
         }
     }
     private class PercentBar extends Actor {
@@ -104,19 +117,27 @@ public class ItemButton extends SelectableButton {
 
     private static Texture selectedTexture;
     private static Texture unselectedTexture;
+    private InventoryViewer viewer;
+    private static Label.LabelStyle labelStyle = new Label.LabelStyle(
+            FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 10), Color.WHITE);
+    private Label hoverLabel = new Label("", labelStyle);
+    private Image hoverLabelBg;
+    private Group hoverGroup = new Group();
 
     /**
      * Builds selectable button with default rectangular shape
      * @param x x coord
      * @param y y coord
      */
-    public ItemButton(float x, float y){
+    public ItemButton(float x, float y, InventoryViewer viewer){
         super(x, y, getSelectedTexture(), getUnselectedTexture());
+
+        this.viewer = viewer;
 
         Label.LabelStyle amountStyle = new Label.LabelStyle();
         amountStyle.font = FarmaniaFonts.generateFont("fonts/OpenSans-Bold.ttf", 10);
         amountLabel = new AmountLabel("", amountStyle, this);
-        amountLabel.setPosition(3, getHeight() - amountLabel.getHeight() - 7);
+        amountLabel.setPosition(0, getHeight() - amountLabel.getHeight());
         amountLabel.setVisible(false);
         this.addActor(amountLabel);
         amountLabel.setColor(Color.BLACK);
@@ -127,6 +148,25 @@ public class ItemButton extends SelectableButton {
         percentBar.setY(getY() + 18);
         percentBar.setVisible(false);
         percentBar.setParent(this); // emulate setting parent for access to coordinates
+
+        hoverGroup.setY(3);
+        hoverGroup.setVisible(false);
+        hoverGroup.addActor(hoverLabel);
+        addActor(hoverGroup);
+
+        addCaptureListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.enter(event, x, y, pointer, fromActor);
+                if (pointer == -1 && getItem() != null) hoverGroup.setVisible(true);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                super.exit(event, x, y, pointer, toActor);
+                if (pointer == -1 && getItem() != null) hoverGroup.setVisible(false);
+            }
+        });
     }
 
     public static Texture getUnselectedTexture() {
@@ -144,23 +184,35 @@ public class ItemButton extends SelectableButton {
         percentBar.draw(batch, parentAlpha);
     }
 
-    public ItemButton(float x, float y, boolean isHotItem){
-        this(x, y);
+    public ItemButton(float x, float y, boolean isHotItem, InventoryViewer viewer){
+        this(x, y, viewer);
         this.isHotItem = isHotItem;
     }
 
-    public ItemButton(boolean isHotItem){
-        this(0, 0, isHotItem);
+    public ItemButton(boolean isHotItem, InventoryViewer viewer){
+        this(0, 0, isHotItem, viewer);
     }
 
-    public ItemButton(){
-        this(0, 0);
+    public ItemButton(InventoryViewer viewer){
+        this(0, 0, viewer);
     }
 
     public void setItem(IInventoryItem item){
         this.item = item;
 
         if(item != null) {
+            hoverLabel.setText(item.getDisplayName());
+            hoverLabel.pack();
+
+            if(hoverLabelBg != null) hoverLabelBg.remove();
+            hoverLabelBg = new Image(new Texture(ShapeGenerator.createRoundedRectangle(
+                    (int) hoverLabel.getWidth() + 6, (int) hoverLabel.getHeight(), 3, new Color(0, 0, 0, .6f)
+            )));
+            hoverLabelBg.setX(-3);
+            hoverGroup.addActorBefore(hoverLabel, hoverLabelBg);
+
+            hoverGroup.setX(Math.abs(getWidth() - hoverLabel.getWidth())/2);
+
             Image contents = new Image(item.getTexture());
             setContents(contents);
             if(item.getAmount() > 1){
@@ -172,9 +224,10 @@ public class ItemButton extends SelectableButton {
             if(IDepleteableItem.class.isAssignableFrom(item.getClass())) { //if the item is depletable
                 percentBar.setVisible(true);
                 percentBar.setPercent(1 - ((IDepleteableItem) item).getDepletionPercentage());
-            }
+            } else percentBar.setVisible(false);
         }
         else {
+            hoverGroup.setVisible(false);
             amountLabel.setVisible(false);
             percentBar.setVisible(false);
             setContents(null);
@@ -225,5 +278,9 @@ public class ItemButton extends SelectableButton {
         }
         if(IDepleteableItem.class.isAssignableFrom(item.getClass())) // update percent label
             percentBar.setPercent(1 - ((IDepleteableItem)item).getDepletionPercentage());
+    }
+
+    public InventoryViewer getViewer() {
+        return viewer;
     }
 }

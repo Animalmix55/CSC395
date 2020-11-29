@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.utilities.Setting;
+import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.TimeEngine;
 
 /**
@@ -37,13 +38,13 @@ public class PlayableActor extends BaseActor {
     private Animation<TextureRegion> rightAnimation;
     private Animation<TextureRegion> upAnimation;
     private Animation<TextureRegion> downAnimation;
-    private int prevKey = Input.Keys.D;
     private MoveToAction action;
+    protected LevelScreen screen;
 
-    private String actorName;
-
-    public PlayableActor(float x, float y, Stage s, boolean focused) {
-        super(x, y, s);
+    public PlayableActor(float x, float y, LevelScreen screen, boolean focused) {
+        super(x, y, screen.getMainStage());
+        this.screen = screen;
+        Stage s = screen.getMainStage();
         this.isFocused = focused;
 
         PlayableActor actor = this;
@@ -64,7 +65,12 @@ public class PlayableActor extends BaseActor {
         this.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent e, float x, float y) {
-                Color pickedColor = null;
+                if(!getFocused()) { // only do fancy click logic if the object is focused
+                    onClick(e, x, y);
+                    return;
+                }
+
+                Color pickedColor;
 
                 Texture texture = getAnimation().getKeyFrame(0).getTexture();
                 Pixmap pixmap;
@@ -73,14 +79,14 @@ public class PlayableActor extends BaseActor {
                         texture.getTextureData().prepare();
                     }
                     pixmap = texture.getTextureData().consumePixmap();
-                    pickedColor = new Color(pixmap.getPixel((int)x, (int)y));
+                    pickedColor = new Color(pixmap.getPixel((int) x, (int) (getHeight() - y)));
                 } catch (Exception ex) {
                     pickedColor = new Color(0, 0, 0, 0); // if there is no pixmap, just allow clickthrough
                 }
 
                 //Check for transparency
-                if (pickedColor != null && pickedColor.a != 0) {
-                    onClick();
+                if (pickedColor.a != 0) {
+                    onClick(e, x, y);
                 }
                 else {
                     Vector2 screenCoords = localToScreenCoordinates(new Vector2(x, y));
@@ -94,7 +100,7 @@ public class PlayableActor extends BaseActor {
         });
     }
 
-    public void onClick() {
+    public void onClick(InputEvent e, float x, float y) {
         // implement
     }
 
@@ -110,6 +116,8 @@ public class PlayableActor extends BaseActor {
         leftAnimation = left;
         rightAnimation = right;
         upAnimation = up;
+
+        setAnimationDirection(Direction.down); //update on screen
     }
 
     public static double angleBetweenTwoPointsWithFixedPoint(double point1X, double point1Y,
@@ -159,28 +167,26 @@ public class PlayableActor extends BaseActor {
         //walkingSound.setVolume(0);
 
         super.act(dt);
-        if (isFocused) {
+
+        Direction prevDirection = getAnimationDirection();
+        if (isFocused && dt != 0) { // if dt is zero, the game is paused, don't change directions
             // configure sprite direction
             if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                if (prevKey != Input.Keys.W) setAnimation(upAnimation);
-                prevKey = Input.Keys.W;
-                if (prevKey != Input.Keys.UP) setAnimation(upAnimation);
-                prevKey = Input.Keys.UP;
+                if (prevDirection != Direction.up) {
+                    setAnimation(upAnimation);
+                }
             } else if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                if (prevKey != Input.Keys.D) setAnimation(rightAnimation);
-                prevKey = Input.Keys.D;
-                if (prevKey != Input.Keys.RIGHT) setAnimation(rightAnimation);
-                prevKey = Input.Keys.RIGHT;
+                if (prevDirection != Direction.right) {
+                    setAnimation(rightAnimation);
+                }
             } else if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                if (prevKey != Input.Keys.A) setAnimation(leftAnimation);
-                prevKey = Input.Keys.A;
-                if (prevKey != Input.Keys.LEFT) setAnimation(leftAnimation);
-                prevKey = Input.Keys.LEFT;
+                if (prevDirection != Direction.left) {
+                    setAnimation(leftAnimation);
+                }
             } else if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                if (prevKey != Input.Keys.S) setAnimation(downAnimation);
-                prevKey = Input.Keys.S;
-                if (prevKey != Input.Keys.DOWN) setAnimation(downAnimation);
-                prevKey = Input.Keys.DOWN;
+                if (prevDirection != Direction.down) {
+                    setAnimation(downAnimation);
+                }
             }
 
             // configure acceleration
@@ -205,7 +211,7 @@ public class PlayableActor extends BaseActor {
                     FarmaniaGame.walkingSound.setVolume(Setting.GameVolume*0.01f);
                     FarmaniaGame.walkingSound.play();}}
 
-            if(action != null) action.act(dt * TimeEngine.getDilation()); // update action
+            if(action != null) action.act(dt); // update action
 
             applyPhysics(dt);
             boundToWorld();
@@ -225,16 +231,18 @@ public class PlayableActor extends BaseActor {
         prevPos.y = getY();
     }
 
+    public void preventOverlapWithAddedActors() {
+        screen.getAddedActors().forEach(a -> {
+            if (a != this && BaseActor.class.isAssignableFrom(a.getClass())) preventOverlap((BaseActor) a);
+        });
+    }
+
     public void setFocused(boolean focused) {
         isFocused = focused;
     }
 
     public boolean getFocused() {
         return isFocused;
-    }
-
-    public int getPrevKey() {
-        return prevKey;
     }
 
     public void setAnimationDirection(Direction direction) {
@@ -265,6 +273,8 @@ public class PlayableActor extends BaseActor {
 
     @Override
     public Vector2 preventOverlap(BaseActor other) {
+        if(!getFocused()) return null;
+
         Vector2 vector = super.preventOverlap(other);
         if(vector != null && action != null) {
             removeAction(action);
@@ -273,9 +283,4 @@ public class PlayableActor extends BaseActor {
 
         return vector;
     }
-
-    public void setActorName(String name) { actorName = name; }
-
-    public String getActorName() { return actorName; }
-
 }

@@ -60,4 +60,10 @@ public abstract class Disaster extends BaseActor {
             plant.setDisaster(null);
         }
     }
+
+    public abstract Disaster createInstance(Plant target);
+
+    public LocalDateTime getDisasterProgress() { return startTime; }
+
+    public void setDisasterProgress(LocalDateTime progress) { startTime = progress; }
 }

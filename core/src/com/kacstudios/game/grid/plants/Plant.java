@@ -3,18 +3,32 @@ package com.kacstudios.game.grid.plants;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.disasters.Disaster;
-import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.disasters.InsectDisaster;
+import com.kacstudios.game.grid.GridSquare;
+import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.TimeEngine;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
+
+import static com.kacstudios.game.disasters.Disaster.generateRandom;
 
 public class Plant extends GridSquare {
 
+    public interface HarvestItemConstructor {
+        IInventoryItem createInstance(int amount);
+    }
+
+    private HarvestItemConstructor harvestItemConstructor;
+
     private Image drySoil;
     private Image wetSoil;
+
+    private float dryGrowthRateModifier = 0;
+    private float secondsToDry = -1;
+    private LocalDateTime lastWatered;
 
     private float growthPercentage = 0;
     private float growthRateModifier = 1;
@@ -26,17 +40,14 @@ public class Plant extends GridSquare {
     private Boolean isDead = false;
     private Boolean isProtected = false;
     private long growthTime = 60;
-    private LocalDateTime startTime = TimeEngine.getDateTime();
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
 
-    private String plantType; // used when saving game to define what type of plant is being saved
-
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
-        drySoil = new Image(new Texture("soil.png"));
-        wetSoil = new Image(new Texture("soil-wet.png"));
+        drySoil = new Image(new Texture("plant-textures/soil.png"));
+        wetSoil = new Image(new Texture("plant-textures/soil-wet.png"));
         deadImage = new Image(new Texture(deadTexturePath));
         deadImage.setVisible(false);
         wetSoil.setVisible(false);
@@ -100,9 +111,17 @@ public class Plant extends GridSquare {
     @Override
     public void act(float dt) {
         super.act(dt);
+        if(lastWatered != null && getWatered() && secondsToDry != -1 &&
+                TimeEngine.getSecondsSince(lastWatered) >= secondsToDry) {
+            setWatered(false);
+            lastWatered = null;
+        }
+
         if(!fullyGrown && !isDead)
         {
-            float tempGrowthPercentage = getPercentPerSecond() * dt + growthPercentage; // update growth percentage
+            float tempGrowthPercentage = getPercentPerSecond() * dt * (getWatered()? 1 : dryGrowthRateModifier)
+                    + growthPercentage; // update growth percentage
+
             if(tempGrowthPercentage >= 1) {
                 fullyGrown = true;
                 growthPercentage = 1;
@@ -133,6 +152,7 @@ public class Plant extends GridSquare {
     public void setWatered(boolean isWatered){
         wetSoil.setVisible(isWatered);
         drySoil.setVisible(!isWatered);
+        if (isWatered) lastWatered = TimeEngine.getDateTime();
     }
 
     public boolean getWatered(){
@@ -157,9 +177,7 @@ public class Plant extends GridSquare {
         this.growthRateModifier = 1;
     }
 
-    public Disaster getDisaster() {
-        return disaster;
-    }
+    public Disaster getDisaster() { return disaster; }
 
     /**
      * Kills the plant
@@ -180,6 +198,8 @@ public class Plant extends GridSquare {
         return isDead;
     }
 
+    public Boolean getFullyGrown() {return fullyGrown;}
+
     public float getGrowthPercentage() {
         return growthPercentage;
     }
@@ -196,7 +216,36 @@ public class Plant extends GridSquare {
 
     public int getSavedY() { return savedY; }
 
-    public void setPlantName(String plantName) { plantType = plantName; }
+    /**
+     * Sets the modifier to the primary growth rate when the plant is not watered.
+     * A value of .4 means that the plant grows at 40% of the normal rate when dry.
+     *
+     * @param dryGrowthRateModifier A value between 0 and 1.
+     */
+    public void setDryGrowthRateModifier(float dryGrowthRateModifier) {
+        this.dryGrowthRateModifier = dryGrowthRateModifier;
+    }
 
-    public String getPlantName() { return plantType; }
+    /**
+     * Sets the number of seconds it takes for a watered plot to dry out.
+     * -1 means unlimited.
+     * @param secondsToDry
+     */
+    public void setSecondsToDry(float secondsToDry) {
+        this.secondsToDry = secondsToDry;
+    }
+
+    public void setHarvestItemConstructor(HarvestItemConstructor harvestItemConstructor) {
+        this.harvestItemConstructor = harvestItemConstructor;
+    }
+
+    /**
+     * Returns a new instance of the harvested item with the given amount.
+     * @param amount an integer representing the amount of the item.
+     * @return a new instance of an inventory item or null if one is not set.
+     */
+    public IInventoryItem getHarvestItem(int amount) {
+        if(harvestItemConstructor != null) return harvestItemConstructor.createInstance(amount);
+        return null;
+    }
 }

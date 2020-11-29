@@ -4,14 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.kacstudios.game.actors.PlayableActor;
 
 import java.nio.ByteBuffer;
 
 public class ShapeGenerator {
+    public enum Direction {
+        up,
+        down,
+        left,
+        right,
+    }
     public static Pixmap createRoundedRectangle(int width, int height, int cornerRadius, Color color) {
         Pixmap shape = new Pixmap(width, height, Pixmap.Format.RGBA4444);
 
@@ -24,6 +32,16 @@ public class ShapeGenerator {
 
         shape.fillRectangle(0, cornerRadius, width, height - 2 * cornerRadius);
         shape.fillRectangle(cornerRadius, 0, width - 2 * cornerRadius, height);
+
+        return shape;
+    }
+
+    public static Pixmap createRectangle(int width, int height, Color color) {
+        Pixmap shape = new Pixmap(width, height, Pixmap.Format.RGBA4444);
+
+        shape.setBlending(Pixmap.Blending.None);
+        shape.setColor(color);
+        shape.fillRectangle(0, 0, width, height);
 
         return shape;
     }
@@ -85,9 +103,17 @@ public class ShapeGenerator {
         return pixmap;
     }
 
-    public static Pixmap createEquilateralTriangle(int sideLength, Color fillColor, boolean pointUp) {
-        FrameBuffer frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, sideLength,
-                (int)Math.ceil(Math.sqrt(3) * (sideLength/2)),false);
+    public static Pixmap createEquilateralTriangle(int sideLength, Color fillColor, Direction direction) {
+        FrameBuffer frameBuffer;
+        double shortSide = Math.ceil(Math.sqrt(3) * (sideLength / 2));
+        if(direction == Direction.down || direction == Direction.up) {
+            frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, sideLength,
+                    (int) shortSide, false);
+        } else {
+            frameBuffer = new FrameBuffer(Pixmap.Format.RGBA8888,
+                    (int) shortSide, sideLength, false);
+        }
+
         ShapeRenderer shapeRenderer = new ShapeRenderer();
         frameBuffer.begin();
 
@@ -101,18 +127,35 @@ public class ShapeGenerator {
         shapeRenderer.setColor(fillColor);
         shapeRenderer.setProjectionMatrix(m);
 
-        if(pointUp) {
-            shapeRenderer.triangle(
-                    0, frameBuffer.getHeight(),
-                    frameBuffer.getWidth() / 2, 0,
-                    frameBuffer.getWidth(), frameBuffer.getHeight()
-            );
-        } else {
-            shapeRenderer.triangle(
-                    0, 0,
-                    frameBuffer.getWidth() / 2, frameBuffer.getHeight(),
-                    frameBuffer.getWidth(), 0
-            );
+        switch (direction) {
+            case up:
+                shapeRenderer.triangle(
+                        0, frameBuffer.getHeight(),
+                        frameBuffer.getWidth() / 2, 0,
+                        frameBuffer.getWidth(), frameBuffer.getHeight()
+                );
+                break;
+            case down:
+                shapeRenderer.triangle(
+                        0, 0,
+                        frameBuffer.getWidth() / 2, frameBuffer.getHeight(),
+                        frameBuffer.getWidth(), 0
+                );
+                break;
+            case right:
+                shapeRenderer.triangle(
+                        0, 0,
+                        frameBuffer.getWidth(), frameBuffer.getHeight() / 2,
+                        0, frameBuffer.getHeight()
+                );
+                break;
+            case left:
+                shapeRenderer.triangle(
+                        frameBuffer.getWidth(), 0,
+                        0, frameBuffer.getHeight() / 2,
+                        frameBuffer.getWidth(), frameBuffer.getHeight()
+                );
+                break;
         }
         shapeRenderer.end();
 
@@ -123,6 +166,28 @@ public class ShapeGenerator {
         Gdx.gl.glReadPixels(0, 0, pixmap.getWidth(), pixmap.getHeight(), GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, buf);
         frameBuffer.end();
 
+        return pixmap;
+    }
+
+    public static Pixmap extractPixmapFromTextureRegion(TextureRegion textureRegion) {
+        TextureData textureData = textureRegion.getTexture().getTextureData();
+        if (!textureData.isPrepared()) {
+            textureData.prepare();
+        }
+        Pixmap pixmap = new Pixmap(
+                textureRegion.getRegionWidth(),
+                textureRegion.getRegionHeight(),
+                textureData.getFormat()
+        );
+        pixmap.drawPixmap(
+                textureData.consumePixmap(), // The other Pixmap
+                0, // The target x-coordinate (top left corner)
+                0, // The target y-coordinate (top left corner)
+                textureRegion.getRegionX(), // The source x-coordinate (top left corner)
+                textureRegion.getRegionY(), // The source y-coordinate (top left corner)
+                textureRegion.getRegionWidth(), // The width of the area from the other Pixmap in pixels
+                textureRegion.getRegionHeight() // The height of the area from the other Pixmap in pixels
+        );
         return pixmap;
     }
 }

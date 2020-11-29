@@ -11,13 +11,10 @@ import com.kacstudios.game.utilities.Setting;
 
 public class BasicTractorItem extends IInventoryItem {
     private static Texture texture = new Texture("items/tractor-1.png");
-    public static Music TractorSound;
-    public static float volume=0;
 
     public BasicTractorItem(int amount) {
         setAmount(amount);
         setDisplayName("Basic Tractor");
-        setInventoryItemType("II");
     }
 
     public BasicTractorItem() {
@@ -26,15 +23,10 @@ public class BasicTractorItem extends IInventoryItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
-        TractorSound = Gdx.audio.newMusic(Gdx.files.internal("SoundEffects/tractor-engine.ogg"));
-        TractorSound.setLooping(true);
-        TractorSound.setVolume(volume);
-        TractorSound.play();
-
         if(!event.farmerWithinRadius(300)) return;
         if(getAmount() > 0) {
             setAmount(getAmount() - 1);
-            Vector2 clickLoc = event.getEventCoords();
+            Vector2 clickLoc = event.getScreen().getMainStage().screenToStageCoordinates(event.getEventCoords());
 
             Tractor tractor = new Tractor(clickLoc.x, clickLoc.y, event.getScreen());
             tractor.setX(clickLoc.x - tractor.getWidth()/2);

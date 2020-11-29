@@ -17,8 +17,10 @@ public class GridClickEvent {
 
     public GridClickEvent(float x, float y, LevelScreen screen) {
         this.grid = screen.getGrid();
-        this.x = x;
-        this.y = y;
+
+        Vector2 coords = this.grid.localToScreenCoordinates(new Vector2(x, y));
+        this.x = coords.x;
+        this.y = coords.y;
 
         this.gridCoords = new GridVector((int)x / grid.getSquareSideLength(),
                 (int) y / grid.getSquareSideLength());
@@ -34,7 +36,7 @@ public class GridClickEvent {
     }
 
     /**
-     * Returns the location of the original click event
+     * Returns the location of the original click event on LevelScreen
      * @return Vector2 containing the click coords
      */
     public Vector2 getEventCoords(){

@@ -2,17 +2,18 @@ package com.kacstudios.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.kacstudios.game.actors.BaseActor;
-import com.kacstudios.game.actors.Tractor;
+import com.kacstudios.game.actors.Farmer.Farmer;
+import com.kacstudios.game.disasters.Disaster;
 import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
 
 import com.kacstudios.game.grid.GridSquare;
-import com.kacstudios.game.grid.plants.BlueberriesPlant;
-import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
 
 import com.kacstudios.game.inventoryItems.*;
@@ -22,6 +23,8 @@ import com.kacstudios.game.utilities.TimeEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -48,7 +51,7 @@ public class LoadMenu extends BaseScreen {
     public void initialize() {
         // set background/map limits
         BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
-        farmBaseActor.loadTexture("background_3.png");
+        farmBaseActor.loadTexture("menu-textures/background_3.png");
         farmBaseActor.setSize(1280,720);
         BaseActor.setWorldBounds(farmBaseActor);
 
@@ -109,11 +112,12 @@ public class LoadMenu extends BaseScreen {
         int levelHeight;
 
         Plant tempPlant;
+        GridSquare tempSquare;
         List<Plant> plants = new ArrayList<Plant>();
+        List<GridSquare> miscSquares = new ArrayList<GridSquare>();
         IInventoryItem tempItem;
-        IDepleteableItem tempDepleteableItem;
         List<IInventoryItem> items = new ArrayList<IInventoryItem>();
-        String time;
+        Farmer.FarmerTextureData customization = new Farmer.FarmerTextureData();
         int money;
 
         try {
@@ -133,7 +137,11 @@ public class LoadMenu extends BaseScreen {
             splitFileLine = fileLine.split(",");
             levelWidth = Integer.parseInt(splitFileLine[0]);
             levelHeight = Integer.parseInt(splitFileLine[1]);
-            time = splitFileLine[2];
+
+            // init time engine, set time
+            TimeEngine.Init( LocalDateTime.parse(splitFileLine[2]) );
+
+            // load money
             money = Integer.parseInt(splitFileLine[3]);
 
             // iterate through rest of grid squares in save file
@@ -145,25 +153,53 @@ public class LoadMenu extends BaseScreen {
                 switch (splitFileLine[2]) {
                     case "plant":
                         // check what type of Plant the current line is, and create specific plant type
-                        switch (splitFileLine[3]) {
-                            case "corn":
-                                tempPlant = new CornPlant();
-                                break;
-                            case "blueberries":
-                                tempPlant = new BlueberriesPlant();
-                                break;
-                            default:
-                                tempPlant = null;
-                                break;
+                        String className = splitFileLine[3];
+                        try {
+                            Class<?> plantClass = Class.forName(className);
+                            if(Plant.class.isAssignableFrom(plantClass)) {
+                                tempPlant = (Plant) plantClass.getDeclaredConstructor().newInstance();
+
+                                // FOR ALL PLANTS
+                                if (splitFileLine[4].equals("t"))
+                                    tempPlant.setWatered(true); // set plant to be watered if saved as watered
+                                tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
+                                tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
+                                tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+
+                                if (!splitFileLine[5].equals("0")) {
+                                    String disasterClassName = splitFileLine[5];
+                                    try {
+                                        Class<?> disasterClass = Class.forName(disasterClassName);
+                                        if (Disaster.class.isAssignableFrom(disasterClass)) {
+                                            tempPlant.setDisaster( (Disaster) disasterClass.getDeclaredConstructor(Plant.class).newInstance(tempPlant) );
+                                            if (!splitFileLine[6].equals("0")) tempPlant.getDisaster().setDisasterProgress( LocalDateTime.parse(splitFileLine[6]) );
+                                        }
+                                    }
+                                    catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                if (splitFileLine[8].equals("t")) tempPlant.setDead(true);
+                                plants.add(tempPlant);
+                            }
+                        } catch (Exception e) {
+                            // if the class is bad and the reflection fails, just bail
+                        }
+                        break;
+                    case "gridsquare":
+                        className = splitFileLine[3];
+                        try {
+                            Class<?> gridSquareClass = Class.forName(className);
+                            tempSquare = (GridSquare) gridSquareClass.getDeclaredConstructor().newInstance();
+                            tempSquare.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
+                            tempSquare.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+                            miscSquares.add(tempSquare);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
                         }
 
-                        // FOR ALL PLANTS
-                        if (splitFileLine[4].equals("t")) tempPlant.setWatered(true); // set plant to be watered if saved as watered
-                        tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
-                        tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
-                        tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
-                        if (splitFileLine[8].equals("t")) tempPlant.setDead(true);
-                        plants.add(tempPlant);
                         break;
                 }
             }
@@ -179,70 +215,79 @@ public class LoadMenu extends BaseScreen {
                 splitFileLine = fileLine.split(",");
 
                 // check what type of item is being loaded
-                switch (splitFileLine[0]) {
-                    // INVENTORY ITEMS
-                    case "II":
-                        // specify which item is being created
-                        switch(splitFileLine[1]) {
-                            case "Basic Tractor":
-                                tempItem = new BasicTractorItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            case "Corn Seed":
-                                tempItem = new CornPlantItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            case "Blueberry Seed":
-                                tempItem = new BlueberriesPlantItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            default:
-                                tempItem = null;
-                        }
+                boolean isDepletable = splitFileLine[0] == "ID";
+
+                // specify which item is being created
+                String className = splitFileLine[1];
+                int amount = Integer.parseInt(splitFileLine[2]);
+
+                try {
+                    Class<?> itemClass = Class.forName(className);
+                    if(IInventoryItem.class.isAssignableFrom(itemClass)) {
+                        tempItem = (IInventoryItem) itemClass.getDeclaredConstructor(int.class).newInstance(amount);
+
                         items.add(tempItem);
-                        break;
 
-                    // DEPLETABLE ITEMS
-                    case "ID":
-                        switch(splitFileLine[1]) {
-                            case "Pesticide":
-                                tempDepleteableItem = new PesticideItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            case "Watering Can":
-                                tempDepleteableItem = new WateringCanItem(Integer.parseInt(splitFileLine[2]));
-                                break;
-                            default:
-                                tempDepleteableItem = null;
-                        }
-                        tempDepleteableItem.setDepletionPercentage(Float.parseFloat(splitFileLine[3]));
-                        items.add(tempDepleteableItem);
-                        break;
+                        if (isDepletable)
+                            ((IDepleteableItem) tempItem).setDepletionPercentage(Float.parseFloat(splitFileLine[3]));
+                    }
+                } catch (Exception e) {
+                    // pass, this happens if the class is invalid or a constructor doesn't exist
                 }
-
-
             }
-
+            // switch over to actors file
             temporarySaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
             fileScanner.close();
             fileScanner = new Scanner(temporarySaveFile);
 
+            // pull farmer location and save into variable
             fileLine = fileScanner.nextLine();
             splitFileLine = fileLine.split(",");
             float farmerCoordinateX = Float.parseFloat(splitFileLine[1]);
             float farmerCoordinateY = Float.parseFloat(splitFileLine[2]);
 
-            level = new LevelScreen(levelWidth, levelHeight, plants, items, time);
+            // create level, set previously stored farmer location
+            level = new LevelScreen(levelWidth, levelHeight, plants, items, miscSquares);
             level.getFarmer().setX(farmerCoordinateX);
             level.getFarmer().setY(farmerCoordinateY);
+
+            // set money
             Economy.setMoney( money );
+
+            // set current level indicator within pause menu
             level.getPauseMenu().saveMenu_setCurrentLevel(levelNumber);
 
+            // iterate other existing actors and place them accordingly
             while (fileScanner.hasNextLine()) {
                 fileLine = fileScanner.nextLine();
                 splitFileLine = fileLine.split(",");
-                switch (splitFileLine[0]) {
-                    case "BasicTractor":
-                        level.addSecondaryActor( new Tractor( Float.parseFloat(splitFileLine[1]), Float.parseFloat(splitFileLine[2]), level ) );
-                        break;
+                String className = splitFileLine[0];
+                try {
+                    Class<?> secondaryActorClass = Class.forName(className);
+                    if(Actor.class.isAssignableFrom(secondaryActorClass)) {
+                        Constructor<?> constructor = secondaryActorClass.getConstructor(float.class, float.class, LevelScreen.class);
+
+                        level.addSecondaryActor( (Actor) constructor.newInstance(Float.parseFloat(splitFileLine[1]), Float.parseFloat(splitFileLine[2]), level));
+                    }
+                } catch (Exception e) {
+                    // pass, only occurs when the casting/reflection fails.
                 }
             }
+
+            // set farmer customization
+            temporarySaveFile = new File(String.format("core/assets/saves/farmer%d.mcconnell",levelNumber));
+            fileScanner.close();
+            fileScanner = new Scanner(temporarySaveFile);
+            customization.headName = fileScanner.nextLine();
+            customization.headColor = Color.valueOf( fileScanner.nextLine() );
+            customization.shirtName = fileScanner.nextLine();
+            customization.shirtColor = Color.valueOf( fileScanner.nextLine() );
+            customization.pantsName = fileScanner.nextLine();
+            customization.pantsColor = Color.valueOf( fileScanner.nextLine() );
+            customization.skinColor = Color.valueOf( fileScanner.nextLine() );
+            fileScanner.close();
+            level.getFarmer().setTextureData(customization);
+            level.getFarmer().updateTextures();
 
 
             FarmaniaGame.setActiveScreen(level);
@@ -263,30 +308,41 @@ public class LoadMenu extends BaseScreen {
             for (int row=0;row<loadedSquares[column].length;row++) {
                 if (loadedSquares[column][row] != null) {
                     // do this for every grid square:
-                    if ( loadedSquares[column][row].getClass().getName().startsWith("com.kacstudios.game.grid.plants") ) {
+                    if ( Plant.class.isAssignableFrom(loadedSquares[column][row].getClass()) ) {
                         tempLine = new String[9];
                         tempLine[0] = String.valueOf(column);
                         tempLine[1] = String.valueOf(row);
                         tempLine[2] = "plant";
                         tempPlant = (Plant) loadedSquares[column][row];
-                        tempLine[3] = tempPlant.getPlantName();
+                        tempLine[3] = tempPlant.getClass().getName();
                         if (tempPlant.getWatered()) tempLine[4] = "t";
                         else tempLine[4] = "f";
-                        // insert disaster save code here
-                        tempLine[5] = "0";
-                        tempLine[6] = "0";
+                        // create disaster class
+                        if (tempPlant.getDisaster() != null) tempLine[5] = tempPlant.getDisaster().getClass().getCanonicalName();
+                        else tempLine[5] = "0";
+                        // set disaster progress
+                        if (tempPlant.getDisaster() != null) tempLine[6] = tempPlant.getDisaster().getDisasterProgress().toString();
+                        else tempLine[6] = "0";
                         // end disaster code
                         tempLine[7] = String.valueOf(tempPlant.getGrowthPercentage());
                         if (tempPlant.getDead()) tempLine[8] = "t";
                         else tempLine[8] = "f";
-                        String arrayConvertedToString = "";
-                        for (String element : tempLine) {
-                            arrayConvertedToString += element+",";
-                        }
-                        arrayConvertedToString = arrayConvertedToString.substring(0,arrayConvertedToString.length()-1);
-                        gridLinesToWrite.add(arrayConvertedToString);
+                    }
+                    else {
+                        tempLine = new String[4];
+                        tempLine[0] = String.valueOf(column);
+                        tempLine[1] = String.valueOf(row);
+                        tempLine[2] = "gridsquare";
+                        tempLine[3] = loadedSquares[column][row].getClass().getName();
                     }
 
+                    // convert line to string, add to lines to write
+                    String arrayConvertedToString = "";
+                    for (String element : tempLine) {
+                        arrayConvertedToString += element+",";
+                    }
+                    arrayConvertedToString = arrayConvertedToString.substring(0,arrayConvertedToString.length()-1);
+                    gridLinesToWrite.add(arrayConvertedToString);
                 }
             }
         }
@@ -309,17 +365,22 @@ public class LoadMenu extends BaseScreen {
 
         // save actors
         ArrayList<String> actorsLinesToWrite = new ArrayList<String>();
-        String tempActorsLine;
-        actorsLinesToWrite.add( String.format("Farmer,%f,%f",screen.getFarmer().getX(),screen.getFarmer().getY()) );
+        actorsLinesToWrite.add( String.format("%s,%f,%f", Farmer.class.getCanonicalName(), screen.getFarmer().getX(),screen.getFarmer().getY()) );
         for (int i=0;i<screen.getAddedActors().size();i++) {
-            actorsLinesToWrite.add( String.format("%s,%f,%f", screen.getAddedActors().get(i).getActorName(), screen.getAddedActors().get(i).getX(), screen.getAddedActors().get(i).getY() ) );
+            actorsLinesToWrite.add( String.format("%s,%f,%f", screen.getAddedActors().get(i).getClass().getCanonicalName(),
+                    screen.getAddedActors().get(i).getX(), screen.getAddedActors().get(i).getY() ) );
         }
 
+        // save farmer customization
+        String[] farmerState = screen.getFarmer().getFarmerTextureSaveState();
 
+        // set file names according to level number
         File gridSaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
         File inventorySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
         File actorsSaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
+        File farmerSaveFile = new File(String.format("core/assets/saves/farmer%d.mcconnell",levelNumber));
 
+        // write to save files
         try {
             fileWriter = new FileWriter(gridSaveFile);
             for (int i=0;i<gridLinesToWrite.size();i++) {
@@ -336,6 +397,11 @@ public class LoadMenu extends BaseScreen {
                 fileWriter.write(actorsLinesToWrite.get(i) + "\n");
             }
             fileWriter.close();
+            fileWriter = new FileWriter(farmerSaveFile);
+            for (String farmerLine : farmerState) {
+                fileWriter.write(farmerLine + "\n");
+            }
+            fileWriter.close();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -350,22 +416,16 @@ public class LoadMenu extends BaseScreen {
      */
     private static String getInventorySaveLine(ItemButton itemButton) {
         IInventoryItem item = itemButton.getItem();
-        String itemName = item.getDisplayName();
-        String itemType = item.getInventoryItemType();
+        String itemName = item.getClass().getCanonicalName();
         IDepleteableItem tempDepletion;
         String retString;
-        switch(itemType) {
-            case "II":
-                retString = String.format("%s,%s,%s","II",itemName,item.getAmount());
-                break;
-            case "ID":
-                tempDepletion = (IDepleteableItem) item;
-                retString = String.format("%s,%s,%s,%s","ID",itemName,item.getAmount(),tempDepletion.getDepletionPercentage());
-                break;
-            default:
-                retString = "";
-                break;
+        if(IDepleteableItem.class.isAssignableFrom(item.getClass())) {
+            tempDepletion = (IDepleteableItem) item;
+            retString = String.format("%s,%s,%s,%s","ID",itemName,item.getAmount(),tempDepletion.getDepletionPercentage());
+        } else {
+            retString = String.format("%s,%s,%s","II",itemName,item.getAmount());
         }
+
         return retString;
     }
 

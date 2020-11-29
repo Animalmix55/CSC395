@@ -11,8 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragScrollListener;
 import com.kacstudios.game.utilities.ShapeGenerator;
+import com.kacstudios.game.utilities.TimeEngine;
 
 import javax.swing.plaf.basic.BasicSliderUI;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class ScrollableGroup extends Group {
     private ScrollPane scrollPane;
@@ -67,7 +70,8 @@ public class ScrollableGroup extends Group {
         if(scrollBarKnob != null) scrollBarKnob.remove();
         if(scrollPane.getActor().getHeight() <= getHeight()) return;
 
-        int scrollBarHeight = (int)getHeight() - 50;
+        int scrollBarHeight = (int)getHeight() - (int) getHeight() / 6;
+
         int knobHeight = (int) ((getHeight() / scrollPane.getActor().getHeight()) * (scrollBarHeight - 2 * scrollBarPadding));
 
         scrollBar = new Image(new Texture(ShapeGenerator.createRoundedRectangle(10, scrollBarHeight, 5, Color.GRAY)));
@@ -103,11 +107,13 @@ public class ScrollableGroup extends Group {
             ScrollableGroup body = this;
             scrollPane = new ScrollPane(contents);
             scrollPane.addListener(event -> {
-                float minPos = scrollBar.getY() + scrollBarPadding;
-                float maxPos = scrollBar.getY() + scrollBar.getHeight() - scrollBarPadding - scrollBarKnob.getHeight();
-                float scrollY = scrollPane.getScrollY();
-                scrollBarKnob.setY(Math.max(Math.min(((1 - scrollY/(scrollPane.getActor().getHeight()-body.getHeight()))
-                        * (maxPos - minPos)) + minPos, maxPos), minPos));
+                if(scrollBar != null) {
+                    float minPos = scrollBar.getY() + scrollBarPadding;
+                    float maxPos = scrollBar.getY() + scrollBar.getHeight() - scrollBarPadding - scrollBarKnob.getHeight();
+                    float scrollY = scrollPane.getScrollY();
+                    scrollBarKnob.setY(Math.max(Math.min(((1 - scrollY / (scrollPane.getActor().getHeight() - body.getHeight()))
+                            * (maxPos - minPos)) + minPos, maxPos), minPos));
+                }
 
                 return true;
             });
