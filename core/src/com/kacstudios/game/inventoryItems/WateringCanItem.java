@@ -13,7 +13,7 @@ import com.kacstudios.game.utilities.GridClickEvent;
 public class WateringCanItem extends IDepleteableItem {
     private static Texture texture = new Texture("items/watering_can.png");
     public WateringCanItem(int amount){
-        super(300, true);
+        super(true, 300);
         setAmount(amount);
         setDisplayName("Watering Can");
     }

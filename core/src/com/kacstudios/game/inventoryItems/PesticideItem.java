@@ -13,7 +13,7 @@ public class PesticideItem extends IDepleteableItem{
 
     private static Texture texture = new Texture("items/insecticide.png");
     public PesticideItem(int amount){
-        super(300, true);
+        super(true, 300);
         setAmount(amount);
         setDisplayName("Pesticide");
     }

@@ -12,7 +12,7 @@ public class HarvestingItem extends IInventoryItem {
     private static Texture texture = new Texture("items/scythe.png");
 
     public HarvestingItem(int amount){
-        super(300, true);
+        super(true, 300);
         setAmount(amount);
         setDisplayName("Scythe");
         setDeletable(false);

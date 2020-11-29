@@ -16,7 +16,7 @@ public class EmptyBucketItem extends IInventoryItem{
 
     public EmptyBucketItem() {this(1);}
     public EmptyBucketItem(int amount){
-        super(300, true);
+        super(true, 300);
         setAmount(amount);
         setDisplayName("Empty Bucket");
     }

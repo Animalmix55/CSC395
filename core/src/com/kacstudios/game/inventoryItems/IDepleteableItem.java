@@ -11,6 +11,10 @@ public abstract class IDepleteableItem extends IInventoryItem {
         super(radius, showHover);
     }
 
+    public IDepleteableItem(boolean setHoverSizeToTarget, int radius) {
+        super(true, 300);
+    }
+
     public IDepleteableItem() {
         super();
     }

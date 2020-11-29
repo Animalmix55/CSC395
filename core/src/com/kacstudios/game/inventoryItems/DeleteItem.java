@@ -13,7 +13,7 @@ public class DeleteItem extends IInventoryItem{
     private static Texture texture = new Texture("items/shovel.png");
 
     public DeleteItem(int amount){
-        super(300, true);
+        super(true, 300);
 
         setAmount(amount);
         setDisplayName("Shovel");

@@ -12,6 +12,7 @@ import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.GridVector;
+import com.kacstudios.game.grid.OversizeGridSquare;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
@@ -37,7 +38,7 @@ public abstract class IInventoryItem {
      * @param radius
      * @param isMatchHoverSizeToTarget if the hover box should be 1x1 or match the size to the target
      */
-    private IInventoryItem(boolean isMatchHoverSizeToTarget, int radius) {
+    public IInventoryItem(boolean isMatchHoverSizeToTarget, int radius) {
         this(radius, true, 1, 1);
         this.matchHoverToTarget = isMatchHoverSizeToTarget;
     }
@@ -166,23 +167,31 @@ public abstract class IInventoryItem {
             Vector2 localCoordinates = grid.screenToLocalCoordinates(screenCoordinates);
             GridVector coord = grid.getGridCoordinate(localCoordinates);
             GridClickEvent gridEvent = new GridClickEvent(localCoordinates.x, localCoordinates.y, screen);
-            Vector2 farmerLocation = gridEvent.getFarmerLocation();
 
+            Vector2 farmerLocation = gridEvent.getFarmerLocation();
             boolean closeToFarmer = gridEvent.farmerWithinRadius(radius);
 
             if(prevCoord.x != localCoordinates.x || prevCoord.y != localCoordinates.y || !farmerLocation.equals(prevFarmerCoord)) {
                 if (closeToFarmer) {
                     if (localCoordinates.x < 0 || coord.x >= grid.getGridWidth() || localCoordinates.y < 0 || coord.y >= grid.getGridHeight())
                         hoverImage.setVisible(false);
-                    else if (!hoverImage.isVisible()) {
-                        hoverImage.setVisible(true);
+                    else {
+                        if(!hoverImage.isVisible()) hoverImage.setVisible(true);
+
+                        if(matchHoverToTarget && gridEvent.getGridSquare() != null && OversizeGridSquare.class.isAssignableFrom(gridEvent.getGridSquare().getClass())) {
+                            OversizeGridSquare square = (OversizeGridSquare) gridEvent.getGridSquare();
+                            hoverImage.setScaleX((square.getGridSquareWidth() * Grid.squareSideLength) / hoverImage.getWidth());
+                            hoverImage.setScaleY((square.getGridSquareHeight() * Grid.squareSideLength) / hoverImage.getHeight());
+
+                            coord = square.getGridCoords();
+                        } else if (hoverImage.getScaleX() != 1 || hoverImage.getScaleY() != 1) hoverImage.setScale(1);
                     }
 
                     if (hoverImage.isVisible()) {
                         hoverImage.setPosition(Grid.squareSideLength * coord.x, Grid.squareSideLength * coord.y);
                         hoverImage.setColor(!isBlocked(gridEvent) ? safeColor : unsafeColor);
                     }
-                    prevCoord = coord;
+                    prevCoord = new GridVector(coord.x, coord.y); // fixes reference issue
                 } else hoverImage.setVisible(false);
                 prevFarmerCoord = gridEvent.getFarmerLocation();
             }

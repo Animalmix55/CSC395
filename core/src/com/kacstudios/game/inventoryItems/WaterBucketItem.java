@@ -20,7 +20,7 @@ public class WaterBucketItem extends IDepleteableItem{
 
     public WaterBucketItem() {this(1);}
     public WaterBucketItem(int amount){
-        super(300, true);
+        super(true, 300);
         setAmount(amount);
         setDisplayName("Water Bucket");
     }
