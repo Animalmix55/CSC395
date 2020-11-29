@@ -37,67 +37,6 @@ public class InventoryViewer extends Group {
         background.setVisible(false);
         this.addActor(background);
 
-        ClickListener listener = new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if(!isExpanded) return true;
-
-                mouseDown = true;
-                mouseDownTime = LocalDateTime.now(); // use system time
-                if(event.getTarget().getClass() == ItemButton.class) mouseTarget = (ItemButton) event.getTarget();
-                else mouseTarget = (ItemButton) event.getTarget().getParent();
-
-                return true;
-            }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                mouseDown = false;
-                mouseDownTime = null;
-
-                if(dragItemImage == null) return;
-                boolean placed = false;
-
-                float gridX = dragItemImage.getX() + dragItemImage.getWidth()/2;
-                float gridY = dragItemImage.getY() + dragItemImage.getHeight()/2;
-
-                for(ItemButton[] column: itemButtons){
-                    for(ItemButton itemButton : column){
-                        if(gridX < itemButton.getX()) continue;
-                        if(gridX > itemButton.getX() + itemButton.getWidth()) continue;
-
-                        if(gridY < itemButton.getY()) continue;
-                        if(gridY > itemButton.getY() + itemButton.getHeight()) continue;
-
-                        IInventoryItem temp = itemButton.getItem();
-                        itemButton.setItem(dragItem);
-                        if(temp != null) mouseTarget.setItem(temp);
-                        placed = true;
-
-                        break;
-                    }
-                }
-
-                ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
-                viewInventoryButton.setDeleteMode(false);
-
-                if(!placed) { // put the item back where it was...
-                    mouseTarget.setItem(dragItem);
-                }
-                else if (viewInventoryButton.getItem() != null){
-                    viewInventoryButton.setItem(null);
-                    if(!dragItem.isDeletable()) mouseTarget.setItem(dragItem);
-                    else informSubscribers();
-                }
-
-                dragItemImage.remove();
-                dragItemImage = null;
-                dragItem = null;
-
-                mouseTarget = null;
-            }
-        };
-
         // init buttons
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
@@ -113,7 +52,69 @@ public class InventoryViewer extends Group {
 
                     }
                 };
-                temp.addCaptureListener(listener);
+
+                // handle dragging
+                temp.addCaptureListener(new ClickListener() {
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        if(!isExpanded) return true;
+
+                        mouseDown = true;
+                        mouseDownTime = LocalDateTime.now(); // use system time
+                        mouseTarget = temp;
+
+                        return true;
+                    }
+
+                    @Override
+                    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                        mouseDown = false;
+                        mouseDownTime = null;
+
+                        if(dragItemImage == null) return;
+                        boolean placed = false;
+
+                        float gridX = dragItemImage.getX() + dragItemImage.getWidth()/2;
+                        float gridY = dragItemImage.getY() + dragItemImage.getHeight()/2;
+
+                        for(ItemButton[] column: itemButtons){
+                            for(ItemButton itemButton : column){
+                                if(gridX < itemButton.getX()) continue;
+                                if(gridX > itemButton.getX() + itemButton.getWidth()) continue;
+
+                                if(gridY < itemButton.getY()) continue;
+                                if(gridY > itemButton.getY() + itemButton.getHeight()) continue;
+
+                                IInventoryItem temp1 = itemButton.getItem();
+                                itemButton.setItem(dragItem);
+                                if(temp1 != null) mouseTarget.setItem(temp1);
+                                placed = true;
+
+                                break;
+                            }
+                        }
+
+                        ViewInventoryButton viewInventoryButton = (ViewInventoryButton) itemButtons[columns-1][0];
+                        viewInventoryButton.setDeleteMode(false);
+
+                        if(!placed) { // put the item back where it was...
+                            mouseTarget.setItem(dragItem);
+                        }
+                        else if (viewInventoryButton.getItem() != null){
+                            viewInventoryButton.setItem(null);
+                            if(!dragItem.isDeletable()) mouseTarget.setItem(dragItem);
+                            else informSubscribers();
+                        }
+
+                        dragItemImage.remove();
+                        dragItemImage = null;
+                        dragItem = null;
+
+                        mouseTarget = null;
+                    }
+                });
+
+                // handle selection
                 temp.addCaptureListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {

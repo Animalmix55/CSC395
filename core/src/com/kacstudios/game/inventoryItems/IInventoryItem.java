@@ -17,6 +17,7 @@ import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.ShapeGenerator;
+import com.kacstudios.game.utilities.TimeEngine;
 
 public abstract class IInventoryItem {
     private Integer amount = 1;
@@ -163,6 +164,11 @@ public abstract class IInventoryItem {
     public void whileEquipped(LevelScreen screen) {
         Grid grid = screen.getGrid();
         if(hoverImage != null) {
+            if(TimeEngine.getDilation() == 0) {
+                hoverImage.setVisible(false);
+                return;
+            }
+
             Vector2 screenCoordinates = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             Vector2 localCoordinates = grid.screenToLocalCoordinates(screenCoordinates);
             GridVector coord = grid.getGridCoordinate(localCoordinates);

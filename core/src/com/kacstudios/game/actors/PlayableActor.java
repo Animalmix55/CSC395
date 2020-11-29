@@ -57,7 +57,7 @@ public class PlayableActor extends BaseActor {
         s.addListener(new ClickListener(Input.Buttons.RIGHT){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(isFocused) {
+                if(isFocused && TimeEngine.getDilation() != 0) {
                     super.clicked(event, x, y);
                     float clickX = Gdx.input.getX();
                     float clickY = Gdx.input.getY();
@@ -70,6 +70,8 @@ public class PlayableActor extends BaseActor {
         this.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent e, float x, float y) {
+                if(TimeEngine.getDilation() == 0) return; // dont propagate events in paused game
+
                 if(!getFocused()) { // only do fancy click logic if the object is focused
                     onClick(e, x, y);
                     return;
@@ -138,20 +140,20 @@ public class PlayableActor extends BaseActor {
         double angle=Math.toDegrees(angleBetweenTwoPointsWithFixedPoint(getX(),getY(),x,y,getX(),getY()));
 
         if(angle<=45 && angle >=-45){
-            setAnimation(rightAnimation);
+            setAnimationDirection(Direction.right);
             accelerateAtAngle(0);
         }
         else
         if(angle>45 && angle<=135){
-            setAnimation(upAnimation);
+            setAnimationDirection(Direction.up);
             accelerateAtAngle(90);
         }
         else if (angle>135 || angle <-135){
-            setAnimation(leftAnimation);
+            setAnimationDirection(Direction.left);
             accelerateAtAngle(180);
         }
         else {
-            setAnimation(downAnimation);
+            setAnimationDirection(Direction.down);
             accelerateAtAngle(270);
         }
 
@@ -169,25 +171,16 @@ public class PlayableActor extends BaseActor {
     public void act(float dt) {
         super.act(dt);
 
-        Direction prevDirection = getAnimationDirection();
-        if (isFocused && dt != 0) { // if dt is zero, the game is paused, don't change directions
+        if (isFocused) { // if dt is zero, the game is paused, don't change directions
             // configure sprite direction
             if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                if (prevDirection != Direction.up) {
-                    setAnimation(upAnimation);
-                }
+                setAnimationDirection(Direction.up);
             } else if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                if (prevDirection != Direction.right) {
-                    setAnimation(rightAnimation);
-                }
+                setAnimationDirection(Direction.right);
             } else if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                if (prevDirection != Direction.left) {
-                    setAnimation(leftAnimation);
-                }
+                setAnimationDirection(Direction.left);
             } else if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                if (prevDirection != Direction.down) {
-                    setAnimation(downAnimation);
-                }
+                setAnimationDirection(Direction.down);
             }
 
             // configure acceleration
@@ -241,6 +234,8 @@ public class PlayableActor extends BaseActor {
     }
 
     public void setAnimationDirection(Direction direction) {
+        if(getAnimationDirection() == direction) return;
+
         switch (direction) {
             case up:
                 setAnimation(upAnimation);

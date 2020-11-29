@@ -19,17 +19,13 @@ public class PriceBox extends Group {
     public static final int width = 105;
     private static final int cornerRadius = 20;
 
-    private static Texture greenBox = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
+    private static final Texture greenBox = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
             new Color(0f, 1f, 0f, .4f)));
-    private static Texture greenBoxHover = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
+    private static final Texture greenBoxHover = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
             new Color(0f, 1f, 0f, .7f)));
-    private static Texture redBox = redBox = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
-            new Color(	1f, 0f, 0f, .4f)));
-    private static Texture redBoxHover = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
-            new Color(	1f, 0f, 0f, .7f)));
-    private static Texture disabledTexture = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
+    private static final Texture disabledTexture = new Texture(ShapeGenerator.createRoundedRectangle(width, height, cornerRadius,
             new Color(1f, 1f, 1f, .2f)));
-    private static Label.LabelStyle priceBoxTextStyle =
+    private static final Label.LabelStyle priceBoxTextStyle =
             new Label.LabelStyle(FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 20), Color.WHITE);
 
     private int price;
@@ -48,16 +44,9 @@ public class PriceBox extends Group {
         this.price = price;
         this.type = type;
 
-        switch (type) {
-            case Buy:
-                regularImage = new Image(redBox);
-                hoverImage = new Image(redBoxHover);
-                break;
-            case Sell:
-                regularImage = new Image(greenBox);
-                hoverImage = new Image(greenBoxHover);
-                break;
-        }
+        regularImage = new Image(greenBox);
+        hoverImage = new Image(greenBoxHover);
+
         setHeight(regularImage.getHeight());
         setWidth(regularImage.getWidth());
 

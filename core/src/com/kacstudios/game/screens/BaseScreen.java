@@ -47,20 +47,6 @@ public abstract class BaseScreen implements Screen, InputProcessor
             update(dt * TimeEngine.getDilation());
         }
 
-
-
-
-
-        /*
-        // act methods
-        uiStage.act(dt);
-        mainStage.act(dt);
-
-        // defined by user
-        update(dt);
-
-         */
-
         // clear the screen
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

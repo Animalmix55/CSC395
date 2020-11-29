@@ -159,8 +159,6 @@ public class LevelScreen extends BaseScreen {
         new GridExpandPrompt(this);
 
         pauseMenu = new PauseMenu(this);
-
-        grid.addGridSquare(3, 3, new BarnStructure());
     }
 
     public void update(float dt) {

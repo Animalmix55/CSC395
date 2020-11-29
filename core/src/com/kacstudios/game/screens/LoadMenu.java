@@ -15,6 +15,7 @@ import com.kacstudios.game.games.FarmaniaGame;
 
 import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.GridVector;
+import com.kacstudios.game.grid.OversizeGridSquare;
 import com.kacstudios.game.grid.plants.Plant;
 
 import com.kacstudios.game.inventoryItems.*;
@@ -329,6 +330,11 @@ public class LoadMenu extends BaseScreen {
                         else tempLine[8] = "f";
                     }
                     else {
+                        GridSquare square = loadedSquares[column][row];
+                        if(square.getGridCoords().x != column || square.getGridCoords().y != row) {
+                            continue; // for oversize squares, skip over saving several times
+                        }
+
                         tempLine = new String[4];
                         tempLine[0] = String.valueOf(column);
                         tempLine[1] = String.valueOf(row);
