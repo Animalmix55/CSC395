@@ -1,4 +1,4 @@
-II,com.kacstudios.game.inventoryItems.BarnItem,1
+II,com.kacstudios.game.inventoryItems.BarnItem,100
 ID,com.kacstudios.game.inventoryItems.WaterBucketItem,101,0.0
 II,com.kacstudios.game.inventoryItems.BasicTractorItem,100
 II,com.kacstudios.game.inventoryItems.EmptyBucketItem,7

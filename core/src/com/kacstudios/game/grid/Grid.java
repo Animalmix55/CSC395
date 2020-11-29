@@ -230,11 +230,11 @@ public class Grid extends Group {
         return gridSquares;
     }
 
-    public GridVector getGridCoordinate(Vector2 screenCoordinate){
-        return new GridVector((int)screenCoordinate.x / width, (int)screenCoordinate.y / height);
+    public GridVector getGridCoordinate(Vector2 localCoordinate){
+        return new GridVector((int)localCoordinate.x / squareSideLength, (int)localCoordinate.y / squareSideLength);
     }
-    public GridVector getGridCoordinate(Vector3 screenCoordinate){
-        return new GridVector((int)screenCoordinate.x / width, (int)screenCoordinate.y / height);
+    public GridVector getGridCoordinate(Vector3 localCoordinate){
+        return new GridVector((int)localCoordinate.x / squareSideLength, (int)localCoordinate.y / squareSideLength);
     }
 
     public Integer getSquareSideLength() {
@@ -478,5 +478,23 @@ public class Grid extends Group {
         BaseActor.setWorldBounds(getWidth(), getHeight());
 
         createOutOfBoundsArea();
+    }
+
+    /**
+     * Checks to see if there is room for an oversize gridSquare at the place clicked
+     * @param width
+     * @param height
+     * @return
+     */
+    public boolean hasClearanceFor(int startX, int startY, int width, int height) {
+        if (startX + width > getGridWidth() || startY + height > getGridHeight()) return false;
+
+        for (int x = startX; x < startX + width; x++) {
+            for (int y = startY; y < startY + height; y++) {
+                if (getSquare(x, y) != null) return false;
+            }
+        }
+
+        return true;
     }
 }

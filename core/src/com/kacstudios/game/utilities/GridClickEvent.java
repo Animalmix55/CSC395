@@ -85,13 +85,7 @@ public class GridClickEvent {
         int startX = getGridLocation().x;
         int startY = getGridLocation().y;
 
-        for (int x = startX; x < startX + width; x++) {
-            for (int y = startY; y < startY + width; y++) {
-                if (grid.getSquare(x, y) != null) return false;
-            }
-        }
-
-        return true;
+        return grid.hasClearanceFor(startX, startY, width, height);
     }
 
     public LevelScreen getScreen() {

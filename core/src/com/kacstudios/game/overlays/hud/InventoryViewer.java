@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.inventoryItems.IInventoryItem;
 import com.kacstudios.game.utilities.GridClickEvent;
 
@@ -18,6 +19,7 @@ public class InventoryViewer extends Group {
     private static final int rows = 3;
     private static final int columns = 9;
     private final ItemButton[][] itemButtons = new ItemButton[columns][rows];
+    private ItemButton selectedButton;
     private boolean isExpanded = false;
     private final Image background;
     private boolean mouseDown = false;
@@ -26,8 +28,10 @@ public class InventoryViewer extends Group {
     private IInventoryItem dragItem;
     private Image dragItemImage;
     private final ArrayList<Runnable> updateListeners = new ArrayList<>();
+    private HUD hud;
 
-    public InventoryViewer(){
+    public InventoryViewer(HUD hud){
+        this.hud = hud;
         background = new Image(new Texture("bottombar/background-inventory-extension.png"));
         background.setY(64);
         background.setVisible(false);
@@ -105,9 +109,7 @@ public class InventoryViewer extends Group {
                     public void clicked(InputEvent event, float x, float y) {
                         if(!temp.getIsHotItem()) return;
 
-                        for(int j = 0; j < columns - 1; j++){
-                            itemButtons[j][0].setSelected(itemButtons[j][0] == temp);
-                        }
+                        selectButton(temp);
                     }
                 });
                 temp.setX(8 + x * temp.getWidth());
@@ -120,7 +122,7 @@ public class InventoryViewer extends Group {
         }
 
 
-        itemButtons[0][0].setSelected(true); // select default first slot
+        selectButton(itemButtons[0][0]); // select default first slot
         setWidth(background.getWidth());
 
         // init ViewInventoryButton
@@ -161,6 +163,10 @@ public class InventoryViewer extends Group {
                 dragItemImage.setY(localCoordinates.y - dragItemImage.getHeight() / 2);
             }
         }
+
+        if(selectedButton != null && selectedButton.getItem() != null){
+            selectedButton.getItem().whileEquipped(hud.getScreen().getGrid(), hud.getScreen().getFarmer());
+        }
     }
 
     private void toggleViewer(){
@@ -174,11 +180,7 @@ public class InventoryViewer extends Group {
     }
 
     public void onUseItem(GridClickEvent event){
-        for(int i = 0; i < columns - 1; i++){
-            if(itemButtons[i][0].getSelected()){
-                itemButtons[i][0].onUseItem(event);
-            }
-        }
+        if(selectedButton != null) selectedButton.onUseItem(event);
         informSubscribers();
     }
 
@@ -321,5 +323,16 @@ public class InventoryViewer extends Group {
                 updateListeners.remove(u);
             }
         });
+    }
+
+    private void selectButton(ItemButton button) {
+        Grid grid = hud.getScreen().getGrid();
+        if(selectedButton != null) {
+            selectedButton.setSelected(false);
+            if (selectedButton.getItem() != null) selectedButton.getItem().onEquippedChange(false, grid);
+        }
+        button.setSelected(true);
+        if (button.getItem() != null) button.getItem().onEquippedChange(true, grid);
+        selectedButton = button;
     }
 }

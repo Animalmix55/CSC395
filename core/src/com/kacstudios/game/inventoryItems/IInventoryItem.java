@@ -1,8 +1,11 @@
 package com.kacstudios.game.inventoryItems;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.kacstudios.game.actors.Farmer.Farmer;
+import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.GridClickEvent;
@@ -11,7 +14,8 @@ public abstract class IInventoryItem {
     private Integer amount = 1;
     private String displayName = null;
     private String description = null;
-    private String inventoryItemType = null;
+    private boolean showHover = false;
+    private int radius = 300;
     private boolean isDeletable = true;
 
     /**
@@ -83,9 +87,33 @@ public abstract class IInventoryItem {
     }
 
     /**
-     * To be called every frame when selected, can draw screen
+     * To be called every frame when selected, can draw on grid
      */
-    public void draw() {
+    public void whileEquipped(Grid grid, Farmer farmer) {
         // pass
+    }
+
+    /**
+     * To be called when the item is equipped and unequipped
+     * @param isEquipped
+     */
+    public void onEquippedChange(boolean isEquipped, Grid grid) {
+        // pass
+    }
+
+    protected void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    protected int getRadius() {
+        return radius;
+    }
+
+    protected void setShowHover(boolean showHover) {
+        this.showHover = showHover;
+    }
+
+    protected boolean isShowHover() {
+        return showHover;
     }
 }
