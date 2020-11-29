@@ -147,7 +147,7 @@ public class MarketPage extends Group {
                 new ShopItem(new EmptyBucketItem(), ShopItem.ItemAccessibility.Both, 20, 10)
         });
 
-        private static final MarketPage.Data WATERSOURCE = new MarketPage.Data(0, "Water Spigot", "An outdoor water source used to refill buckets.", new ShopItem[]{
+        private static final MarketPage.Data WATERSOURCE = new MarketPage.Data(0, "Pond", "An outdoor water source used to refill buckets.", new ShopItem[]{
                 new ShopItem(new WaterSourceItem(), ShopItem.ItemAccessibility.Both, 1000, 100)
         });
 

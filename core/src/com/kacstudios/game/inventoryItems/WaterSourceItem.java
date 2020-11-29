@@ -13,7 +13,7 @@ public class WaterSourceItem extends IInventoryItem{
 
     public WaterSourceItem(int amount){
         setAmount(amount);
-        setDisplayName("Water Spigot");
+        setDisplayName("Pond");
     }
 
     @Override
