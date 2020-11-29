@@ -75,6 +75,25 @@ public class GridClickEvent {
                 squareY - radius <= getFarmerLocation().y);
     }
 
+    /**
+     * Checks to see if there is room for an oversize gridSquare at the place clicked
+     * @param width
+     * @param height
+     * @return
+     */
+    public boolean hasClearanceFor(int width, int height) {
+        int startX = getGridLocation().x;
+        int startY = getGridLocation().y;
+
+        for (int x = startX; x < startX + width; x++) {
+            for (int y = startY; y < startY + width; y++) {
+                if (grid.getSquare(x, y) != null) return false;
+            }
+        }
+
+        return true;
+    }
+
     public LevelScreen getScreen() {
         return screen;
     }

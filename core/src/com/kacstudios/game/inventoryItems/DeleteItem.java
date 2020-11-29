@@ -3,6 +3,7 @@ package com.kacstudios.game.inventoryItems;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.ContextMenu.ContextMenu;
 import com.kacstudios.game.overlays.hud.ItemButton;
@@ -23,6 +24,11 @@ public class DeleteItem extends IInventoryItem{
         if (event.getGridSquare() != null) {
             Vector2 coords = event.getGridSquare().getStage().screenToStageCoordinates(event.getEventCoords());
 
+            GridSquare square = event.getGridSquare();
+
+            // not so fast, you can't get rid of a disaster with a shovel!
+            if(Plant.class.isAssignableFrom(square.getClass()) && ((Plant) square).getDisaster() != null) return;
+
             ContextMenu menu = new ContextMenu((int) coords.x, (int) coords.y, new ContextMenu.ContextMenuOption[] {
                     new ContextMenu.ContextMenuOption("Delete",
                             () -> { if(event.farmerWithinRadius(300)) event.setSquare(null); })
@@ -36,13 +42,13 @@ public class DeleteItem extends IInventoryItem{
                     }
                 }
             };
-            event.getGridSquare().setColor(new Color(255, 255, 255, .4f));
+            square.setColor(new Color(255, 255, 255, .4f));
 
             menu.setPosition(coords.x - menu.getWidth()/2, coords.y - menu.getHeight()/2);
 
             menu.setOpen(true);
 
-            event.getGridSquare().getStage().addActor(menu);
+            square.getStage().addActor(menu);
         }
 
         parent.checkItem();

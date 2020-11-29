@@ -436,9 +436,20 @@ public class Grid extends Group {
         }
 
         // rebuild array and reposition squares
+        ArrayList<OversizeGridSquare> handledOsSquares = new ArrayList<>();
         for (int x = 0; x < oldGrid.length; x++) {
             for (int y = 0; y < oldGrid[x].length; y++) {
                 GridSquare actor = oldGrid[x][y];
+                if(actor == null) continue;
+
+                // handle oversize squares
+                if(OversizeGridSquare.class.isAssignableFrom(actor.getClass())) {
+                    if(handledOsSquares.contains(actor)) continue; // don't redo an actor already moved
+
+                    OversizeGridSquare temp = (OversizeGridSquare) actor;
+                    handledOsSquares.add(temp);
+                }
+
                 addGridSquare(x + xOffset, y + yOffset, actor);
             }
         }

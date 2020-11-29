@@ -23,4 +23,8 @@ public class BarnStructure extends OversizeGridSquare {
 
         addActor(new Image(barnTexture));
     }
+
+    public static Texture getTexture() {
+        return barnTexture;
+    }
 }

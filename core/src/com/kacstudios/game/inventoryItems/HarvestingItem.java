@@ -22,7 +22,7 @@ public class HarvestingItem extends IInventoryItem {
         if (event.getGridSquare() == null) return;
         if (Plant.class.isAssignableFrom(event.getGridSquare().getClass())) {
             Plant target = (Plant) event.getGridSquare();
-            if (target.getFullyGrown() == true){
+            if (target.getFullyGrown() == true && !target.getDead()){
                 parent.getViewer().addItem(target.getHarvestItem(1));
                 event.setSquare(null);
             }

@@ -81,4 +81,11 @@ public abstract class IInventoryItem {
     public boolean isDeletable() {
         return isDeletable;
     }
+
+    /**
+     * To be called every frame when selected, can draw screen
+     */
+    public void draw() {
+        // pass
+    }
 }

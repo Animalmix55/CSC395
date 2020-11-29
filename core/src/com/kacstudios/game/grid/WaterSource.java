@@ -16,6 +16,8 @@ public class WaterSource extends GridSquare{
 
     public WaterSource() {
         setTexture("grid-textures/water.png");
+        setCollideWithPlayer(true);
+        setBoundaryRectangle();
     }
 
     @Override

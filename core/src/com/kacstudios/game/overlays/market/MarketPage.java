@@ -138,6 +138,10 @@ public class MarketPage extends Group {
                 new ShopItem(new BasicTractorItem(), ShopItem.ItemAccessibility.Both, 40000, 15000)
         });
 
+        private static final MarketPage.Data BARN = new MarketPage.Data(0, "Barn", "A beautiful, mid-century modern barn fitted with all of the features a farmer could ever need. Looks pretty and is a great status piece to show off without any associated functionality.", new ShopItem[]{
+                new ShopItem(new BarnItem(), ShopItem.ItemAccessibility.Both, 100000, 30000)
+        });
+
         private static final MarketPage.Data WATERINGCAN = new MarketPage.Data(0, "Watering Can", "Waters a plant which increases its growth rate and adds a higher protection against fire.", new ShopItem[]{
                 new ShopItem(new WateringCanItem(), ShopItem.ItemAccessibility.Both, 20,10)
         });
@@ -156,7 +160,7 @@ public class MarketPage extends Group {
         });
 
         private static final MarketPage.Data[] PAGES = new MarketPage.Data[] {
-                CORN, BLUEBERRY, POTATO, WATERINGCAN, WATERBUCKET, WATERSOURCE, PESTICIDE, TRACTOR
+                CORN, BLUEBERRY, POTATO, WATERINGCAN, WATERBUCKET, WATERSOURCE, PESTICIDE, TRACTOR, BARN
         };
 
         public static MarketPage.Data[] getPages() {
