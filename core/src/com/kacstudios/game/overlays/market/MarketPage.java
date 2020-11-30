@@ -134,7 +134,7 @@ public class MarketPage extends Group {
                 new ShopItem(new PotatoesPlantItem(), ShopItem.ItemAccessibility.Both, 4, 2),
         });
 
-        private static final MarketPage.Data TRACTOR = new MarketPage.Data(0, "Tractor", "An engineering vehicle specifically designed to deliver a high tractive effort at slow speeds, for the purposes of hauling a trailer or machinery such as that used in agriculture.", new ShopItem[]{
+        private static final MarketPage.Data TRACTOR = new MarketPage.Data(0, "Tractor", "An engineering vehicle specifically designed to deliver a high tractive effort at slow speeds, for the purposes of hauling a trailer or machinery such as that used in agriculture. Left click to ride.", new ShopItem[]{
                 new ShopItem(new BasicTractorItem(), ShopItem.ItemAccessibility.Both, 40000, 15000)
         });
 
@@ -146,12 +146,12 @@ public class MarketPage extends Group {
                 new ShopItem(new WateringCanItem(), ShopItem.ItemAccessibility.Both, 20,10)
         });
 
-        private static final MarketPage.Data WATERBUCKET = new MarketPage.Data(0, "Water Bucket", "A metal bucket used to hold water and put out fires.", new ShopItem[]{
+        private static final MarketPage.Data WATERBUCKET = new MarketPage.Data(0, "Water Bucket", "A metal bucket used to hold water and put out fires. Can be refilled at a water source.", new ShopItem[]{
                 new ShopItem(new WaterBucketItem(), ShopItem.ItemAccessibility.Both, 50, 20),
                 new ShopItem(new EmptyBucketItem(), ShopItem.ItemAccessibility.Both, 20, 10)
         });
 
-        private static final MarketPage.Data WATERSOURCE = new MarketPage.Data(0, "Pond", "An outdoor water source used to refill buckets.", new ShopItem[]{
+        private static final MarketPage.Data WATERSOURCE = new MarketPage.Data(0, "Pond", "An outdoor water source used to refill buckets. Waters any adjacent plants, given them increased fire resistance and faster growth.", new ShopItem[]{
                 new ShopItem(new WaterSourceItem(), ShopItem.ItemAccessibility.Both, 1000, 100)
         });
 

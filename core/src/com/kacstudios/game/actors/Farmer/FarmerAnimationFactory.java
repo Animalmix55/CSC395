@@ -268,13 +268,32 @@ public class FarmerAnimationFactory {
     }
 
     public static TextureRegion generatePreviewFrame(Farmer.FarmerTextureData textureData) {
+        return generatePreviewAnimation(Direction.down, textureData).getKeyFrame(0);
+    }
+
+    public static Animation<TextureRegion> generatePreviewAnimation(Direction direction, Farmer.FarmerTextureData textureData) {
+        ArrayList<TextureAtlas.AtlasRegion> skinFrames;
+        switch (direction) {
+            case right:
+                skinFrames = FarmerAnimationFactory.getTextures().right.skinKeyframes;
+                break;
+            case left:
+                skinFrames = FarmerAnimationFactory.getTextures().left.skinKeyframes;
+                break;
+            case up:
+                skinFrames = FarmerAnimationFactory.getTextures().back.skinKeyframes;
+                break;
+            default:
+                skinFrames = FarmerAnimationFactory.getTextures().front.skinKeyframes;
+        }
+
         return FarmerAnimationFactory.createAnimation(
-                textureData.pantsColor, retrievePart(Direction.down, CustomizationPart.pants, textureData.pantsName),
-                textureData.skinColor, FarmerAnimationFactory.getTextures().front.skinKeyframes,
-                textureData.shirtColor, retrievePart(Direction.down, CustomizationPart.shirt, textureData.shirtName),
-                textureData.headColor, retrievePart(Direction.down, CustomizationPart.head, textureData.headName),
+                textureData.pantsColor, retrievePart(direction, CustomizationPart.pants, textureData.pantsName),
+                textureData.skinColor, skinFrames,
+                textureData.shirtColor, retrievePart(direction, CustomizationPart.shirt, textureData.shirtName),
+                textureData.headColor, retrievePart(direction, CustomizationPart.head, textureData.headName),
                 false
-        ).getKeyFrame(0);
+        );
     }
 
     public static void updateFarmerTextures(Farmer farmer) {

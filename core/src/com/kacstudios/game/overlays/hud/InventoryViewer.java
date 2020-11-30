@@ -28,11 +28,12 @@ public class InventoryViewer extends Group {
     private IInventoryItem dragItem;
     private Image dragItemImage;
     private final ArrayList<Runnable> updateListeners = new ArrayList<>();
+    private static Texture expansionBg = new Texture("bottombar/background-inventory-extension.png");
     private HUD hud;
 
     public InventoryViewer(HUD hud){
         this.hud = hud;
-        background = new Image(new Texture("bottombar/background-inventory-extension.png"));
+        background = new Image(expansionBg);
         background.setY(64);
         background.setVisible(false);
         this.addActor(background);

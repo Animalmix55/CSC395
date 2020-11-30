@@ -60,10 +60,14 @@ public class GameSounds {
             playIds.toArray(ids);
             return ids;
         }
+
+        public void stopAll() {
+            sound.stop();
+        }
     }
 
-    private static float musicVolume = 50;
-    private static float sfxVolume = 50;
+    private static float musicVolume = .2f;
+    private static float sfxVolume = .5f;
 
     public static Music birdsChirping = Gdx.audio.newMusic(Gdx.files.internal("sounds-music/gamenoise.ogg"));
     public static Music gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds-music/Music.ogg"));
@@ -180,5 +184,11 @@ public class GameSounds {
         setMusicVolume(.2f);
         setSfxVolume(.5f);
         saveGlobalSettingsToFile();
+    }
+
+    public static void stopGameSounds() {
+        for (SoundWrapper soundWrapper : sfx) {
+            soundWrapper.stopAll();
+        }
     }
 }

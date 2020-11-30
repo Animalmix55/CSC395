@@ -21,18 +21,20 @@ import com.kacstudios.game.utilities.TimeEngine;
 import static com.kacstudios.game.screens.LoadMenu.saveLevel;
 
 public class PauseMenu extends Group {
-    private LevelScreen screen;
-    private Image defaultBackground;
-    private Image saveBackground;
+    private final LevelScreen screen;
 
     private final int pauseMenuWidth = 324;
-    private final int pauseMenuX = 640 - (pauseMenuWidth/2);
     private final int pauseMenuHeight = 242;
     private final int saveMenuHeight = 358;
 
     private final int pauseMenuButtonWidth = 304;
-    private final int pauseMenuButtonX = 640 - (pauseMenuButtonWidth/2);
     private final int pauseMenuButtonHeight = 48;
+
+    private Image defaultBackground = new Image(new Texture(ShapeGenerator.createRoundedRectangle(pauseMenuWidth, pauseMenuHeight,
+            16, new Color(0,0,0,.5f))));
+
+    private Image saveBackground = new Image(new Texture(ShapeGenerator.createRoundedRectangle(pauseMenuWidth, saveMenuHeight, 16,
+                        new Color(0,0,0,.5f))));
 
     PauseMenuButton[] pauseButtonsArray;
     Group pauseButtons = new Group();
@@ -49,46 +51,17 @@ public class PauseMenu extends Group {
         screen = inputScreen;
 
         // CODE FOR ADDING DEFAULT MENU ASSETS (INITIAL PAUSE MENU)
-        defaultBackground = new Image(
-                new Texture(ShapeGenerator.createRoundedRectangle(
-                        pauseMenuWidth,
-                        pauseMenuHeight,
-                        16,
-                        new Color(0,0,0,.5f)
-                )
-                )
-        );
-        defaultBackground.setX(pauseMenuX);
-        defaultBackground.setY(360 - (pauseMenuHeight/2)); // center
+        float pauseMenuX = (inputScreen.getUIStage().getWidth() - pauseMenuWidth)/2;
+        int pauseMenuButtonX = (int)((float) (pauseMenuWidth - pauseMenuButtonWidth))/2;
+
+        setX(pauseMenuX);
+        setY((inputScreen.getUIStage().getHeight() - pauseMenuHeight)/2);
+
+        setHeight(pauseMenuHeight);
+        setWidth(pauseMenuWidth);
         addActor(defaultBackground);
 
-        // 58 apart on Y coordinate
-        PauseMenuButton resumeButton = new PauseMenuButton("Resume", pauseMenuButtonX, (447 - (pauseMenuButtonHeight/2)));
-        resumeButton.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setMenu_resume();
-                TimeEngine.resume();
-            }
-        });
-        pauseButtons.addActor(resumeButton);
-        PauseMenuButton saveButton = new PauseMenuButton("Save", pauseMenuButtonX, (389 - (pauseMenuButtonHeight/2)));
-        saveButton.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setMenu_save();
-            }
-        });
-        pauseButtons.addActor(saveButton);
-        PauseMenuButton optionsButton = new PauseMenuButton("Options", pauseMenuButtonX, (331 - (pauseMenuButtonHeight/2)));
-        optionsButton.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setMenu_options();
-            }
-        });
-        pauseButtons.addActor(optionsButton);
-        PauseMenuButton exitButton = new PauseMenuButton("Exit Game", pauseMenuButtonX, (273 - (pauseMenuButtonHeight/2)));
+        PauseMenuButton exitButton = new PauseMenuButton("Exit Game", pauseMenuButtonX, 10);
         exitButton.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -98,6 +71,34 @@ public class PauseMenu extends Group {
         pauseButtons.addActor(exitButton);
         addActor(pauseButtons);
 
+        PauseMenuButton optionsButton = new PauseMenuButton("Options", pauseMenuButtonX, (int) exitButton.getTop() + 10);
+        optionsButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_options();
+            }
+        });
+        pauseButtons.addActor(optionsButton);
+
+        PauseMenuButton saveButton = new PauseMenuButton("Save", pauseMenuButtonX, (int) optionsButton.getTop() + 10);
+        saveButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_save();
+            }
+        });
+        pauseButtons.addActor(saveButton);
+
+        // 58 apart on Y coordinate
+        PauseMenuButton resumeButton = new PauseMenuButton("Resume", pauseMenuButtonX, (int) saveButton.getTop() + 10);
+        resumeButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_resume();
+                TimeEngine.resume();
+            }
+        });
+        pauseButtons.addActor(resumeButton);
 
 
 
@@ -105,20 +106,24 @@ public class PauseMenu extends Group {
 
 
         // CODE FOR ADDING SAVE MENU ASSETS
-        saveBackground = new Image(
-                new Texture(ShapeGenerator.createRoundedRectangle(
-                        pauseMenuWidth,
-                        saveMenuHeight,
-                        16,
-                        new Color(0,0,0,.5f)
-                )
-                )
-        );
-        saveBackground.setX(pauseMenuX);
-        saveBackground.setY(360 - (saveMenuHeight/2)); // center
-        addActor(saveBackground);
+        pauseButtonsArray = new PauseMenuButton[5];
+        saveBackground.setPosition(0, -(saveBackground.getHeight() - getHeight())/2);
 
-        PauseMenuButton save_backButton = new PauseMenuButton("Back", pauseMenuButtonX, (505 - (pauseMenuButtonHeight/2)));
+        for (int i = 4; i >= 0; i--) {
+            pauseButtonsArray[i] = new PauseMenuButton(String.format("Save #%d",i+1), pauseMenuButtonX,  (int) saveBackground.getY() + 10 + (4 - i) * (pauseMenuButtonHeight + 10));
+            saveButtons.addActor(pauseButtonsArray[i]);
+            int finalI = i;
+            pauseButtonsArray[i].addCaptureListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    saveLevel(screen, finalI +1);
+                    saveMenu_setCurrentLevel(finalI +1);
+                    setMenu_pause();
+                }
+            });
+        }
+
+        PauseMenuButton save_backButton = new PauseMenuButton("Back", pauseMenuButtonX, (int) pauseButtonsArray[0].getTop() + 10);
         save_backButton.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -126,26 +131,10 @@ public class PauseMenu extends Group {
             }
         });
         saveButtons.addActor(save_backButton);
-        pauseButtonsArray = new PauseMenuButton[5];
-        for (int i=0;i<5;i++) {
-            pauseButtonsArray[i] = new PauseMenuButton(String.format("Save #%d",i+1), pauseMenuButtonX, (447-(58*i) - (pauseMenuButtonHeight/2)));
-        }
-        for (int i=0;i<5;i++) {
-            saveButtons.addActor(
-                    pauseButtonsArray[i]
-            );
-        }
-        for (int i=0;i<5;i++) {
-            int finalI = i;
-            saveButtons.getChildren().get(i+1).addCaptureListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    saveLevel(screen,finalI+1);
-                    saveMenu_setCurrentLevel(finalI+1);
-                    setMenu_pause();
-                }
-            });
-        }
+        saveButton.setWidth(getWidth());
+        saveButton.setHeight(save_backButton.getTop() + 10);
+
+        addActor(saveBackground);
         addActor(saveButtons);
 
 
@@ -156,11 +145,32 @@ public class PauseMenu extends Group {
 
         // CODE FOR ADDING OPTIONS MENU ASSETS
         // no background is added here since the options menu will be the same size as the default menu size
+        PauseMenuButton options_saveSettings = new PauseMenuButton("Return", pauseMenuButtonX, 10);
+        options_saveSettings.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setMenu_pause();
+            }
+        });
+        optionsButtons.addActor(options_saveSettings);
+
+        PauseMenuButton options_resetToDefault = new PauseMenuButton("Reset to Default", pauseMenuButtonX,
+                (int) options_saveSettings.getTop() + 10);
+        options_resetToDefault.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameSounds.setDefaults();
+                updateSliders();
+            }
+        });
+        optionsButtons.addActor(options_resetToDefault);
+
+
         options_gameVolumeSlider = new PauseMenuButton(
                 "Sound Volume",
                 new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
                 pauseMenuButtonX,
-                (447 - (pauseMenuButtonHeight/2))
+                (int) options_resetToDefault.getTop() + 10
         );
         options_gameVolumeSlider.getPrivateButtonSlider().setValue(GameSounds.getSfxVolume());
         options_gameVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
@@ -188,7 +198,7 @@ public class PauseMenu extends Group {
                 "Music Volume",
                 new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
                 pauseMenuButtonX,
-                (389 - (pauseMenuButtonHeight/2))
+                (int) options_gameVolumeSlider.getTop() + 10
         );
         options_musicVolumeSlider.getPrivateButtonSlider().setValue(GameSounds.getMusicVolume());
         options_musicVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
@@ -212,24 +222,7 @@ public class PauseMenu extends Group {
 
 
         optionsButtons.addActor(options_musicVolumeSlider);
-        PauseMenuButton options_resetToDefault = new PauseMenuButton("Reset to Default", pauseMenuButtonX, (331 - (pauseMenuButtonHeight / 2)));
-        options_resetToDefault.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                GameSounds.setDefaults();
-                updateSliders();
-            }
-        });
-        optionsButtons.addActor(options_resetToDefault);
 
-        PauseMenuButton options_saveSettings = new PauseMenuButton("Return", pauseMenuButtonX, (273 - (pauseMenuButtonHeight / 2)));
-        options_saveSettings.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setMenu_pause();
-            }
-        });
-        optionsButtons.addActor(options_saveSettings);
         addActor(optionsButtons);
 
 
@@ -240,21 +233,8 @@ public class PauseMenu extends Group {
 
         // CODE FOR ADDING EXIT MENU ASSETS
         // no background is added here since the exit menu will be the same size as the default menu size
-        PauseMenuButton confirmLine1 = new PauseMenuButton("Unsaved changes will be lost",pauseMenuButtonX, (447 - (pauseMenuButtonHeight/2)), 16, Color.WHITE, Color.CLEAR);
-        exitButtons.addActor(confirmLine1);
-        PauseMenuButton confirmLine2 = new PauseMenuButton("Are you sure you want to continue?",pauseMenuButtonX, (389 - (pauseMenuButtonHeight/2)), 16, Color.WHITE, Color.CLEAR);
-        exitButtons.addActor(confirmLine2);
 
-        PauseMenuButton exit_confirmButton = new PauseMenuButton("Yes", pauseMenuButtonX, (331 - (pauseMenuButtonHeight/2)));
-        exit_confirmButton.addCaptureListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                TimeEngine.resume();
-                FarmaniaGame.setActiveScreen(new MainMenu());
-            }
-        });
-        exitButtons.addActor(exit_confirmButton);
-        PauseMenuButton exit_cancelButton = new PauseMenuButton("No", pauseMenuButtonX, (273 - (pauseMenuButtonHeight/2)));
+        PauseMenuButton exit_cancelButton = new PauseMenuButton("No", pauseMenuButtonX, 10);
         exit_cancelButton.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -262,6 +242,26 @@ public class PauseMenu extends Group {
             }
         });
         exitButtons.addActor(exit_cancelButton);
+
+        PauseMenuButton exit_confirmButton = new PauseMenuButton("Yes", pauseMenuButtonX, (int) exit_cancelButton.getTop() + 10);
+        exit_confirmButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                TimeEngine.resume();
+                FarmaniaGame.setActiveScreen(new MainMenu());
+                GameSounds.stopGameSounds();
+            }
+        });
+        exitButtons.addActor(exit_confirmButton);
+
+        PauseMenuButton confirmLine2 = new PauseMenuButton("Are you sure you want to continue?",pauseMenuButtonX, (int) exit_confirmButton.getTop() + 10,
+                16, Color.WHITE, Color.CLEAR);
+        exitButtons.addActor(confirmLine2);
+
+        PauseMenuButton confirmLine1 = new PauseMenuButton("Unsaved changes will be lost",pauseMenuButtonX,
+                (int) confirmLine2.getTop() + 10, 16, Color.WHITE, Color.CLEAR);
+        exitButtons.addActor(confirmLine1);
+
         addActor(exitButtons);
 
 
@@ -272,12 +272,13 @@ public class PauseMenu extends Group {
 
 
         // set everything invisible here, so that when it's added into the levelscreen, the pause menu doesn't show up by default
-        defaultBackground.setVisible(false);
-        pauseButtons.setVisible(false);
-        saveButtons.setVisible(false);
+
         saveBackground.setVisible(false);
+        saveButtons.setVisible(false);
         optionsButtons.setVisible(false);
         exitButtons.setVisible(false);
+
+        setVisible(false);
 
         // add to screen UI
         screen.getUIStage().addActor(this);
@@ -287,8 +288,7 @@ public class PauseMenu extends Group {
      * Sets pause menu as being invisible by setting the default menu invisible
      */
     public void setMenu_resume() {
-        defaultBackground.setVisible(false);
-        pauseButtons.setVisible(false);
+        setVisible(false);
         setCurrentMenu(null);
     }
 
@@ -307,6 +307,7 @@ public class PauseMenu extends Group {
         // set original menu visible
         defaultBackground.setVisible(true);
         pauseButtons.setVisible(true);
+        setVisible(true);
         setCurrentMenu("pause");
     }
 
@@ -316,8 +317,8 @@ public class PauseMenu extends Group {
      */
     public void setMenu_save() {
         // set default menu invisible
-        defaultBackground.setVisible(false);
         pauseButtons.setVisible(false);
+        defaultBackground.setVisible(false);
         // set save menu visible
         saveButtons.setVisible(true);
         saveBackground.setVisible(true);

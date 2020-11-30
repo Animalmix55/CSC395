@@ -40,7 +40,7 @@ public class Plant extends GridSquare {
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
-    private boolean canDry = false;
+    private boolean canDry = true;
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
@@ -235,5 +235,11 @@ public class Plant extends GridSquare {
     public IInventoryItem getHarvestItem(int amount) {
         if(harvestItemConstructor != null) return harvestItemConstructor.createInstance(amount);
         return null;
+    }
+
+    @Override
+    public boolean remove() {
+        if(getDisaster() != null) setDisaster(null);
+        return super.remove();
     }
 }

@@ -41,7 +41,7 @@ public class Farmer extends PlayableActor {
     @Override
     public void act(float dt) {
         super.act(dt);
-        if(isMoving()) GameSounds.walkingSound.resume(soundId);
+        if(isMoving() || (getAction() != null && !getAction().isComplete())) GameSounds.walkingSound.resume(soundId);
         else GameSounds.walkingSound.pause(soundId);
     }
 
