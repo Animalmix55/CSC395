@@ -60,6 +60,10 @@ public class GameSounds {
             playIds.toArray(ids);
             return ids;
         }
+
+        public void stopAll() {
+            sound.stop();
+        }
     }
 
     private static float musicVolume = .2f;
@@ -180,5 +184,11 @@ public class GameSounds {
         setMusicVolume(.2f);
         setSfxVolume(.5f);
         saveGlobalSettingsToFile();
+    }
+
+    public static void stopGameSounds() {
+        for (SoundWrapper soundWrapper : sfx) {
+            soundWrapper.stopAll();
+        }
     }
 }

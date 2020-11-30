@@ -249,6 +249,7 @@ public class PauseMenu extends Group {
             public void clicked(InputEvent event, float x, float y) {
                 TimeEngine.resume();
                 FarmaniaGame.setActiveScreen(new MainMenu());
+                GameSounds.stopGameSounds();
             }
         });
         exitButtons.addActor(exit_confirmButton);
