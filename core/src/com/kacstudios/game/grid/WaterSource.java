@@ -38,9 +38,23 @@ public class WaterSource extends GridSquare{
                 Plant plant = (Plant) square;
                 if (!plant.getWatered()) {
                     plant.setWatered(true);
-                    plant.setSecondsToDry(-1); // never dries
                 }
+                plant.setCanDry(false); // never dries
             }
         }
+    }
+
+    @Override
+    public boolean remove() {
+        ArrayList<GridSquare> adj = getAdjacentSquares();
+        for (GridSquare square:
+                adj) {
+            if (Plant.class.isAssignableFrom(square.getClass())) {
+                Plant plant = (Plant) square;
+                plant.setCanDry(true);
+                plant.setWatered(true); // give it a last moment
+            }
+        }
+        return super.remove();
     }
 }

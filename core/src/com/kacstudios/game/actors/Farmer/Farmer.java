@@ -5,14 +5,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.kacstudios.game.actors.PlayableActor;
 import com.kacstudios.game.screens.LevelScreen;
+import com.kacstudios.game.sounds.GameSounds;
 
 import java.util.logging.Level;
 
 public class Farmer extends PlayableActor {
-    Animation<TextureRegion> leftAnimation;
-    Animation<TextureRegion> rightAnimation;
-    Animation<TextureRegion> upAnimation;
-    Animation<TextureRegion> downAnimation;
+    long soundId;
     FarmerTextureData textureData = new FarmerTextureData();
 
     public static class FarmerTextureData {
@@ -35,6 +33,16 @@ public class Farmer extends PlayableActor {
         setMaxSpeed(200);
         setDeceleration(1000);
         setBoundaryPolygon(8);
+
+        soundId = GameSounds.walkingSound.play(true);
+        GameSounds.wateringSound.pause(soundId);
+    }
+
+    @Override
+    public void act(float dt) {
+        super.act(dt);
+        if(isMoving()) GameSounds.walkingSound.resume(soundId);
+        else GameSounds.walkingSound.pause(soundId);
     }
 
     public void setDefaultAnimations() {

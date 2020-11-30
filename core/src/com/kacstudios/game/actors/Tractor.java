@@ -8,6 +8,7 @@ import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.inventoryItems.BasicTractorItem;
 import com.kacstudios.game.overlays.ContextMenu.ContextMenu;
 import com.kacstudios.game.screens.LevelScreen;
+import com.kacstudios.game.sounds.GameSounds;
 
 import java.awt.geom.Point2D;
 
@@ -16,6 +17,7 @@ public class Tractor extends PlayableActor {
     private Farmer farmer;
     private boolean hasResized = true;
     private boolean justMounted = false;
+    private long soundId;
 
     ContextMenu menu = new ContextMenu(0, 0, new ContextMenu.ContextMenuOption[] {
             new ContextMenu.ContextMenuOption("Store", () -> { if(getDistanceFromFarmer() < radius) removeTractor(); }),
@@ -108,6 +110,8 @@ public class Tractor extends PlayableActor {
         justMounted = true;
         this.setFocused(true);
         farmer.setMaxSpeed(625);
+
+        soundId = GameSounds.tractorSound.play(true);
     }
 
     /**
@@ -119,6 +123,8 @@ public class Tractor extends PlayableActor {
         farmer.setFocused(true);
         farmer.setMaxSpeed(200);
         this.setSpeed(0);
+
+        GameSounds.tractorSound.stop(soundId);
     }
 
     /**
@@ -137,5 +143,11 @@ public class Tractor extends PlayableActor {
         screen.getHud().getInventoryViewer().addItem(new BasicTractorItem(1));
         screen.getAddedActors().remove(this);
         remove();
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
+        if(!focused) removeFarmer();
     }
 }

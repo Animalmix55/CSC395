@@ -6,6 +6,7 @@ import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class HarvestingItem extends IInventoryItem {
@@ -20,11 +21,14 @@ public class HarvestingItem extends IInventoryItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+        GameSounds.harvestSound.play(false);
+
         Plant target = (Plant) event.getGridSquare();
         parent.getViewer().addItem(target.getHarvestItem(1));
         event.setSquare(null);
 
         parent.checkItem();
+        GameSounds.plantingSound.play(false);
     }
 
     @Override

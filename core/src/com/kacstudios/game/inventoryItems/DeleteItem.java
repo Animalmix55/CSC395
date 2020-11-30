@@ -7,6 +7,7 @@ import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.ContextMenu.ContextMenu;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class DeleteItem extends IInventoryItem{
@@ -26,8 +27,12 @@ public class DeleteItem extends IInventoryItem{
         GridSquare square = event.getGridSquare();
 
         ContextMenu menu = new ContextMenu((int) coords.x, (int) coords.y, new ContextMenu.ContextMenuOption[] {
-                new ContextMenu.ContextMenuOption("Delete",
-                        () -> { if(event.farmerWithinRadius(300)) event.setSquare(null); })
+                new ContextMenu.ContextMenuOption("Delete", () -> {
+                    if(event.farmerWithinRadius(300)) {
+                        event.setSquare(null);
+                        GameSounds.harvestSound.play(false);
+                    }
+                })
         }) {
             @Override
             public void setOpen(boolean isOpen) {

@@ -8,6 +8,7 @@ import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.WaterSource;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.utilities.SelectableButton;
 import com.kacstudios.game.inventoryItems.EmptyBucketItem;
@@ -27,6 +28,9 @@ public class WaterBucketItem extends IDepleteableItem{
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+        GameSounds.wateringSound.play(false);
+        GameSounds.waterExtinguishSound.play(false);
+
         //ACTION LOGIC
         if (isEmpty) return;
         Plant target = (Plant) event.getGridSquare();

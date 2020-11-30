@@ -8,6 +8,7 @@ import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.screens.LevelScreen;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class WateringCanItem extends IDepleteableItem {
@@ -24,6 +25,8 @@ public class WateringCanItem extends IDepleteableItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+        GameSounds.wateringSound.play(false);
+
         //ACTION LOGIC
         Plant target = (Plant) event.getGridSquare();
         target.setWatered(true);
