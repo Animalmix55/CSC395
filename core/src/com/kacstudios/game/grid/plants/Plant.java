@@ -40,7 +40,7 @@ public class Plant extends GridSquare {
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
-    private boolean canDry = false;
+    private boolean canDry = true;
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
