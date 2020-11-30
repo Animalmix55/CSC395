@@ -6,13 +6,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.kacstudios.game.games.FarmaniaGame;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.screens.MainMenu;
-import com.kacstudios.game.utilities.Setting;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.ShapeGenerator;
 import com.kacstudios.game.utilities.TimeEngine;
 
@@ -37,6 +39,9 @@ public class PauseMenu extends Group {
     Group saveButtons = new Group();
     Group optionsButtons = new Group();
     Group exitButtons = new Group();
+
+    private final PauseMenuButton options_gameVolumeSlider;
+    private final PauseMenuButton options_musicVolumeSlider;
 
     private String currentPauseMenu;
 
@@ -151,48 +156,68 @@ public class PauseMenu extends Group {
 
         // CODE FOR ADDING OPTIONS MENU ASSETS
         // no background is added here since the options menu will be the same size as the default menu size
-        PauseMenuButton options_gameVolumeSlider = new PauseMenuButton(
-                "Game Volume",
-                new Slider(0,100,1,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
+        options_gameVolumeSlider = new PauseMenuButton(
+                "Sound Volume",
+                new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
                 pauseMenuButtonX,
                 (447 - (pauseMenuButtonHeight/2))
         );
-        options_gameVolumeSlider.getPrivateButtonSlider().setValue(Setting.GameVolume);
+        options_gameVolumeSlider.getPrivateButtonSlider().setValue(GameSounds.getSfxVolume());
         options_gameVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Setting.GameVolume = Math.round(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
-                Setting.saveGlobalSettingsToFile();
+                setGameVolume(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
+                GameSounds.saveGlobalSettingsToFile();
             }
         });
+        options_gameVolumeSlider.getPrivateButtonSlider().addCaptureListener(new DragListener() {
+            @Override
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                setGameVolume(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
+            }
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
+                setGameVolume(options_gameVolumeSlider.getPrivateButtonSlider().getValue());
+                GameSounds.saveGlobalSettingsToFile();
+            }
+        });
+
         optionsButtons.addActor(options_gameVolumeSlider);
 
-        PauseMenuButton options_musicVolumeSlider = new PauseMenuButton(
+        options_musicVolumeSlider = new PauseMenuButton(
                 "Music Volume",
-                new Slider(0,100,1,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
+                new Slider(0,1,.01f,false, new Skin(Gdx.files.internal("misc/uiskin.json"))),
                 pauseMenuButtonX,
                 (389 - (pauseMenuButtonHeight/2))
         );
-        options_musicVolumeSlider.getPrivateButtonSlider().setValue(Setting.MusicVolume);
+        options_musicVolumeSlider.getPrivateButtonSlider().setValue(GameSounds.getMusicVolume());
         options_musicVolumeSlider.getPrivateButtonSlider().addCaptureListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Setting.MusicVolume = Math.round(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
-                Setting.saveGlobalSettingsToFile();
+                setMusicVolume(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
+                GameSounds.saveGlobalSettingsToFile();
             }
         });
+        options_musicVolumeSlider.getPrivateButtonSlider().addCaptureListener(new DragListener() {
+            @Override
+            public void drag(InputEvent event, float x, float y, int pointer) {
+                setMusicVolume(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
+            }
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer) {
+                setMusicVolume(options_musicVolumeSlider.getPrivateButtonSlider().getValue());
+                GameSounds.saveGlobalSettingsToFile();
+            }
+        });
+
 
         optionsButtons.addActor(options_musicVolumeSlider);
         PauseMenuButton options_resetToDefault = new PauseMenuButton("Reset to Default", pauseMenuButtonX, (331 - (pauseMenuButtonHeight / 2)));
         options_resetToDefault.addCaptureListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Setting.GameVolume = 50;
-                Setting.MusicVolume = 50;
-                options_gameVolumeSlider.getPrivateButtonSlider().setValue(Setting.GameVolume);
-                options_musicVolumeSlider.getPrivateButtonSlider().setValue(Setting.MusicVolume);
-                Setting.saveGlobalSettingsToFile();
-
+                GameSounds.setDefaults();
+                updateSliders();
             }
         });
         optionsButtons.addActor(options_resetToDefault);
@@ -305,6 +330,7 @@ public class PauseMenu extends Group {
      * Function works by setting default menu ( setMenu_pause() ) to invisible, and then setting itself to being visible
      */
     public void setMenu_options() {
+        updateSliders();
         // set default menu invisible, but keep background visible since it is used in options menu
         defaultBackground.setVisible(true);
         pauseButtons.setVisible(false);
@@ -338,5 +364,24 @@ public class PauseMenu extends Group {
             pauseButtonsArray[i].setButtonLabelText( String.format("Save #%d",i+1) );
         }
         pauseButtonsArray[currentLevel-1].setButtonLabelText( String.format("Save #%d (current)",currentLevel) );
+    }
+
+    private void setGameVolume(float volume) {
+        options_gameVolumeSlider.setButtonLabelText(String.format("Sound Volume: %d%%", Math.round(volume * 100)));
+        if(GameSounds.getSfxVolume() != volume) GameSounds.setSfxVolume(volume);
+        if(options_gameVolumeSlider.getPrivateButtonSlider().getValue() != volume)
+            options_gameVolumeSlider.getPrivateButtonSlider().setValue(volume);
+    }
+
+    private void setMusicVolume(float volume) {
+        options_musicVolumeSlider.setButtonLabelText(String.format("Music Volume: %d%%", Math.round(volume * 100)));
+        if(GameSounds.getMusicVolume() != volume) GameSounds.setMusicVolume(volume);
+        if(options_musicVolumeSlider.getPrivateButtonSlider().getValue() != volume)
+            options_musicVolumeSlider.getPrivateButtonSlider().setValue(volume);
+    }
+
+    private void updateSliders() {
+        setMusicVolume(GameSounds.getMusicVolume());
+        setGameVolume(GameSounds.getSfxVolume());
     }
 }

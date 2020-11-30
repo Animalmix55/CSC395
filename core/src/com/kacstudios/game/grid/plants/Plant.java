@@ -27,7 +27,7 @@ public class Plant extends GridSquare {
     private Image wetSoil;
 
     private float dryGrowthRateModifier = 0;
-    private float secondsToDry = -1;
+    private float secondsToDry = 20;
     private LocalDateTime lastWatered;
 
     private float growthPercentage = 0;
@@ -40,6 +40,7 @@ public class Plant extends GridSquare {
     private ArrayList<Image> growthImages = new ArrayList<>();
     private Image deadImage;
     private Disaster disaster;
+    private boolean canDry = false;
 
     public Plant(String[] growthTexturePaths, String deadTexturePath) {
         super();
@@ -99,7 +100,7 @@ public class Plant extends GridSquare {
     @Override
     public void act(float dt) {
         super.act(dt);
-        if(lastWatered != null && getWatered() && secondsToDry != -1 &&
+        if(lastWatered != null && getWatered() && canDry &&
                 TimeEngine.getSecondsSince(lastWatered) >= secondsToDry) {
             setWatered(false);
             lastWatered = null;
@@ -208,11 +209,18 @@ public class Plant extends GridSquare {
 
     /**
      * Sets the number of seconds it takes for a watered plot to dry out.
-     * -1 means unlimited.
-     * @param secondsToDry
+     * Must be a positive number
      */
     public void setSecondsToDry(float secondsToDry) {
-        this.secondsToDry = secondsToDry;
+        if(secondsToDry > 0) this.secondsToDry = secondsToDry;
+    }
+
+    /**
+     * Sets whether the plan can dry out or not. Useful for water sources.
+     * @param canDry
+     */
+    public void setCanDry(boolean canDry) {
+        this.canDry = canDry;
     }
 
     public void setHarvestItemConstructor(HarvestItemConstructor harvestItemConstructor) {

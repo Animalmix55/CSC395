@@ -1,5 +1,7 @@
 package com.kacstudios.game.utilities;
 
+import com.kacstudios.game.sounds.GameSounds;
+
 import java.util.ArrayList;
 
 public class Economy {
@@ -22,6 +24,7 @@ public class Economy {
      * Adds a given amount to the economy.
      */
     public static void addMoney(int amount) {
+        GameSounds.chaChingSound.play(false);
         setMoney(getMoney() + amount);
     }
 
@@ -32,6 +35,7 @@ public class Economy {
      */
     public static boolean removeMoney(int amount) {
         if(getMoney() < amount) return false;
+        GameSounds.chaChingSound.play(false);
         setMoney(getMoney() - amount);
         return true;
     }

@@ -1,5 +1,6 @@
 package com.kacstudios.game.inventoryItems;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.kacstudios.game.disasters.FireDisaster;
@@ -7,6 +8,7 @@ import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.WaterSource;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 import com.kacstudios.game.inventoryItems.WaterBucketItem;
 
@@ -23,6 +25,8 @@ public class EmptyBucketItem extends IInventoryItem{
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+        GameSounds.fillBucketSound.play(false);
+
         int amount = getAmount();
         if(amount <= 1) {
             parent.setItem(null);

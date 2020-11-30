@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class CornSeedItem extends IInventoryItem {
@@ -20,6 +21,8 @@ public class CornSeedItem extends IInventoryItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+        GameSounds.plantingSound.play(false);
+
         event.setSquare(new CornPlant());
         int amount = getAmount();
         amount--;

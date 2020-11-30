@@ -5,6 +5,7 @@ import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.grid.plants.PotatoesPlant;
 import com.kacstudios.game.overlays.hud.ItemButton;
+import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class PotatoesPlantItem extends IInventoryItem {
@@ -21,6 +22,8 @@ public class PotatoesPlantItem extends IInventoryItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+        GameSounds.plantingSound.play(false);
+
         event.setSquare(new PotatoesPlant());
         int amount = getAmount();
         amount--;
