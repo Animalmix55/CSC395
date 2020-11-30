@@ -3,10 +3,15 @@ package com.kacstudios.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.actors.Farmer.Farmer;
 import com.kacstudios.game.disasters.Disaster;
@@ -21,6 +26,7 @@ import com.kacstudios.game.grid.plants.Plant;
 import com.kacstudios.game.inventoryItems.*;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.Economy;
+import com.kacstudios.game.utilities.ShapeGenerator;
 import com.kacstudios.game.utilities.TimeEngine;
 
 import java.io.File;
@@ -41,6 +47,7 @@ public class LoadMenu extends BaseScreen {
     private TextButton[] levelButtons;
     private TextButton backButton;
 
+    public static Texture bg = new Texture("menu-textures/background_3.png");
     // used for cycling files in and out to be used in file streams
     private File temporarySaveFile;
 
@@ -52,52 +59,55 @@ public class LoadMenu extends BaseScreen {
 
     public void initialize() {
         // set background/map limits
-        BaseActor farmBaseActor = new BaseActor(0,0,mainStage);
-        farmBaseActor.loadTexture("menu-textures/background_3.png");
-        farmBaseActor.setSize(1280,720);
-        BaseActor.setWorldBounds(farmBaseActor);
+        Image background = new Image(bg);
+        float scaleFactor = Math.max(mainStage.getWidth() / background.getWidth(), mainStage.getHeight() / background.getHeight());
+        background.setScale(scaleFactor);
+        mainStage.addActor(background);
 
         // add back button to top left of screen
         backButton = new TextButton("Back", BaseGame.textButtonStyle);
-        backButton.setPosition(20,650);
+        backButton.setPosition(20,uiStage.getHeight() - backButton.getHeight() - 20);
         uiStage.addActor(backButton);
-        backButton.addListener(
-                (Event e) -> {
-                    if ( !(e instanceof InputEvent) ) return false;
-                    if ( !((InputEvent)e).getType().equals(InputEvent.Type.touchDown) ) return false;
-                    FarmaniaGame.setActiveScreen( new MainMenu() );
-                    return true;
-                }
-        );
+        backButton.addCaptureListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                FarmaniaGame.setActiveScreen( new MainMenu() );
+            }
+        });
 
+        Group buttons = new Group();
+        buttons.setWidth(300);
         // create list of level saves, and grey out those that don't exist
         levelButtons = new TextButton[5];
-        for (int levelNum=0;levelNum<5;levelNum++) {
-            levelButtons[levelNum] = new TextButton(String.format("Save #%d", levelNum+1),BaseGame.textButtonStyle);
-            levelButtons[levelNum].setPosition(540,540-(100*levelNum));
-            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNum+1));
+        for (int i = 0; i < 5; i++) {
+            int levelNum = 5 - i;
+            TextButton button = new TextButton(String.format("Save #%d", levelNum),BaseGame.textButtonStyle);
+            button.setWidth(buttons.getWidth());
+            button.align(Align.center);
+
+            levelButtons[i] = button;
+            levelButtons[i].setPosition(0, (i > 0? levelButtons[i - 1].getTop() + 30 : 0));
+            buttons.addActor(button);
+            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell", levelNum));
 
             // if save file doesn't exist upon first look, grey out the text and never add an event listener
             // otherwise, add the event listener to load the clicked save file
-            if (!temporarySaveFile.exists()) levelButtons[levelNum].setStyle(BaseGame.textButtonStyleGray);
+            if (!temporarySaveFile.exists()) button.setStyle(BaseGame.textButtonStyleGray);
             else {
-                int finalLevelNum = levelNum+1; // needed because of use in lambda function
-                levelButtons[levelNum].addListener(
-                        (Event e) -> {
-                            if (!(e instanceof InputEvent)) return false;
-                            if (!((InputEvent) e).getType().equals(InputEvent.Type.touchDown)) return false;
-                            loadLevel(finalLevelNum);
-                            return true;
-                        }
-                );
+                button.addCaptureListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        loadLevel(levelNum);
+                    }
+                });
             }
         }
 
-        // render buttons to load menu screen
-        for (TextButton individualButton : levelButtons) {
-            uiStage.addActor(individualButton);
-        }
-
+        buttons.setHeight(levelButtons[levelButtons.length - 1].getTop());
+        buttons.setPosition((uiStage.getWidth() - buttons.getWidth())/2,
+                (uiStage.getHeight() - buttons.getHeight())/2);
+        uiStage.addActor(buttons);
     }
 
     public void update(float dt) {}

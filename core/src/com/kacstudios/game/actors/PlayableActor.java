@@ -157,8 +157,7 @@ public class PlayableActor extends BaseActor {
             accelerateAtAngle(270);
         }
 
-
-        action= new MoveToAction();
+        action = new MoveToAction();
         action.setPosition(x,y);
         action.setActor(this);
 
@@ -272,5 +271,9 @@ public class PlayableActor extends BaseActor {
         }
 
         return vector;
+    }
+
+    public MoveToAction getAction() {
+        return action;
     }
 }
