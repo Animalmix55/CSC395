@@ -1,5 +1,11 @@
 ## Java
 
+/core/build
+/desktop/build
+/desktop/out
+/core/resources
+/out
+
 *.class
 *.war
 *.ear
