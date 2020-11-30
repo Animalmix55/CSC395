@@ -61,8 +61,6 @@ public class MainMenu extends BaseScreen {
         mainStage.addActor(background);
 
         Group logoButtons = new Group();
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle(BaseGame.textButtonStyle);
-        style.font.getData().setScale(1.4f);
 
         TextButton NewButton = new TextButton( "New", BaseGame.textButtonStyle );
         logoButtons.addActor(NewButton);
