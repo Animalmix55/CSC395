@@ -16,6 +16,7 @@ public class CharacterMenu extends Group {
     private Image char_preview_background;
     private Image char_preview;
     private Farmer.FarmerTextureData tempTextureData;
+    private static Texture closeButtonTexture = new Texture(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE));
     public static final int charMenuWidth = 356;
     public static final int charMenuHeight = 384;
     private static Texture backgroundTexture = new Texture(ShapeGenerator.createRoundedRectangle(
@@ -91,7 +92,8 @@ public class CharacterMenu extends Group {
         });
         mainButtons.addActor(main_headButton);
 
-        Image closeButton = new Image(new Texture(ShapeGenerator.createCloseButton(20, Color.BLACK, Color.WHITE)));
+
+        Image closeButton = new Image(closeButtonTexture);
         closeButton.setPosition(getWidth() - closeButton.getWidth() / 2, getHeight() - closeButton.getHeight() / 2);
         closeButton.addCaptureListener(new ClickListener() {
             @Override

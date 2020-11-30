@@ -236,4 +236,10 @@ public class Plant extends GridSquare {
         if(harvestItemConstructor != null) return harvestItemConstructor.createInstance(amount);
         return null;
     }
+
+    @Override
+    public boolean remove() {
+        if(getDisaster() != null) setDisaster(null);
+        return super.remove();
+    }
 }

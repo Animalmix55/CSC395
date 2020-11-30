@@ -26,13 +26,15 @@ public class HUD extends Group {
 
     public HUD(LevelScreen inputScreen){
         screen = inputScreen;
-        background = new Image(new Texture("bottombar/background.png"));
+        background = new Image(new Texture(ShapeGenerator.createRectangle(
+                (int) inputScreen.getUIStage().getWidth(), 64,
+                new Color(0, 0, 0, .5f))));
 
         this.setWidth(background.getWidth());
         this.setHeight(background.getHeight());
         this.setBounds(0, 0, getWidth(), getHeight());
         this.addActor(background);
-        this.setX((screen.getUIStage().getWidth() - 1280)/2); // center
+        this.setX((screen.getUIStage().getWidth() - getWidth())/2); // center
 
         //ADD TIME
 

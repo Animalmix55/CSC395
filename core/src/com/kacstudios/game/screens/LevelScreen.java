@@ -104,7 +104,7 @@ public class LevelScreen extends BaseScreen {
         buttonStyle.up = new TextureRegionDrawable(buttonRegion);
 
         Button PauseButton = new Button(buttonStyle);
-        PauseButton.setPosition(20, 650);
+        PauseButton.setPosition(20, getMainStage().getHeight() - PauseButton.getHeight() - 20);
         uiStage.addActor(PauseButton);
 
         market = new Market(this) {

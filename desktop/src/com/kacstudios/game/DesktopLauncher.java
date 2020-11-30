@@ -14,7 +14,8 @@ public class DesktopLauncher {
 		config.width = 1280;
 		config.height = 720;
 
-		config.resizable = false;
+		config.resizable = true;
+//		config.samples = 1000;
 
 		config.addIcon("core/assets/misc/icon-256.png", Files.FileType.Internal);
 		config.addIcon("core/assets/misc/icon-64.png", Files.FileType.Internal);
