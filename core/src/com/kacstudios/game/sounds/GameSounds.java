@@ -1,20 +1,16 @@
 package com.kacstudios.game.sounds;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GameSounds {
-    private static Scanner fileScanner;
-    public static FileWriter fileWriter;
-
     public static class SoundWrapper {
         private Sound sound;
         private ArrayList<Long> playIds = new ArrayList<>();
@@ -136,35 +132,31 @@ public class GameSounds {
      * Overrides default static global variables for settings only if an options file is found
      */
     public static void loadGlobalSettingsFromFile() {
-        File settingsFile = new File("core/assets/saves/options.mcconnell");
+        FileHandle settingsFile = Gdx.files.getFileHandle("saves/options.mcconnell", Files.FileType.External);
         if (settingsFile.exists()) {
             String fileLine;
             String[] splitFileLine;
 
-            try {
-                fileScanner = new Scanner(settingsFile);
+            try (Scanner fileScanner = new Scanner(settingsFile.reader())) {
 
                 fileLine = fileScanner.nextLine();
                 splitFileLine = fileLine.split(",");
-                setSfxVolume(Float.parseFloat( splitFileLine[1] ));
+                setSfxVolume(Float.parseFloat(splitFileLine[1]));
 
                 fileLine = fileScanner.nextLine();
                 splitFileLine = fileLine.split(",");
-                setMusicVolume(Float.parseFloat( splitFileLine[1] ));
-
+                setMusicVolume(Float.parseFloat(splitFileLine[1]));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            catch (FileNotFoundException e) { e.printStackTrace(); }
-            finally { fileScanner.close(); }
         }
     }
 
     public static void saveGlobalSettingsToFile() {
-        File settingsFile = new File("core/assets/saves/options.mcconnell");
-        try {
-            fileWriter = new FileWriter(settingsFile);
+        FileHandle settingsFile = Gdx.files.getFileHandle("saves/options.mcconnell", Files.FileType.External);
+        try (Writer fileWriter = settingsFile.writer(false)){
             fileWriter.write("GameVolume,"+sfxVolume);
             fileWriter.write("\nMusicVolume,"+musicVolume);
-            fileWriter.close();
         }
         catch (IOException e) {
             e.printStackTrace();

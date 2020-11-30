@@ -12,7 +12,7 @@ import com.kacstudios.game.sounds.GameSounds;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class WateringCanItem extends IDepleteableItem {
-    private static Texture texture = new Texture("items/watering_can.png");
+    private static Texture texture = new Texture("items/watering-can.png");
     public WateringCanItem(int amount){
         super(true, 300);
         setAmount(amount);

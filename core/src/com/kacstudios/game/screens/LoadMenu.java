@@ -1,7 +1,9 @@
 package com.kacstudios.game.screens;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -31,12 +33,14 @@ import com.kacstudios.game.utilities.TimeEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.io.FileWriter;
+import java.util.logging.FileHandler;
 
 
 public class LoadMenu extends BaseScreen {
@@ -49,13 +53,10 @@ public class LoadMenu extends BaseScreen {
 
     public static Texture bg = new Texture("menu-textures/background_3.png");
     // used for cycling files in and out to be used in file streams
-    private File temporarySaveFile;
+    private FileHandle temporarySaveFile;
 
     // used for iteration through save file lines
     private Scanner fileScanner;
-    private String fileLine;
-    private String[] splitFileLine;
-    private static FileWriter fileWriter;
 
     public void initialize() {
         // set background/map limits
@@ -88,7 +89,7 @@ public class LoadMenu extends BaseScreen {
             levelButtons[i] = button;
             levelButtons[i].setPosition(0, (i > 0? levelButtons[i - 1].getTop() + 30 : 0));
             buttons.addActor(button);
-            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell", levelNum));
+            temporarySaveFile = Gdx.files.getFileHandle(String.format("saves/grid%d.mcconnell", levelNum), Files.FileType.External);
 
             // if save file doesn't exist upon first look, grey out the text and never add an event listener
             // otherwise, add the event listener to load the clicked save file
@@ -141,12 +142,12 @@ public class LoadMenu extends BaseScreen {
             uiStage.addActor(loadingIndicator);
 
             // open grid save file
-            temporarySaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
-            fileScanner = new Scanner(temporarySaveFile);
+            temporarySaveFile = Gdx.files.getFileHandle(String.format("saves/grid%d.mcconnell",levelNumber), Files.FileType.External);
+            fileScanner = new Scanner(temporarySaveFile.reader());
 
             // get grid size, store in variables
-            fileLine = fileScanner.nextLine();
-            splitFileLine = fileLine.split(",");
+            String fileLine = fileScanner.nextLine();
+            String[] splitFileLine = fileLine.split(",");
             levelWidth = Integer.parseInt(splitFileLine[0]);
             levelHeight = Integer.parseInt(splitFileLine[1]);
 
@@ -216,9 +217,10 @@ public class LoadMenu extends BaseScreen {
             }
 
             // load inventory items save file into scanner
-            temporarySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
+            temporarySaveFile = Gdx.files.getFileHandle(String.format("saves/inventory%d.mcconnell",levelNumber),
+                    Files.FileType.External);
             fileScanner.close();
-            fileScanner = new Scanner(temporarySaveFile);
+            fileScanner = new Scanner(temporarySaveFile.reader());
 
             // iterate through lines in items save file
             while (fileScanner.hasNextLine()) {
@@ -247,9 +249,10 @@ public class LoadMenu extends BaseScreen {
                 }
             }
             // switch over to actors file
-            temporarySaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
+            temporarySaveFile = Gdx.files.getFileHandle(String.format("saves/actors%d.mcconnell",levelNumber),
+                    Files.FileType.External);
             fileScanner.close();
-            fileScanner = new Scanner(temporarySaveFile);
+            fileScanner = new Scanner(temporarySaveFile.reader());
 
             // pull farmer location and save into variable
             fileLine = fileScanner.nextLine();
@@ -286,9 +289,9 @@ public class LoadMenu extends BaseScreen {
             }
 
             // set farmer customization
-            temporarySaveFile = new File(String.format("core/assets/saves/farmer%d.mcconnell",levelNumber));
+            temporarySaveFile = Gdx.files.getFileHandle(String.format("saves/farmer%d.mcconnell",levelNumber), Files.FileType.External);
             fileScanner.close();
-            fileScanner = new Scanner(temporarySaveFile);
+            fileScanner = new Scanner(temporarySaveFile.reader());
             customization.headName = fileScanner.nextLine();
             customization.headColor = Color.valueOf( fileScanner.nextLine() );
             customization.shirtName = fileScanner.nextLine();
@@ -391,29 +394,33 @@ public class LoadMenu extends BaseScreen {
         String[] farmerState = screen.getFarmer().getFarmerTextureSaveState();
 
         // set file names according to level number
-        File gridSaveFile = new File(String.format("core/assets/saves/grid%d.mcconnell",levelNumber));
-        File inventorySaveFile = new File(String.format("core/assets/saves/inventory%d.mcconnell",levelNumber));
-        File actorsSaveFile = new File(String.format("core/assets/saves/actors%d.mcconnell",levelNumber));
-        File farmerSaveFile = new File(String.format("core/assets/saves/farmer%d.mcconnell",levelNumber));
+        FileHandle gridSaveFile = Gdx.files.getFileHandle(String.format("saves/grid%d.mcconnell",levelNumber),
+                Files.FileType.External);
+        FileHandle inventorySaveFile = Gdx.files.getFileHandle(String.format("saves/inventory%d.mcconnell",levelNumber),
+                Files.FileType.External);
+        FileHandle actorsSaveFile = Gdx.files.getFileHandle(String.format("saves/actors%d.mcconnell",levelNumber),
+                Files.FileType.External);
+        FileHandle farmerSaveFile = Gdx.files.getFileHandle(String.format("saves/farmer%d.mcconnell",levelNumber),
+                Files.FileType.External);
 
         // write to save files
         try {
-            fileWriter = new FileWriter(gridSaveFile);
+            Writer fileWriter = gridSaveFile.writer(false);
             for (int i=0;i<gridLinesToWrite.size();i++) {
                 fileWriter.write(gridLinesToWrite.get(i) + "\n");
             }
             fileWriter.close();
-            fileWriter = new FileWriter(inventorySaveFile);
+            fileWriter = inventorySaveFile.writer(false);
             for (int i=0;i<inventoryLinesToWrite.size();i++) {
                 fileWriter.write(inventoryLinesToWrite.get(i) + "\n");
             }
             fileWriter.close();
-            fileWriter = new FileWriter(actorsSaveFile);
+            fileWriter = actorsSaveFile.writer(false);
             for (int i=0;i<actorsLinesToWrite.size();i++) {
                 fileWriter.write(actorsLinesToWrite.get(i) + "\n");
             }
             fileWriter.close();
-            fileWriter = new FileWriter(farmerSaveFile);
+            fileWriter = farmerSaveFile.writer(false);
             for (String farmerLine : farmerState) {
                 fileWriter.write(farmerLine + "\n");
             }
@@ -444,5 +451,4 @@ public class LoadMenu extends BaseScreen {
 
         return retString;
     }
-
 }

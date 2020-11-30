@@ -8,7 +8,7 @@ import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
 
 public class BasicTractorItem extends IInventoryItem {
-    private static Texture texture = new Texture("items/tractor-1.png");
+    private static Texture texture = new Texture("items/basic-tractor.png");
     public BasicTractorItem(int amount) {
         setAmount(amount);
         setDisplayName("Basic Tractor");
