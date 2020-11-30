@@ -107,7 +107,6 @@ public class Tractor extends PlayableActor {
     private void addFarmer() {
         justMounted = true;
         this.setFocused(true);
-        farmer.setFocused(false);
         farmer.setMaxSpeed(625);
     }
 
@@ -120,7 +119,6 @@ public class Tractor extends PlayableActor {
         farmer.setFocused(true);
         farmer.setMaxSpeed(200);
         this.setSpeed(0);
-        this.setFocused(false);
     }
 
     /**

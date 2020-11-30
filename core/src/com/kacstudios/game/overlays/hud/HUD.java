@@ -108,7 +108,7 @@ public class HUD extends Group {
         this.addActor(market);
 
         // Set up inventory viewer
-        inventoryViewer = new InventoryViewer();
+        inventoryViewer = new InventoryViewer(this);
         inventoryViewer.setX(getWidth() - inventoryViewer.getWidth());
         this.addActor(inventoryViewer);
 

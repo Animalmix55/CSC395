@@ -14,6 +14,8 @@ import com.kacstudios.game.games.BaseGame;
 import com.kacstudios.game.games.FarmaniaGame;
 
 import com.kacstudios.game.grid.GridSquare;
+import com.kacstudios.game.grid.GridVector;
+import com.kacstudios.game.grid.OversizeGridSquare;
 import com.kacstudios.game.grid.plants.Plant;
 
 import com.kacstudios.game.inventoryItems.*;
@@ -163,8 +165,7 @@ public class LoadMenu extends BaseScreen {
                                 if (splitFileLine[4].equals("t"))
                                     tempPlant.setWatered(true); // set plant to be watered if saved as watered
                                 tempPlant.setGrowthPercentage(Float.parseFloat(splitFileLine[7])); // restore plant growth progress
-                                tempPlant.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
-                                tempPlant.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+                                tempPlant.setGridCoords(new GridVector(Integer.parseInt(splitFileLine[0]), Integer.parseInt(splitFileLine[1]))); // set placement y coordinate
 
                                 if (!splitFileLine[5].equals("0")) {
                                     String disasterClassName = splitFileLine[5];
@@ -192,8 +193,8 @@ public class LoadMenu extends BaseScreen {
                         try {
                             Class<?> gridSquareClass = Class.forName(className);
                             tempSquare = (GridSquare) gridSquareClass.getDeclaredConstructor().newInstance();
-                            tempSquare.setSavedX(Integer.parseInt(splitFileLine[0])); // set placement x coordinate
-                            tempSquare.setSavedY(Integer.parseInt(splitFileLine[1])); // set placement y coordinate
+                            tempSquare.setGridCoords(new GridVector(Integer.parseInt(splitFileLine[0]),
+                                    Integer.parseInt(splitFileLine[1]))); // set placement y coordinate
                             miscSquares.add(tempSquare);
                         }
                         catch (Exception e) {
@@ -329,6 +330,11 @@ public class LoadMenu extends BaseScreen {
                         else tempLine[8] = "f";
                     }
                     else {
+                        GridSquare square = loadedSquares[column][row];
+                        if(square.getGridCoords().x != column || square.getGridCoords().y != row) {
+                            continue; // for oversize squares, skip over saving several times
+                        }
+
                         tempLine = new String[4];
                         tempLine[0] = String.valueOf(column);
                         tempLine[1] = String.valueOf(row);

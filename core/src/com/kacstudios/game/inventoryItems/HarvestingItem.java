@@ -1,6 +1,7 @@
 package com.kacstudios.game.inventoryItems;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.BlueberriesPlant;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.grid.plants.Plant;
@@ -11,6 +12,7 @@ public class HarvestingItem extends IInventoryItem {
     private static Texture texture = new Texture("items/scythe.png");
 
     public HarvestingItem(int amount){
+        super(true, 300);
         setAmount(amount);
         setDisplayName("Scythe");
         setDeletable(false);
@@ -18,16 +20,9 @@ public class HarvestingItem extends IInventoryItem {
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
-        if (!event.farmerWithinRadius(300)) return;
-        if (event.getGridSquare() == null) return;
-        if (Plant.class.isAssignableFrom(event.getGridSquare().getClass())) {
-            Plant target = (Plant) event.getGridSquare();
-            if (target.getFullyGrown() == true){
-                parent.getViewer().addItem(target.getHarvestItem(1));
-                event.setSquare(null);
-            }
-
-        }
+        Plant target = (Plant) event.getGridSquare();
+        parent.getViewer().addItem(target.getHarvestItem(1));
+        event.setSquare(null);
 
         parent.checkItem();
     }
@@ -40,5 +35,11 @@ public class HarvestingItem extends IInventoryItem {
     @Override
     public IInventoryItem createNewInstance(int amount) {
         return new HarvestingItem(amount);
+    }
+
+    protected boolean isBlocked(GridClickEvent event) {
+        GridSquare target = event.getGridSquare();
+        return target == null || !Plant.class.isAssignableFrom(target.getClass()) ||
+                ((Plant) target).getDead() || !((Plant) target).getFullyGrown();
     }
 }

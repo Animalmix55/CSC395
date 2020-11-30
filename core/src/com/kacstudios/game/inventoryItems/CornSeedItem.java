@@ -1,6 +1,7 @@
 package com.kacstudios.game.inventoryItems;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.kacstudios.game.grid.GridSquare;
 import com.kacstudios.game.grid.plants.CornPlant;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
@@ -12,26 +13,23 @@ public class CornSeedItem extends IInventoryItem {
     }
 
     public CornSeedItem(int amount){
+        super(300, true, 1, 1);
         setAmount(amount);
         setDisplayName("Corn Seed");
     }
 
     @Override
     public void onDeployment(GridClickEvent event, ItemButton parent) {
+        event.setSquare(new CornPlant());
+        int amount = getAmount();
+        amount--;
+        setAmount(Math.max(amount, 0));
 
-        if(!event.farmerWithinRadius(300)) return; // must be within 300 pixels
-        if(event.getGridSquare() == null) {
-            event.setSquare(new CornPlant());
-            int amount = getAmount();
-            amount--;
-            setAmount(amount >= 0 ? amount : 0);
-
-            if(amount == 0){ // amount of -1 signifies unlimited
-                parent.setItem(null); // remove from button
-            }
-
-            parent.checkItem(); // update button display amount
+        if(amount == 0){ // amount of -1 signifies unlimited
+            parent.setItem(null); // remove from button
         }
+
+        parent.checkItem(); // update button display amount
     }
 
     @Override
@@ -42,5 +40,10 @@ public class CornSeedItem extends IInventoryItem {
     @Override
     public IInventoryItem createNewInstance(int amount) {
         return new CornSeedItem(amount);
+    }
+
+    protected boolean isBlocked(GridClickEvent event) {
+        GridSquare target = event.getGridSquare();
+        return target != null;
     }
 }

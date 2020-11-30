@@ -3,6 +3,7 @@ package com.kacstudios.game.inventoryItems;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.kacstudios.game.actors.Tractor;
+import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.overlays.hud.ItemButton;
 import com.kacstudios.game.utilities.GridClickEvent;
 
@@ -41,5 +42,10 @@ public class BasicTractorItem extends IInventoryItem {
     @Override
     public IInventoryItem createNewInstance(int amount) {
         return new BasicTractorItem(amount);
+    }
+
+    @Override
+    public void onEquippedChange(boolean isEquipped, Grid grid) {
+        super.onEquippedChange(isEquipped, grid);
     }
 }

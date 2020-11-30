@@ -2,9 +2,8 @@ package com.kacstudios.game.grid;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.kacstudios.game.actors.BaseActor;
 import com.kacstudios.game.utilities.TimeEngine;
 
@@ -17,23 +16,18 @@ public class GridSquare extends BaseActor {
     private GridVector gridCoords;
     private Grid grid;
 
-    private int savedX;
-    private int savedY;
-
     public GridSquare()
     {
         super();
 
         // add event
-        this.addListener(
-            (Event e) ->
-            {
-                InputEvent ie = (InputEvent)e;
-                if ( ie.getType().equals(InputEvent.Type.touchDown) )
-                    this.clickFunction(TimeEngine.getDateTime());
-                return false;
+        this.addCaptureListener(new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                onClick();
+                return super.touchDown(event, x, y, pointer, button);
             }
-        );
+        });
     }
 
     public void setParent(Grid grid, GridVector position) {
@@ -47,6 +41,10 @@ public class GridSquare extends BaseActor {
 
     public GridVector getGridCoords() {
         return gridCoords;
+    }
+
+    public void setGridCoords(GridVector gridCoords) {
+        this.gridCoords = gridCoords;
     }
 
     /**
@@ -86,25 +84,12 @@ public class GridSquare extends BaseActor {
         }
     }
 
-    public void setCollisionSetting(boolean collides) {
-        collideWithPlayer = collides;
-    }
-
     public boolean getCollisionSetting() {
         return collideWithPlayer;
     }
 
-    public void clickFunction(LocalDateTime dateTime) {
-        System.out.println("I was clicked!");
+    public void onClick() {
     }
-
-    public void setSavedX(int x) { savedX = x; }
-
-    public void setSavedY(int y) { savedY = y; }
-
-    public int getSavedX() { return savedX; }
-
-    public int getSavedY() { return savedY; }
 
     @Override
     public void act(float dt) {
