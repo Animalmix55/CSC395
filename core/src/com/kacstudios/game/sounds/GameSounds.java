@@ -62,8 +62,8 @@ public class GameSounds {
         }
     }
 
-    private static float musicVolume = 50;
-    private static float sfxVolume = 50;
+    private static float musicVolume = .2f;
+    private static float sfxVolume = .5f;
 
     public static Music birdsChirping = Gdx.audio.newMusic(Gdx.files.internal("sounds-music/gamenoise.ogg"));
     public static Music gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds-music/Music.ogg"));

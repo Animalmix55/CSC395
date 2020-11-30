@@ -12,6 +12,7 @@ import com.kacstudios.game.grid.Grid;
 import com.kacstudios.game.screens.LevelScreen;
 import com.kacstudios.game.utilities.Economy;
 import com.kacstudios.game.utilities.ShapeGenerator;
+import com.kacstudios.game.utilities.TimeEngine;
 
 public class GridExpandPrompt extends Group {
     private LevelScreen screen;
@@ -33,7 +34,7 @@ public class GridExpandPrompt extends Group {
         left = new GridExpandArrow(grid.getGridHeight() * perSquarePrice, ShapeGenerator.Direction.left) {
             @Override
             public void onClick() {
-                if(!Economy.removeMoney(getPrice())) return;
+                if(TimeEngine.getDilation() == 0 || !Economy.removeMoney(getPrice())) return;
                 grid.expandGrid(ShapeGenerator.Direction.left);
                 top.setPrice(grid.getGridWidth() * perSquarePrice);
                 bottom.setPrice(grid.getGridWidth() * perSquarePrice);
@@ -42,7 +43,7 @@ public class GridExpandPrompt extends Group {
         right = new GridExpandArrow(grid.getGridHeight() * perSquarePrice, ShapeGenerator.Direction.right) {
             @Override
             public void onClick() {
-                if(!Economy.removeMoney(getPrice())) return;
+                if(TimeEngine.getDilation() == 0 || !Economy.removeMoney(getPrice())) return;
                 grid.expandGrid(ShapeGenerator.Direction.right);
                 top.setPrice(grid.getGridWidth() * perSquarePrice);
                 bottom.setPrice(grid.getGridWidth() * perSquarePrice);
@@ -51,7 +52,7 @@ public class GridExpandPrompt extends Group {
         top = new GridExpandArrow(grid.getGridWidth() * perSquarePrice, ShapeGenerator.Direction.up) {
             @Override
             public void onClick() {
-                if(!Economy.removeMoney(getPrice())) return;
+                if(TimeEngine.getDilation() == 0 || !Economy.removeMoney(getPrice())) return;
                 grid.expandGrid(ShapeGenerator.Direction.up);
                 left.setPrice(grid.getGridHeight() * perSquarePrice);
                 right.setPrice(grid.getGridHeight() * perSquarePrice);
@@ -60,7 +61,7 @@ public class GridExpandPrompt extends Group {
         bottom = new GridExpandArrow(grid.getGridHeight() * perSquarePrice, ShapeGenerator.Direction.down) {
             @Override
             public void onClick() {
-                if(!Economy.removeMoney(getPrice())) return;
+                if(TimeEngine.getDilation() == 0 || !Economy.removeMoney(getPrice())) return;
                 grid.expandGrid(ShapeGenerator.Direction.down);
                 left.setPrice(grid.getGridHeight() * perSquarePrice);
                 right.setPrice(grid.getGridHeight() * perSquarePrice);
