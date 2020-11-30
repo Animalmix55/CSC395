@@ -26,7 +26,8 @@ import java.awt.*;
 public class Settings extends BaseScreen {
     //private List<Slider> slider;
 
-    private static BitmapFont font = FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 18);
+    private static BitmapFont font = FarmaniaFonts.generateFont("fonts/OpenSans-Regular.ttf", 35);
+    private static Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
     private static Skin skin = new Skin(Gdx.files.internal("misc/uiskin.json"));
     private Slider gameVolumeSlider;
@@ -38,13 +39,14 @@ public class Settings extends BaseScreen {
     public void initialize() {
         Group volumeSliders = new Group();
 
-        gameVolumeLabel = new Label("Sound Volume: 100%", skin);
+        gameVolumeLabel = new Label("Sound Volume: 100%", labelStyle);
         gameVolumeLabel.setColor(Color.WHITE);
         gameVolumeLabel.setAlignment(Align.center);
         gameVolumeLabel.pack();
 
         gameVolumeSlider = new Slider(0,1,.01f,false, skin);
         gameVolumeSlider.setValue(GameSounds.getSfxVolume());
+        gameVolumeSlider.setWidth(300);
 
         gameVolumeLabel.setWidth(gameVolumeSlider.getWidth());
         gameVolumeLabel.setPosition(Math.abs(gameVolumeLabel.getWidth() - gameVolumeSlider.getWidth()) / 2,
@@ -70,15 +72,16 @@ public class Settings extends BaseScreen {
         });
         setGameVolume(GameSounds.getSfxVolume()); //update label
 
-        musicVolumeLabel = new Label("Music Volume: 100%", skin);
+        musicVolumeLabel = new Label("Music Volume: 100%", labelStyle);
         musicVolumeLabel.pack();
         musicVolumeLabel.setAlignment(Align.center);
         musicVolumeLabel.setColor(Color.WHITE);
 
         musicVolumeSlider = new Slider(0,1,.01f,false, skin);
+        musicVolumeSlider.setWidth(300);
         musicVolumeLabel.setWidth(musicVolumeSlider.getWidth());
         musicVolumeSlider.setValue(GameSounds.getMusicVolume());
-        musicVolumeSlider.setPosition(0,gameVolumeLabel.getTop() + 20);
+        musicVolumeSlider.setPosition(0,gameVolumeLabel.getTop() + 60);
         musicVolumeSlider.addCaptureListener(new DragListener() {
             @Override
             public void drag(InputEvent event, float x, float y, int pointer) {
@@ -126,7 +129,7 @@ public class Settings extends BaseScreen {
                 }
             });
 
-            fsButton.setPosition((volumeSliders.getWidth() - fsButton.getWidth())/2, musicVolumeLabel.getTop() + 20);
+            fsButton.setPosition((volumeSliders.getWidth() - fsButton.getWidth())/2, musicVolumeLabel.getTop() + 60);
             volumeSliders.addActor(fsButton);
 
             volumeSliders.setHeight(fsButton.getTop());
