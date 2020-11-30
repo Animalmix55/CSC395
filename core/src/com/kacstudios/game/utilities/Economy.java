@@ -5,7 +5,7 @@ import com.kacstudios.game.sounds.GameSounds;
 import java.util.ArrayList;
 
 public class Economy {
-    private static int Money = 4000;
+    private static int Money = 1000;
     private static ArrayList<Runnable> updateSubscribers = new ArrayList<>();
 
     public static void subscribeToUpdate(Runnable onUpdate) {
@@ -17,7 +17,7 @@ public class Economy {
     }
 
     public static void Init() {
-        setMoney(4000);
+        setMoney(1000);
     }
 
     /**
