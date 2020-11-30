@@ -14,7 +14,7 @@ import com.kacstudios.game.inventoryItems.WaterBucketItem;
 
 public class EmptyBucketItem extends IInventoryItem{
 
-    private static Texture texture = new Texture("items/EmptyBucket.png");
+    private static Texture texture = new Texture("items/empty-bucket.png");
 
     public EmptyBucketItem() {this(1);}
     public EmptyBucketItem(int amount){

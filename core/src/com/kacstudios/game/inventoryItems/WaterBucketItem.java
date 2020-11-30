@@ -16,7 +16,7 @@ import com.kacstudios.game.inventoryItems.EmptyBucketItem;
 
 public class WaterBucketItem extends IDepleteableItem{
 
-    private static Texture texture2 = new Texture("items/waterbucket.png");
+    private static Texture texture2 = new Texture("items/water-bucket.png");
     private boolean isEmpty = false;
 
     public WaterBucketItem() {this(1);}
